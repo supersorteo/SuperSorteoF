@@ -11,7 +11,8 @@ export class WebSocketService {
  constructor() {
   this.client = new Client({
   //brokerURL: 'ws://localhost:8080/ws', // 🔥 Conexión WebSocket nativa
-  brokerURL: 'ws://sweet-laughter-production.up.railway.app/ws',
+  brokerURL: 'wss://sweet-laughter-production.up.railway.app/ws',
+
   reconnectDelay: 5000,
   debug: (msg: string) => console.log('📡 WebSocket:', msg),
 
