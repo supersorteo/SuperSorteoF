@@ -91,6 +91,9 @@ private countdownHandled = false
 
 
   ngOnInit(): void {
+
+    /*
+
       if (history.state && history.state.raffle) {
         this.raffle = history.state.raffle;
         this.raffleId = this.raffle?.id ?? null;
@@ -111,7 +114,27 @@ private countdownHandled = false
         } else {
           console.error('No se encontró el ID de la rifa en la URL.');
         }
-      }
+      }*/
+
+         const idParam = this.route.snapshot.paramMap.get('id');
+  if (idParam) {
+    this.raffleId = Number(idParam);
+
+    // 🔍 Intentar obtener la rifa desde el state por si fue navegada internamente
+    if (history.state && history.state.raffle) {
+      this.raffle = history.state.raffle;
+      this.raffleId = this.raffle?.id ?? null;
+      this.raffleCode = this.raffle?.code ?? '';
+      console.log('🎟️ Código de la rifa obtenido desde state:', this.raffleCode);
+      this.initializeForm();
+      this.loadParticipantes(this.raffleId);
+    } else {
+      // 🔁 Obtener la rifa desde el backend si no hay datos en el state
+      this.cargarRifa(this.raffleId).then(() => {
+        this.initializeForm();
+        this.loadParticipantes(this.raffleId!);
+      });
+    }
 
  // 🔥 Escuchar cambios en participantes en tiempo real
   this.participanteService.refreshParticipants$.subscribe((raffleId) => {
@@ -220,6 +243,7 @@ private countdownHandled = false
 
 
   }
+}
 
   ngOnDestroy(): void {
     if (this.subscription) {
