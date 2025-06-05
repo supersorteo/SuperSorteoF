@@ -1,0 +1,308 @@
+/* Contenedor general del modal (banner) */
+
+.modal-content-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 1rem;
+  box-sizing: border-box;
+}
+
+.banner-container {
+  width: 100%;
+  background: linear-gradient(to bottom, #66a3ff, #ffffff);
+  border-radius: 20px;
+  overflow: hidden;
+  position: relative;
+  font-family: 'Arial', sans-serif;
+}
+
+/*
+.modal-content-wrapper {
+  position: relative;
+
+  min-height: 500px;
+}
+
+
+.banner-container {
+  width: 100%;
+ // margin: auto;
+  background: linear-gradient(to bottom, #66a3ff, #ffffff);
+  overflow: hidden;
+  position: relative;
+  font-family: 'Arial', sans-serif;
+  border-radius: 20px;
+  z-index: 1;
+}
+*/
+
+
+
+/* Encabezado */
+.header {
+  padding: 20px;
+  text-align: start;
+  /* Ajuste para el logo */
+  .logo-header {
+    max-width: 75px;
+    width: 100%;
+    height: auto;
+  }
+}
+
+/* Contenido central */
+.content-box {
+  padding: 30px;
+  margin: 20px auto;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+  text-align: center;
+}
+
+/* Contenedor de imágenes en esquinas, posicionadas de forma absoluta */
+.modal-image-corners {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none; /* Para que no interfieran en la interacción */
+}
+
+/* Estilo base para cada imagen de esquina */
+/*.corner-image {
+  position: absolute;
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 2px solid #fff;
+  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+  z-index: 10;
+  transition: transform 0.3s ease-in-out;
+}*/
+
+.corner-image {
+  width: 100px;       /* Aumenta el ancho */
+  height: 100px;      /* Aumenta la altura */
+  object-fit: cover;
+  border-radius: 10px;
+  border: 2px solid #fff;
+  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+  z-index: 10;
+  transition: transform 0.3s ease-in-out;
+}
+
+
+
+/* Posición para la imagen 1 (index 0): se mueve más abajo */
+.image-pos-1 {
+  position: absolute;
+  top: 100px;          /* Mayor separación del borde superior */
+  left: 30px;
+  transform: rotate(-15deg);
+}
+
+/* Posición para la imagen 2 (index 1): se mueve también más abajo */
+.image-pos-2 {
+  position: absolute;
+  top: 100px;          /* Mayor separación del borde superior */
+  right: 30px;
+  transform: rotate(15deg);
+}
+
+/* Posición para la imagen 3 (index 2): se mantiene en la parte inferior izquierda */
+.image-pos-3 {
+  position: absolute;
+  bottom: 25px;
+  left: 20px;
+  transform: rotate(15deg);
+}
+
+/* Posición para la imagen 4 (index 3): se mantiene en la parte inferior derecha */
+.image-pos-4 {
+  position: absolute;
+  bottom: 25px;
+  right: 20px;
+  transform: rotate(-15deg);
+}
+
+/* Posición para la imagen 5 (index 4): se centra */
+.image-pos-5 {
+  position: absolute;
+  top: 15%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+
+.price-box {
+  background: #1f72dd;
+  font-size: 2em;
+  font-weight: bold;
+  border-radius: 30px;
+  padding: 10px 30px;
+  text-align: center;
+  width: fit-content;
+  margin: 20px auto 0 auto;
+  box-shadow: 3px 3px 10px rgba(0,0,0,0.3);
+}
+
+/* Clases para posicionar cada imagen */
+.top-right {
+  top: 10px;
+  right: 10px;
+  transform: rotate(15deg);
+}
+.top-left {
+  top: 10px;
+  left: 10px;
+  transform: rotate(-15deg);
+}
+.bottom-left {
+  bottom: 10px;
+  left: 10px;
+  transform: rotate(15deg);
+}
+.bottom-right {
+  bottom: 10px;
+  right: 10px;
+  transform: rotate(-15deg);
+}
+
+/* Estilos responsive para pantallas pequeñas */
+@media screen and (max-width: 600px) {
+  .modal-content-wrapper {
+    max-width: 100%;
+    padding: 0.5rem;
+  }
+  .banner-container {
+    border-radius: 10px;
+  }
+  .header {
+    padding: 10px;
+    .logo-header {
+      max-width: 60px;
+    }
+  }
+  .content-box {
+    padding: 15px;
+    margin: 10px auto;
+    font-size: 0.9em;
+  }
+  .corner-image {
+    width: 60px;
+    height: 60px;
+  }
+}
+
+
+.content-box {
+  border-radius: 20px;
+  padding: 30px;
+  max-width: 600px;
+  margin: 50px auto;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  text-align: center;
+}
+
+.product-title {
+  font-size: 1.8em;
+  font-weight: bold;
+  color: #3b3300;
+  margin-bottom: 15px;
+}
+
+.product-description {
+  font-size: 1em;
+  color: #3b3300;
+  line-height: 1.5;
+}
+
+.hashtag {
+  background: #b59800;
+  color: white;
+  padding: 5px 10px;
+  display: inline-block;
+  margin-top: 10px;
+  border-radius: 10px;
+  font-size: 0.9em;
+}
+
+.contact {
+  text-align: center;
+  margin-top: 25px;
+}
+
+.contact-number {
+  font-size: 1.4em;
+  font-weight: bold;
+  color: #3b3300;
+}
+
+/*@media screen and (max-width: 600px) {
+  .corner-image {
+    width: 80px;
+    height: 80px;
+  }
+  .top-right { transform: rotate(10deg); }
+  .top-left { transform: rotate(-10deg); }
+  .bottom-left { transform: rotate(10deg); }
+  .bottom-right { transform: rotate(-10deg); }
+
+
+}*/
+
+/*
+@media screen and (max-width: 600px) {
+  .modal-content-wrapper {
+    max-width: 100%;
+    padding: 0.5rem;
+  }
+  .banner-container {
+    border-radius: 10px;
+  }
+  .header {
+    padding: 10px;
+  }
+  .header .logo-header {
+    max-width: 60px;
+  }
+  .content-box {
+    padding: 15px;
+    margin: 10px auto;
+    font-size: 0.9em;
+  }
+  .corner-image {
+    width: 60px;
+    height: 60px;
+  }
+
+
+  .image-pos-1 {
+    top: 65px;
+    left: 15px;
+    transform: rotate(-10deg);
+  }
+  .image-pos-2 {
+    top: 65px;
+    right: 15px;
+    transform: rotate(10deg);
+  }
+  .image-pos-3 {
+    bottom: 15px;
+    left: 10px;
+    transform: rotate(10deg);
+  }
+  .image-pos-4 {
+    bottom: 15px;
+    right: 10px;
+    transform: rotate(-10deg);
+  }
+  .image-pos-5 {
+    top: 18%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+}*/

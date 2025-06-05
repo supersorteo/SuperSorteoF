@@ -1,0 +1,13 @@
+<!--div class="floating-switch">
+  <p-inputSwitch [(ngModel)]="checked" (click)="onThemeChange(checked ? 'dark' : 'light')"></p-inputSwitch>
+</!--div-->
+
+<!--div class="floating-switch">
+  <p-inputSwitch [(ngModel)]="checked" (click)="onThemeChange(checked ? 'dark' : 'light')"></p-inputSwitch>
+  <i class="pi" [ngClass]="checked ? 'pi-moon' : 'pi-sun'" style="font-size: 1.5rem; margin-left: 0.5rem;"></i>
+</!--div-->
+
+<div class="floating-switch login-switch" (click)="toggleTheme()">
+  <i class="pi" [ngClass]="checked ? 'pi-moon' : 'pi-sun'"></i>
+</div>
+

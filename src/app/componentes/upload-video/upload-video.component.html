@@ -1,0 +1,89 @@
+
+<div class="responsive-container">
+<div class="upload-slot-grid mb-3">
+
+  <!-- Input para seleccionar el video con apariencia de botón -->
+  <div class="grid-item file-input">
+    <label for="videoFile" class="custom-file-upload">
+      <i class="pi pi-upload"></i> Seleccionar Video
+    </label>
+    <input
+      type="file"
+      id="videoFile"
+      accept="video/*"
+      (change)="onFileSelected($event)"
+      #fileInput
+    />
+  </div>
+
+
+ <!-- Previsualización del video seleccionado, se muestra si existe la URL de previsualización -->
+<div class="grid-item preview" *ngIf="videoPreviewUrl">
+  <div class="preview-container">
+    <video width="300" controls>
+      <source [src]="videoPreviewUrl" type="video/mp4" />
+      Tu navegador no soporta la reproducción de video.
+    </video>
+    <!-- Botón para eliminar la previsualización, se muestra en la esquina superior derecha -->
+    <button type="button" class="delete-button" (click)="deleteSelectedVideo()">
+      <i class="pi pi-times"></i>
+    </button>
+  </div>
+</div>
+
+
+  <!-- Botón para subir el video -->
+  <div class="grid-item upload-button">
+    <button
+      pButton
+      label="Subir Video"
+      icon="pi pi-upload"
+      class="p-button-secondary"
+      (click)="uploadVideo()"
+      [disabled]="!selectedFile"
+    ></button>
+  </div>
+</div>
+
+<div class="video-list" *ngIf="videos.length > 0; else noVideos">
+  <div class="upload-slot-grid mb-3" *ngFor="let video of videos">
+    <div class="grid-item preview">
+      <div class="preview-container">
+        <video width="600" controls>
+          <source [src]="getVideoUrl(video)" [attr.type]="getVideoType(video)">
+          Tu navegador no soporta la reproducción de video.
+        </video>
+        <button type="button" class="delete-button" (click)="deleteVideo(video)">
+          <i class="pi pi-times"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+<ng-template #noVideos>
+  <p>No hay videos disponibles.</p>
+</ng-template>
+</div>
+
+
+
+
+
+<div class="go-home-container">
+  <p-button
+    label="Home"
+    [raised]="true"
+    severity="contrast"
+    (click)="goHome()"
+    >
+  </p-button>
+</div>
+<p-toast/>
+<p-confirmDialog />
+<p *ngIf="uploadMessage" class="upload-message">{{ uploadMessage }}</p>

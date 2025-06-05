@@ -1,0 +1,747 @@
+.centered h2,
+.centered small {
+  text-align: center;
+}
+
+.container{
+  max-width: 1200px;
+}
+
+.page-dashboard {
+  max-width: 1200px;
+  margin: auto;
+}
+
+ p-card {
+  margin: 1rem 0;
+  box-shadow: rgba(50, 50, 105, 0.15) 0px 2px 5px 0px, rgba(0, 0, 0, 0.05) 0px 1px 1px 0px;
+}
+
+.p-card {
+  //transition: transform 0.3s ease,
+  //box-shadow 0.3s ease;
+  cursor: pointer;
+}
+.p-card:hover {
+ // transform: scale(1.05);
+  box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.897);
+}
+
+.p-button.p-button-sm {
+  font-size: 0.8rem;
+  padding: 0.5rem 1.09375rem;
+}
+
+
+.list-group-item {
+  display: block;
+  color: var(--bs-list-group-color);
+  text-decoration: none;
+  border: var(--bs-list-group-border-width) solid var(--bs-list-group-border-color);
+
+  cursor: pointer;
+}
+
+.p-dialog-content {
+  min-width: 100px;
+}
+
+.link {
+  text-decoration: none;
+}
+
+
+.raffle-code {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: #fff;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 5px;
+  font-size: 0.9em;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  display: flex;
+  align-items: center;
+}
+
+
+.edit {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  //background-color: rgba(0, 0, 0, 0.7);
+  //color: #fff;
+  //padding: 6px 12px;
+ // border: none;
+ // border-radius: 5px;
+  font-size: 0.9em;
+  cursor: pointer;
+  //transition: background-color 0.3s;
+  display: flex;
+  align-items: center;
+}
+
+.raffle-code:hover {
+  background-color: rgba(0, 0, 0, 0.9);
+}
+
+
+.floating-actions {
+  position: fixed;
+  top: 10px;       /* Ajusta según necesites */
+  left: 10px;      /* Ajusta según necesites */
+  z-index: 1000;   /* Asegúrate de que esté por encima de otros elementos */
+}
+
+.floating-button {
+  position: fixed;
+  top: 50px;  /* Ajusta según necesites */
+  left: 10px; /* Ajusta según necesites */
+  z-index: 1000; /* Asegura que se muestre por encima de otros elementos */
+}
+
+
+:host ::ng-deep {
+  .speeddial-linear-demo {
+      .p-speeddial-direction-up {
+          left: calc(50% - 2rem);
+          bottom: 0;
+      }
+
+      .p-speeddial-direction-down {
+          left: calc(50% - 2rem);
+          top: 0;
+      }
+
+      .p-speeddial-direction-left {
+          right: 0;
+          top: calc(50% - 2rem);
+      }
+
+      .p-speeddial-direction-right {
+          left: 0;
+          top: calc(50% - 2rem);
+      }
+  }
+
+  .p-speeddial-action {
+    width: 3rem;
+    height: 3rem;
+    background: #626f74;
+    color: #fff;
+  }
+
+.p-speeddial-button.p-button.p-button-icon-only {
+    width: 3rem;
+    height: 3rem;
+}
+}
+
+
+
+@media only screen and (max-width: 768px) {
+  .p-dialog {
+    width: 90% !important;
+    margin: 0 auto;
+  }
+}
+
+/*
+@media only screen and (max-width: 480px) {
+  .p-dialog {
+    width: 100% !important;
+    margin: 0 auto;
+  }
+
+  .flex {
+    flex-direction: column;
+  }
+
+  .col-6 {
+    width: 100%;
+  }
+}
+*/
+
+@media only screen and (max-width: 480px) {
+  .p-dialog {
+    width: 100% !important;
+    margin: 0 auto;
+  }
+
+  .flex {
+    flex-direction: row !important; /* Alinea los elementos en fila */
+    justify-content: center !important; /* Centra los elementos horizontalmente */
+    flex-wrap: wrap; /* Permite que los elementos pasen a la siguiente línea si no hay espacio */
+    gap: 10px; /* Agrega un pequeño espacio entre los botones */
+  }
+
+  .col-6 {
+    width: auto; /* Permite que los botones ocupen su tamaño natural */
+  }
+
+  .flex button {
+    flex: 1; /* Hace que los botones tengan un tamaño uniforme */
+    //max-width: 150px; /* Ajusta el tamaño máximo para que no sean demasiado grandes */
+  }
+}
+
+@media(max-width: 768px) {
+  .grid .col-6 {
+    display: block;
+    width: 100%;
+  }
+
+  .p-col-md-5, .p-offset-md-1 {
+    display: block;
+    width: 100%;
+    margin: 0;
+  }
+
+  .p-button.p-button-sm {
+    font-size: 1rem;
+    padding: 0.5rem 1.09375rem;
+  }
+  .flex {
+    display: flex !important;
+    text-align: center;
+    justify-content: center;
+}
+
+p{
+  text-align: center;
+}
+
+}
+
+.imag {
+  display: flex;
+  justify-content: center;
+}
+
+.flex {
+  display: flex !important
+;
+  justify-content: center;
+}
+
+
+.upload-slot-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  align-items: center;
+  text-align: center;
+  padding: 0.5rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+ // background: #fafafa;
+}
+
+.upload-slot-grid .grid-item {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 80px; /* Ajusta según lo necesario */
+}
+
+/* Estilo para el input file */
+.file-input input[type="file"] {
+  width: 100%;
+  border: 1px solid #ccc;
+  padding: 0.5rem;
+  border-radius: 4px;
+  background-color: #fff;
+}
+
+/* Contenedor de previsualización */
+.preview-container {
+  position: relative;
+  display: inline-block;
+}
+
+.preview-container img {
+  max-width: 100px;
+  max-height: 100px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 5px;
+  background: #fff;
+}
+
+/* Botón para eliminar la imagen */
+.delete-button {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background: rgb(190, 34, 34);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 12px;
+  padding: 0;
+}
+
+
+/* Ocultar el input file real */
+.file-input input[type="file"] {
+  display: none;
+}
+
+/* Estilo del botón que reemplaza al input file */
+.custom-file-upload {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: #007ad9;
+  color: white;
+  padding: 10px 15px;
+  font-size: 16px;
+  font-weight: bold;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s ease-in-out;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Efecto hover */
+.custom-file-upload:hover {
+  background: #005fa3;
+}
+
+/* Icono */
+.custom-file-upload i {
+  font-size: 18px;
+}
+
+
+
+.flex {
+  display: flex;
+  align-items: center;
+  gap: 8px; /* Espacio entre elementos */
+}
+
+.link {
+  text-decoration: none;
+  color: #151516; /* Azul similar a enlaces */
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+}
+
+
+.link:hover {
+  text-decoration: underline;
+}
+
+.raffle-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap; /* Permite que los elementos se acomoden en pantallas pequeñas */
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.raffle-link {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 1rem;
+  text-decoration: none;
+  color: #3c4249;
+  font-weight: bold;
+}
+
+/*.raffle-code1 {
+  background-color: #51575e;
+  color: #ece7e7;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 5px 10px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+}*/
+
+.raffle-code1 {
+  background-color: #51575e;
+  color: #ece7e7;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 8px 12px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  min-width: 120px; /* Evita que el botón se haga demasiado pequeño */
+  justify-content: center;
+}
+.raffle-code:hover {
+  background-color: #e2e6ea;
+}
+
+.pi-copy {
+  font-size: 1rem;
+}
+
+
+.my-swal-popup {
+  z-index: 2000 !important;
+}
+
+.countdown-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #222;
+  color: #0dcaf0;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 1.5rem;
+  margin-bottom: 5px;
+}
+
+.time-box {
+  background-color: #333;
+  padding: 8px 12px;
+  border-radius: 4px;
+  margin: 0 5px;
+  min-width: 40px;
+  width: 100%;
+  text-align: center;
+}
+
+.separator {
+  font-weight: bold;
+}
+
+.expired {
+  text-align: center;
+  color: red;
+  font-size: 1.5rem;
+}
+
+.sidebar-buttons {
+  //width: 100%; /* Hace que todos los botones ocupen el mismo ancho */
+  display: flex;
+  justify-content: center;
+  margin: 10px;
+}
+
+.sidebar-buttons button {
+  width: 100%; /* Hace que todos los botones tengan el mismo ancho */
+  height: 40px; /* Ajusta la altura a un valor uniforme */
+  font-size: 1rem; /* Ajusta el tamaño de fuente si es necesario */
+}
+
+
+
+.floating-button-container {
+  position: fixed;
+  bottom: 20px;          /* Ajusta la distancia desde la parte inferior */
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;         /* Para que esté por encima de otros elementos */
+}
+
+
+@media screen and (max-width: 600px) {
+  .raffle-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .raffle-link {
+    font-size: 0.9rem;
+    text-align: center;
+  }
+
+  .raffle-code1 {
+    font-size: 0.9rem;
+    min-width: 100px;
+  }
+}
+
+
+
+
+.format-toolbar button,
+.format-toolbar p-dropdown,
+.format-toolbar input[type="number"],
+.format-toolbar input[type="color"] {
+  margin: 5px;
+  text-align: center;
+}
+
+/* Contenedor global del toolbar de formato */
+.format-toolbar {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+/* Grupo de botones (para formato básico y alineación) */
+.button-group {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* Tres columnas iguales */
+  gap: 0.5rem;
+ // margin-bottom: 15px;
+
+}
+
+/* Grupo de controles adicionales (opciones de fuente, tamaño y color) */
+.options-group {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* Estilos para el editor modal */
+.editable {
+  min-height: 150px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 0.5rem;
+  overflow: auto;
+  font-size: 1rem;
+  line-height: 1.4;
+  margin-bottom: 1rem;
+}
+
+/* Contenedor que envuelve el editor para poder posicionar el botón sobre él */
+.editor-container {
+  position: relative;
+}
+
+/* Estilos para el área editable */
+.editable {
+  min-height: 150px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 0.5rem;
+  overflow: auto;
+  font-size: 1rem;
+  line-height: 1.4;
+  margin-bottom: 1rem;
+}
+
+/* Botón de formato posicionado en la esquina inferior izquierda */
+.format-button {
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+  padding: 0.3rem; /* Ajusta el padding para que el botón sea pequeño */
+  min-width: auto;
+ // border-radius: 50%;
+  z-index: 10;
+  /* Opcional: Puedes ajustar el tamaño del ícono */
+  font-size: 1.2rem;
+}
+
+/* Responsividad: reduce el tamaño del botón en pantallas más pequeñas */
+@media (max-width: 600px) {
+  .format-button {
+    font-size: 1rem;
+    padding: 0.2rem;
+  }
+}
+
+
+
+
+/* Responsividad para pantallas pequeñas */
+@media (max-width: 600px) {
+  .button-group {
+    grid-template-columns: repeat(3, 1fr); /* O puedes dejarlo en 3 columnas si lo prefieres */
+
+  }
+
+  .editable {
+    min-height: 120px !important;
+  }
+
+  .options-group p {
+    font-size: 12px;
+  }
+}
+
+/* Sobrescribe el font-size de los botones en pantallas pequeñas */
+@media (max-width: 600px) {
+  .button-group .p-button {
+    font-size: 10px !important; /* Ajusta el valor según tus necesidades */
+    //padding: 0.3rem 0.5rem !important; /* Opcional: reducir también el padding */
+  }
+}
+
+/* Contenedor de la imagen del carrusel */
+.image-wrapper {
+  border: 1px solid var(--surface-border); /* O un color fijo, p.ej.: #ccc */
+  border-radius: 0.5rem;
+  margin: 0.5rem;
+  padding: 0.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Estilo base para la imagen del carrusel */
+.carousel-img {
+  width: 100%;        /* Ocupa el 100% del ancho del contenedor */
+  height: auto;
+  object-fit: cover;
+  max-height: 150px;  /* Mantiene la altura máxima en 150px */
+  transition: width 0.3s ease-in-out; /* Transición para cambios en pantalla */
+}
+
+/* Cuando la pantalla es pequeña, se expande el ancho de la imagen */
+@media (max-width: 600px) {
+  .carousel-img {
+    width: 120%; /* Ajusta este porcentaje según lo que necesites para "ocupar más ancho" */
+  }
+}
+
+.winning-number {
+  margin-top: 0.5rem;
+  font-size: 1.2rem;
+  color: #d9534f; /* Color rojo para destacar el número ganador */
+  font-weight: bold;
+}
+
+.winning-info {
+  margin-top: 1rem;
+  font-size: 1.2rem;
+  color: #d9534f; /* Rojo para destacar */
+  font-weight: bold;
+}
+
+/*
+@media (max-width: 480px) {
+  .upload-slot-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .custom-file-upload {
+    padding: 8px 12px;
+    font-size: 14px;
+  }
+  .delete-button {
+    width: 18px;
+    height: 18px;
+    font-size: 10px;
+  }
+}
+*/
+
+
+@media (max-width: 480px) {
+
+  .upload-slot-grid{
+    gap: 0.5rem;
+  }
+  /* Opcional: Reducir tamaños de botones y fuentes */
+  .custom-file-upload {
+    padding: 8px 8px;
+    font-size: 8px;
+
+  }
+  .delete-button {
+    font-size: 8px;
+  }
+
+  .custom-file-upload[_ngcontent-ng-c1042089590] i[_ngcontent-ng-c1042089590] {
+    font-size: 8px;
+}
+
+.sub {
+
+  max-width: 150px; /* Ajusta el tamaño máximo para que no sean demasiado grandes */
+  font-size: 8px;
+}
+}
+
+
+.active-raffles-container {
+  //background-color: #fff;          /* Fondo blanco o el que prefieras */
+  border-radius: 10px;             /* Bordes redondeados */
+  padding: 1rem;                   /* Espaciado interno */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);  /* Sombra sutil */
+  margin-bottom: 1rem;             /* Separación inferior */
+  text-align: center;              /* Centrar el contenido */
+}
+
+.active-raffles-container h3 {
+  margin: 0;                       /* Quita márgenes extra si es necesario */
+  color: #5b5757;                     /* Color del texto */
+  font-size: 1.5rem;               /* Ajusta según tus preferencias */
+}
+
+/* Puedes ajustar los estilos responsivos si lo consideras necesario */
+@media (max-width: 600px) {
+  .active-raffles-container {
+    padding: 0.75rem;
+  }
+  .active-raffles-container h3 {
+    font-size: 1.3rem;
+  }
+}
+
+/* 1) Apunta al p-carousel y a su container interno */
+:host ::ng-deep .p-carousel .p-carousel-container {
+  display: grid !important;
+  grid-template-columns: 2.5% 95% 2.5% !important;
+  align-items: center;
+}
+
+/* 2) Cada slide (= .p-carousel-item) se coloca en la columna central */
+:host ::ng-deep .p-carousel .p-carousel-item {
+  grid-column: 2 / 3 !important;
+  width: 100% !important;
+  box-sizing: border-box;
+}
+
+/* 3) Opcional: centra los botones de navegación y asegúrate de que no rompan la rejilla */
+:host ::ng-deep .p-carousel .p-carousel-prev-nav,
+:host ::ng-deep .p-carousel .p-carousel-next-nav {
+  grid-column: 1 / 4 !important;  /* que cubran las tres columnas si quieres */
+  justify-self: center !important;
+}
+
+/* 4) Que la imagen ocupe siempre todo el ancho de su contenedor */
+:host ::ng-deep .p-carousel .image-container {
+  width: 100% !important;
+  padding: 0 !important;
+}
+:host ::ng-deep .p-carousel .image-container img {
+  width: 100% !important;
+  //height: auto !important;
+  //object-fit: cover !important;
+}
+
+:host ::ng-deep .p-carousel .p-carousel-content .p-carousel-prev,
+:host ::ng-deep .p-carousel .p-carousel-content .p-carousel-next{
+  width: 0.5rem;
+margin: 0;
+}

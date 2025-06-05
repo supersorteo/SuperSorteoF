@@ -1,0 +1,55 @@
+<div class="container">
+  <h2>Gestión de Códigos VIP</h2>
+
+  <div class="form-group">
+    <label for="cantidadRifas">Cantidad de Rifas:</label>
+    <p-dropdown [options]="cantidadRifasOptions" [(ngModel)]="cantidadRifas" placeholder="Selecciona cantidad"></p-dropdown>
+    <button pButton label="Generar VIP" icon="pi pi-plus" class="p-button-success" (click)="generarCodigoVip()"></button>
+  </div>
+
+  <p-table
+  [value]="codigosVip"
+  responsiveLayout="scroll"
+  [paginator]="true"
+  [rows]="5"
+  [(selection)]="selectedCodigo"
+  [rowsPerPageOptions]="[5, 10, 20]"
+  >
+    <ng-template pTemplate="header">
+      <tr>
+
+        <th>Código</th>
+        <th>Cantidad de Rifas</th>
+        <th>Estado</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-codigo>
+      <tr>
+        <!--td>
+          <p-tableRadioButton [value]="codigo" />
+      </td-->
+        <td>{{ codigo.codigo }}</td>
+        <td>{{ codigo.cantidadRifas }}</td>
+        <td>
+          <!--span-- [ngClass]="codigo.utilizado ? 'badge-used' : 'badge-available'">
+            {{ codigo.utilizado ? 'Utilizado' : 'Disponible' }}
+          </!--span-->
+
+           <button
+    pButton
+    pRipple
+    [disabled]="codigo.utilizado"
+    label= "{{ codigo.utilizado ? 'Utilizado' : 'Disponible' }}"
+    [ngClass]="codigo.utilizado ? 'badge-used' : 'badge-available'"
+    (click)="copiarCodigo(codigo.codigo)"
+    >
+      </button>
+
+        </td>
+
+
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
+

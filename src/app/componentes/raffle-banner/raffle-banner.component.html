@@ -1,0 +1,44 @@
+
+
+
+<p-dialog header="Generar Imagen" [(visible)]="displayModal" [modal]="true" [style]="{ width: '95%' }">
+  <!-- Contenedor padre para el contenido y las imágenes en las esquinas -->
+  <div #banner class="modal-content-wrapper">
+    <!-- Banner central (puedes incluir aquí lo que desees mostrar) -->
+    <div class="banner-container">
+      <div class="header">
+        <img src="assets/logoSorteo.jpg" alt="Logo Sorteo" class="logo-header" />
+      </div>
+      <div class="content-box">
+        <div class="hashtag">#Super Sorteo</div>
+        <div class="product-title">{{ raffle?.producto?.nombre }}</div>
+        <!--div-- class="product-description">
+          {{ raffle?.producto?.descripcion }}
+        </!--div-->
+        <div class="product-description" [innerHTML]="raffle?.producto?.descripcion"></div>
+        <div class="contact">
+          <p class="contact-number">Reservá tu número</p>
+          <div class="contact-number">(55) 1234-5678</div>
+          <p class="contact-number">Reservá tu número por:</p>
+        </div>
+        <div class="price-box">{{ raffle?.precio | currency:'USD':'symbol':'1.0-0' }}</div>
+      </div>
+    </div>
+    <!-- Contenedor para las imágenes posicionadas en las esquinas -->
+    <div class="modal-image-corners">
+      <img *ngFor="let imgUrl of raffle?.producto?.imagenes; let i = index"
+           [src]="imgUrl"
+           alt="Imagen del producto"
+           class="corner-image"
+           crossorigin="anonymous"
+           [ngClass]="getCornerClass(i)" />
+    </div>
+  </div>
+
+  <!-- Footer del modal con botones -->
+  <p-footer>
+    <button pButton type="button" label="Descargar" icon="pi pi-download" (click)="downloadImage()"></button>
+    <button pButton type="button" label="Cerrar" icon="pi pi-times" (click)="displayModal = false"></button>
+  </p-footer>
+</p-dialog>
+

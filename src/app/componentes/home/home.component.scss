@@ -1,0 +1,587 @@
+/* Estilos Generales */
+@import url('https://fonts.googleapis.com/css2?family=Righteous&family=Work+Sans:wght@100;300;400;600;800&display=swap');
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Work Sans', sans-serif;
+}
+
+html, body {
+  height: 100%;
+  scroll-behavior: smooth;
+  margin: 0;
+  padding: 0;
+}
+
+section {
+  background: linear-gradient(356deg, rgba(181, 0, 255, 0.72) 0%, rgba(255, 255, 255, 1) 100%);
+}
+
+
+.full-page {
+  position: relative;
+  //height: 100vh; /* Ocupa el 100% de la altura del viewport */
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.full-page:not(:last-of-type)::after {
+  content: "";
+  position: absolute;
+  bottom: 0;         /* Ubicado en la parte inferior de la sección */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;        /* Ancho del separador, ajústalo si es necesario */
+  height: 2px;       /* Grosor de la línea */
+  background-color: #ccc; /* Color de la línea */
+}
+
+/* Estilos de la barra de navegación */
+.contenedor-header {
+  background: #1e2326;
+  width: 100%;
+  top: 0;
+  left: 0;
+  z-index: 99;
+  position: sticky;
+  margin-bottom: 10px;
+}
+
+.contenedor-header header {
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding: 15px 20px; /* Ajusta el padding según necesites */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+ // margin-bottom: 50px;
+}
+
+.contenedor-header header .logo a {
+  font-family: 'Righteous';
+  font-size: 36px;
+  color: #1cb698;
+  text-decoration: none;
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  font-size: 1.8rem;
+}
+
+.logo-img {
+  height: 40px;       /* Ajusta el tamaño de la imagen según tus necesidades */
+  margin-right: 10px; /* Espacio entre la imagen y el texto */
+  margin-left: 10px;
+  //max-width: 100%;   /* La imagen se adapta a su contenedor */
+  //height: auto;
+}
+
+
+
+
+nav {
+  ul {
+    list-style: none;
+    display: flex;
+    gap: 1rem;
+  }
+}
+
+/* Estilos para el botón de menú (hamburguesa) */
+
+
+.nav-responsive {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  z-index: 1000; /* Muy alto para asegurarse de estar por encima */
+  cursor: pointer;
+  //font-size: 2rem;
+  color: #fff;
+}
+
+
+nav.responsive {
+  position: absolute;
+  top: 60px; /* Ajusta según el alto del header */
+  right: 20px; /* Se posiciona a 20px del lado derecho */
+  width: auto; /* Se ajusta al contenido */
+  background: #1e2326;
+  padding: 1rem;
+  border-radius: 8px;
+  z-index: 500;
+
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* o center, según prefieras */
+    gap: 0.5rem;
+  }
+
+  li a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 1.1rem;
+    transition: color 0.3s;
+  }
+
+  li a:hover {
+    color: #1cb698;
+  }
+}
+
+
+
+
+
+
+
+
+
+@media (max-width: 768px) {
+  .logo-container {
+    font-size: 1.4rem;
+  }
+  .logo-img {
+    height: 40px;
+  }
+}
+
+/* Media queries para pantallas pequeñas */
+@media (max-width: 480px) {
+  .logo-container {
+    font-size: 1.2rem;
+  }
+  .logo-img {
+    height: 30px;
+  }
+}
+
+
+.contenedor-header header ul {
+  display: flex;
+  list-style: none;
+}
+
+.contenedor-header header nav ul li a {
+  color: #fff;
+  margin: 0 15px;
+  padding: 3px;
+  text-decoration: none;
+  transition: 0.5s;
+  cursor: pointer;
+}
+
+.contenedor-header header nav ul li a:hover {
+  color: #1cb698;
+}
+
+.nav-responsive {
+  background-color: #1cb698;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  display: none;
+}
+
+
+
+/* Secciones */
+section {
+  padding: 50px;
+  text-align: center;
+}
+
+
+/* Sección Beneficios */
+
+
+#beneficios {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh; /* Ahora la altura se ajusta según el contenido */
+  padding: 40px 20px;
+  text-align: center;
+  overflow: hidden; /* Evita que el contenido se salga */
+}
+
+
+
+
+.beneficios-title {
+  font-size: 2.5rem;
+  margin-bottom: 20px; /* Espaciado entre el título y las tarjetas */
+  //color: #333;
+
+}
+
+.floating-button {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  z-index: 1000;
+}
+
+::ng-deep .custom-dialog .p-dialog {
+  border-radius: 20px;
+}
+
+
+
+/* 🔹 Grid de tarjetas */
+.beneficios-grid {
+  display: flex;
+  flex-wrap: wrap; /* Permite que las tarjetas se acomoden */
+  justify-content: center;
+  gap: 20px;
+  width: 100%;
+  max-width: 1200px;
+}
+
+/* Tarjetas */
+.card {
+  flex: 1 1 calc(33.333% - 20px); /* 3 por fila en pantallas grandes */
+  max-width: 300px;
+  min-height: 350px; /* Altura adaptable */
+  text-align: center;
+  //background-color: #6f6969;
+  background: linear-gradient(356deg, rgba(181, 0, 255, 0.72) 0%, rgba(255, 255, 255, 1) 100%);
+  color: #212121;
+  border-radius: 15px;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.5);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.2s, box-shadow 0.2s;
+  overflow: hidden; /* Evita desbordes */
+}
+
+
+
+/* Avatar dentro de las tarjetas */
+.card:hover {
+  transform: translateY(-5px); /* Efecto de elevación al pasar el mouse */
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+.card-avatar {
+  display: block; /* Hace que la imagen sea tratada como un bloque */
+  margin: 0 auto; /* Centra la imagen horizontalmente */
+  width: 80px;
+  height: 80px;
+ border-radius: 20px; /* Hace la imagen circular */
+//background-color: #f5f5f5;
+
+  padding: 10px; /* Espaciado interno para un diseño uniforme */
+  transition: transform 0.3s;
+}
+
+
+.card:hover .card-avatar {
+  transform: scale(1.1); /* Efecto de zoom en el avatar */
+}
+
+.card-title {
+  font-size: 1.2rem;
+  margin: 10px 0;
+  //color: #333;
+}
+
+
+.card-text {
+  font-size: 1rem;
+  line-height: 1.4; /* Mejor separación de líneas */
+  flex-grow: 1; /* Hace que el texto ocupe el espacio disponible */
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+
+/* General para la sección 'inicio' */
+#inicio {
+  display: flex;
+  flex-direction: column; /* Asegura que los elementos estén uno debajo del otro */
+  align-items: center; /* Centra los elementos horizontalmente */
+  //justify-content: flex-start; /* Alinea el contenido al inicio */
+  //height: 100vh; /* Ocupa toda la pantalla */
+  padding: 20px;
+  text-align: center;
+
+}
+
+#inicio h1 {
+  font-size: 2.2rem; /* Aumenta el tamaño del texto */
+  margin-bottom: 20px; /* Aumenta el espacio inferior */
+  color: #4f4a4a;
+}
+
+/* Texto descriptivo */
+#inicio p {
+  font-size: 1.2rem; /* Aumenta el tamaño del texto */
+  margin-bottom: 20px; /* Aumenta el espacio inferior */
+  line-height: 1.8; /* Mejora la legibilidad */
+  color: #4f4a4a;
+}
+
+/* Botón */
+#inicio button {
+ // font-size: 1.2rem; /* Aumenta el tamaño del texto del botón */
+  padding: 10px 20px; /* Aumenta el relleno del botón */
+  margin-top: 20px; /* Espaciado superior */
+}
+
+/* Contenedor de las imágenes */
+/*.image-container {
+  margin-bottom: 20px;
+
+} */
+
+.image-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+}
+
+.carousel-image {
+  width: 100%;
+  max-height: 300px;
+  object-fit: cover;
+  border-radius: 10px;
+
+}
+
+
+.image-container img {
+  //width: 600px;
+  max-width: 600px;
+  width: 100%;
+  height: 200px;
+  border-radius: 10px;
+}
+
+
+.section-title {
+  font-size: 2.2rem; /* Ajusta el tamaño del texto */
+  margin: 40px 0 20px; /* Espaciado superior e inferior */
+  color: #212121; /* Color por defecto */
+}
+
+body.dark-mode .section-title {
+  color: #ffffff; /* Color claro en modo oscuro */
+}
+
+/* Texto descriptivo */
+.lead {
+  font-size: 1.2rem; /* Tamaño del texto */
+  line-height: 1.6; /* Espaciado entre líneas */
+  margin-bottom: 30px; /* Espaciado inferior */
+  color: #555; /* Texto gris por defecto */
+}
+
+
+/* Botón */
+.btn {
+  display: inline-block;
+  text-decoration: none;
+  padding: 12px 25px; /* Relleno interno del botón */
+  border-radius: 5px; /* Bordes redondeados */
+  font-size: 1rem; /* Tamaño del texto */
+  text-align: center;
+}
+
+
+
+
+.center-content {
+  text-align: center;
+}
+
+#participar h1 {
+  font-size: 2.2rem; /* Aumenta el tamaño del texto */
+  margin-bottom: 20px; /* Aumenta el espacio inferior */
+  color: #4f4a4a;
+}
+
+.large-text {
+  /* Puedes ajustar a 2rem o más para mayor tamaño */
+  margin-bottom: 1rem;
+  font-size: 1.2rem; /* Aumenta el tamaño del texto */
+  margin-bottom: 20px; /* Aumenta el espacio inferior */
+  line-height: 1.8; /* Mejora la legibilidad */
+  color: #4f4a4a;
+}
+
+
+
+#formulario h1 {
+  font-size: 2.2rem; /* Aumenta el tamaño del texto */
+  margin-bottom: 20px; /* Aumenta el espacio inferior */
+  color: #4f4a4a;
+}
+
+#formulario p {
+  font-size: 1.2rem; /* Aumenta el tamaño del texto */
+  margin-bottom: 20px; /* Aumenta el espacio inferior */
+  line-height: 1.8; /* Mejora la legibilidad */
+  color: #4f4a4a;
+}
+
+footer {
+  width: 100%;
+  margin: 0;
+  padding: 15px 0; /* Ajusta el padding si lo necesitas */
+  background-color: #1e2326; /* Color de fondo, puedes cambiarlo si lo deseas */
+  box-shadow: 0px -4px 8px rgba(0, 0, 0, 0.5); /* Sombra para el efecto deseado */
+  color: #fff;
+  text-align: center;
+}
+
+section:not(:last-of-type)::after {
+  content: "";
+  display: block;
+  width: 90%;        /* Ancho de la línea, ajustable */
+  height: 2px;       /* Grosor de la línea */
+  background: #ccc;  /* Color del separador, cámbialo según tu preferencia */
+  margin: 30px auto 0; /* Espaciado superior y centrado */
+}
+
+
+
+/* Responsividad */
+@media screen and (max-width: 600px) {
+  nav {
+    display: none;
+  }
+
+  .nav-responsive {
+    display: block;
+  }
+
+  nav.responsive {
+    display: block;
+    position: absolute;
+    right: 0;
+    top: 0;
+    background-color: #252a2e;
+    width: 180px;
+  }
+
+  nav.responsive ul {
+    display: block !important;
+  }
+
+  nav.responsive ul li {
+    border-bottom: 1px solid #fff;
+    padding: 10px 0;
+  }
+
+
+ /* Ajustes para la sección inicio */
+ #inicio {
+  padding: 10px;
+  /* Si fuera necesario, ajustar flex-direction o justificación */
+  flex-direction: column;
+}
+
+/* Imágenes se adaptan al 100% del contenedor */
+.image-container img {
+  max-width: 350px; /* O el valor que se ajuste mejor */
+}
+
+/* Ajusta el tamaño de fuente si es necesario */
+#inicio h1 {
+  font-size: 1.8rem;
+}
+
+#inicio p {
+  font-size: 1rem;
+}
+
+
+
+
+}
+
+/* Responsivo: Ajustar tarjetas en pantallas pequeñas */
+@media (max-width: 768px) {
+  #beneficios {
+    padding: 30px 10px;
+    min-height: auto; /* Evita que se desborde */
+  }
+
+  .beneficios-title {
+    font-size: 1.8rem;
+  }
+
+  .beneficios-grid {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .card {
+    flex: 1 1 90%;
+    max-width: 90%;
+    min-height: auto;
+  }
+}
+
+
+.video-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+/* 1) Apunta al p-carousel y a su container interno */
+:host ::ng-deep .p-carousel .p-carousel-container {
+  display: grid !important;
+  grid-template-columns: 2.5% 95% 2.5% !important;
+  align-items: center;
+}
+
+/* 2) Cada slide (= .p-carousel-item) se coloca en la columna central */
+:host ::ng-deep .p-carousel .p-carousel-item {
+  grid-column: 2 / 3 !important;
+  width: 100% !important;
+  box-sizing: border-box;
+}
+
+/* 3) Opcional: centra los botones de navegación y asegúrate de que no rompan la rejilla */
+:host ::ng-deep .p-carousel .p-carousel-prev-nav,
+:host ::ng-deep .p-carousel .p-carousel-next-nav {
+  grid-column: 1 / 4 !important;  /* que cubran las tres columnas si quieres */
+  justify-self: center !important;
+}
+
+/* 4) Que la imagen ocupe siempre todo el ancho de su contenedor */
+:host ::ng-deep .p-carousel .image-container {
+  width: 100% !important;
+  padding: 0 !important;
+}
+:host ::ng-deep .p-carousel .image-container img {
+  width: 100% !important;
+  //height: auto !important;
+  //object-fit: cover !important;
+}
+
+:host ::ng-deep .p-carousel .p-carousel-content .p-carousel-prev,
+:host ::ng-deep .p-carousel .p-carousel-content .p-carousel-next{
+  width: 0.5rem;
+margin: 0;
+}

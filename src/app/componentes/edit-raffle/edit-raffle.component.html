@@ -1,0 +1,170 @@
+
+
+
+<div class="edit-raffle-container" *ngIf="raffle">
+  <h2>Editar Rifa</h2>
+  <form (ngSubmit)="onSubmit()" #raffleForm="ngForm">
+
+    <!-- Datos de la rifa -->
+    <div class="field">
+      <label for="nombre">Nombre de la rifa:</label>
+      <input id="nombre" type="text" pInputText [(ngModel)]="raffle.nombre" name="nombre" required />
+    </div>
+
+    <div class="field">
+      <label for="cantidadParticipantes">Cantidad de Participantes:</label>
+      <input id="cantidadParticipantes" type="number" pInputText [(ngModel)]="raffle.cantidadParticipantes" name="cantidadParticipantes" required />
+    </div>
+
+    <div class="field">
+      <label for="fechaSorteo">Fecha del Sorteo:</label>
+      <input id="fechaSorteo" type="date" pInputText [(ngModel)]="raffle.fechaSorteo" name="fechaSorteo" required />
+    </div>
+
+    <div class="field">
+      <label for="precio">Precio:</label>
+      <input id="precio" type="number" pInputText step="0.01" [(ngModel)]="raffle.precio" name="precio" required />
+    </div>
+
+    <h3>Datos del Producto</h3>
+
+    <div class="field">
+      <label for="productoNombre">Nombre del Producto:</label>
+      <input id="productoNombre" type="text" pInputText [(ngModel)]="raffle.producto.nombre" name="productoNombre" required />
+    </div>
+
+    <!--div-- class="field">
+      <label for="productoDescripcion">Descripción del Producto:</label>
+      <textarea id="productoDescripcion" pInputTextarea rows="4" [(ngModel)]="raffle.producto.descripcion" name="productoDescripcion" required></textarea>
+    </!--div-->
+
+    <!--div class="field">
+      <label for="productoDescripcion">Descripción del Producto:</label>
+      <div #editableDiv
+           contenteditable="true"
+           class="editable"
+           (input)="onDescriptionChange()"
+           (blur)="onDescriptionChange()">
+      </div>
+      <small class="text-red-500" *ngIf="descripcionInvalida">
+        La descripción no puede superar los 1500 caracteres.
+      </small>
+      <div class="full-width-button mt-2">
+        <p-button
+          label="Opciones de Formato"
+          severity="primary"
+          styleClass="custom-button p-button-sm"
+          (onClick)="openFormatDialog()">
+        </p-button>
+      </div>
+    </div-->
+    <div class="field">
+      <label for="productoDescripcion">Descripción del Producto:</label>
+      <!-- Contenedor para el editor y el botón flotante -->
+      <div class="editor-container">
+        <div #editableDiv
+             contenteditable="true"
+             class="editable"
+             (input)="onDescriptionChange()"
+             (blur)="onDescriptionChange()">
+          <!-- Puedes cargar contenido inicial aquí si lo requieres -->
+        </div>
+        <!-- Botón flotante en la esquina inferior izquierda del editor -->
+        <p-button icon="pi pi-pen-to-square"
+                  [rounded]="true"
+                  [text]="true"
+                  severity="primary"
+                  (onClick)="openFormatDialog()"
+                  class="format-button"
+                  title="Opciones de Formato">
+        </p-button>
+      </div>
+      <small class="text-red-500" *ngIf="descripcionInvalida">
+        La descripción no puede superar los 1500 caracteres.
+      </small>
+    </div>
+
+
+
+    <!--div class="field">
+      <label for="productoImagenes">URL de la Imagen del Producto:</label>
+
+      <input id="productoImagenes" type="text" pInputText placeholder="Ingrese URL de la imagen" [(ngModel)]="raffle.producto.imagenes[0]" name="productoImagenes" />
+    </!--div-->
+
+    <div class="button-group">
+      <button pButton type="submit" label="Guardar" icon="pi pi-check" class="p-button-primary" [disabled]="!raffleForm.valid"></button>
+      <button pButton type="button" label="Cancelar" icon="pi pi-times" class="p-button-danger" (click)="cancel()"></button>
+    </div>
+  </form>
+</div>
+
+
+
+<!--p-dialog-- header="Opciones de Formato" [(visible)]="displayFormatDialog" [modal]="true" [style]="{ width: '30rem' }">
+  <div class="format-toolbar">
+
+    <button pButton icon="pi pi-bold" label="Negrita" (click)="applyFormat('bold')"></button>
+    <button pButton icon="pi pi-italic" label="Cursiva" (click)="applyFormat('italic')"></button>
+    <button pButton icon="pi pi-underline" label="Subrayado" (click)="applyFormat('underline')"></button>
+
+
+    <button pButton label="Izquierda" (click)="applyFormat('justifyLeft')"></button>
+    <button pButton label="Centrar" (click)="applyFormat('justifyCenter')"></button>
+    <button pButton label="Derecha" (click)="applyFormat('justifyRight')"></button>
+
+
+    <p-dropdown [options]="fontOptions" [(ngModel)]="selectedFont" placeholder="Fuente" (onChange)="applyFont()"></p-dropdown>
+
+
+    <p-dropdown [options]="fontSizes" [(ngModel)]="selectedFontSize" placeholder="Tamaño" (onChange)="applyFontSize()"></p-dropdown>
+
+
+    <input type="color" [(ngModel)]="textColor" (change)="applyTextColor()" />
+  </div>
+  <div #modalEditor class="editable" contenteditable="true"></div>
+
+  <p-footer>
+    <button pButton type="button" label="Aplicar" icon="pi pi-check" (click)="closeFormatDialog(true)"></button>
+    <button pButton type="button" label="Cancelar" icon="pi pi-times" class="p-button-danger" (click)="closeFormatDialog(false)"></button>
+  </p-footer>
+</!--p-dialog-->
+
+<p-dialog header="Opciones de Formato" [(visible)]="displayFormatDialog" [modal]="true" [style]="{ width: '90%' }">
+  <div class="format-toolbar">
+    <div #modalEditor class="editable" contenteditable="true"></div>
+
+    <!-- Grupo 1: Botones de formato básico (Negrita, Cursiva, Subrayado) en 3 columnas -->
+    <div class="button-group">
+          <button pButton icon="pi pi-bold" label="Negrita" (click)="applyFormat('bold')"></button>
+      <!--p-button-- label="N" [rounded]="true" severity="contrast" (click)="applyFormat('bold')"></!--p-button-->
+          <button pButton icon="pi pi-italic" label="Cursiva" (click)="applyFormat('italic')"></button>
+      <!--p-button-- label="K" [rounded]="true" severity="contrast" (click)="applyFormat('italic')"></!--p-button-->
+        <button pButton  label="Subrayado" (click)="applyFormat('underline')"></button>
+      <!--p-button-- label="S" [rounded]="true" severity="contrast" (click)="applyFormat('underline')"></!--p-button-->
+    </div>
+
+    <!-- Grupo 2: Botones de alineación en 3 columnas -->
+    <div class="button-group">
+      <button pButton label="Izquierda" (click)="applyFormat('justifyLeft')"></button>
+      <button pButton label="Centrar" (click)="applyFormat('justifyCenter')"></button>
+      <button pButton label="Derecha" (click)="applyFormat('justifyRight')"></button>
+    </div>
+
+    <!-- Controles adicionales: Fuente, tamaño y color (se muestran horizontalmente tal y como estaban) -->
+    <div class="options-group">
+      <p-dropdown [options]="fontOptions" [(ngModel)]="selectedFont" placeholder="Fuente" (onChange)="applyFont()" appendTo="body" ></p-dropdown>
+      <p-dropdown [options]="fontSizes" [(ngModel)]="selectedFontSize" placeholder="Tamaño" (onChange)="applyFontSize()" appendTo="body" ></p-dropdown>
+      <input type="color" [(ngModel)]="textColor" (change)="applyTextColor()" />
+    </div>
+
+  </div>
+
+  <!-- Editor modal -->
+  <!--div #modalEditor class="editable" contenteditable="true"></!--div-->
+
+  <p-footer>
+    <button pButton type="button" label="Aplicar" icon="pi pi-check" (click)="closeFormatDialog(true)"></button>
+    <button pButton type="button" label="Cancelar" icon="pi pi-times" class="p-button-danger" (click)="closeFormatDialog(false)"></button>
+  </p-footer>
+</p-dialog>

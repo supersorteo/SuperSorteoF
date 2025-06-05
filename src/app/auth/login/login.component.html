@@ -1,0 +1,143 @@
+<!--div class="container" [class.right-panel-active]="rightPanelActive">
+  <div class="form-container sign-up-container">
+    <form [formGroup]="registerForm" (ngSubmit)="onSignup()">
+      <h1>Registrate</h1>
+
+      <span>Ingrese sus datos para registrarse</span>
+      <input type="text" pInputText placeholder="Name" formControlName="name" />
+
+      <input type="email" pInputText placeholder="Email" formControlName="email" />
+
+      <input type="password" pInputText placeholder="Password" formControlName="password" />
+      <input type="password" pInputText placeholder="Confirm Password" formControlName="confirmarPassword" />
+
+      <button pButton pRipple class="button" type="submit" label="Sign Up"  class="p-button-success"></button>
+
+    </form>
+  </div>
+  <div class="form-container sign-in-container">
+    <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
+      <h1>Inicie Sesion</h1>
+
+      <span>Ingrese sus credenciales</span>
+
+      <input type="email" pInputText placeholder="Email" formControlName="email" />
+
+      <input type="password" pInputText placeholder="Password" formControlName="password" />
+
+      <a (click)="showDialog()">No recuerda su contraseña?</a>
+
+
+      <button pButton pRipple class="button" type="submit" label="Sign In" class="p-button-success"></button>
+    </form>
+  </div>
+  <div class="overlay-container">
+    <div class="overlay">
+      <div class="overlay-panel overlay-left">
+        <h1>!Es usted un ganador!</h1>
+        <p>Para que pueda reservar su numero registrase en nuestra pagina
+          para que tenga los derechos de hacer sus compras y se convierta en un ganador <br> <strong>Bienvenido</strong></p>
+
+        <button pButton pRipple  label="Sign In" class="p-button-success" (click)="togglePanel()" severity="warning"></button>
+      </div>
+      <div class="overlay-panel overlay-right">
+        <h1>Bienvenido a la rifa</h1>
+        <p>Ingerse sus credenciales para que pueda comprar su número y se convierta en un ganador, <br><strong>!Suerte!</strong></p>
+        <button pButton pRipple  label="Sign Up" class="p-button-success" (click)="togglePanel()" severity="warning"></button>
+      </div>
+    </div>
+  </div>
+</!--div-->
+
+
+<div class="auth-container">
+
+  <div class="auth-card">
+
+    <div class="logo-container">
+      <img src="assets/logoSorteo.jpg" alt="Logo Sorteo" class="logo" />
+    </div>
+
+    <form [formGroup]="loginForm" (ngSubmit)="onLogin()" *ngIf="isLogin">
+      <h1>Inicia Sesión</h1>
+      <span>Ingresa tus credenciales</span>
+
+      <input type="email" pInputText placeholder="Correo" formControlName="email" />
+      <input type="password" pInputText placeholder="Contraseña" formControlName="password" />
+      <a (click)="showDialog()">¿Olvidaste tu contraseña?</a>
+
+      <button pButton type="submit" label="Ingresar" class="p-button-success w-full mt-2"></button>
+      <p class="toggle-text">¿No tienes una cuenta? <a (click)="toggle()">Regístrate</a></p>
+    </form>
+
+    <form [formGroup]="registerForm" (ngSubmit)="onSignup()" *ngIf="!isLogin">
+      <h1>Regístrate</h1>
+      <span>Ingresa tus datos</span>
+
+      <input type="text" pInputText placeholder="Nombre" formControlName="name" />
+      <input type="email" pInputText placeholder="Correo" formControlName="email" />
+      <input type="password" pInputText placeholder="Contraseña" formControlName="password" />
+      <input type="password" pInputText placeholder="Confirmar Contraseña" formControlName="confirmarPassword" />
+
+      <!--p-inputMask-- mask="99999999" placeholder="Teléfono" formControlName="telefono"  ></!--p-inputMask-->
+
+      <p-inputMask
+      mask="+54 9 99 9999-9999"
+      placeholder="+54 9 -- -----"
+      formControlName="telefono"
+      [autoClear]="false"
+      slotChar="_"
+    ></p-inputMask>
+      <button pButton type="submit" label="Registrarse" class="p-button-success w-full"></button>
+      <p class="toggle-text">¿Ya tienes una cuenta? <a (click)="toggle()">Iniciar sesión</a></p>
+    </form>
+  </div>
+</div>
+
+
+<p-dialog
+  header="Recuperar Contraseña"
+  [(visible)]="displayDialog"
+  [modal]="true"
+  [style]="{ width: '50%' }"
+>
+  <form (ngSubmit)="onRecuperar()" #recoveryForm="ngForm">
+    <div class="p-fluid grid flex-col gap-2">
+      <div class="col-12">
+        <label for="emailRecovery" class="block font-bold mb-3">Correo Electrónico</label>
+        <input
+          id="emailRecovery"
+          type="email"
+          pInputText
+          [(ngModel)]="recoveryEmail"
+          name="recoveryEmail"
+          required
+          class="w-full"
+          email
+          #emailInput="ngModel"
+        />
+        <small class="text-red-500" *ngIf="emailInput.invalid && (emailInput.dirty || emailInput.touched)">
+          Debes ingresar un correo electrónico válido.
+        </small>
+      </div>
+    </div>
+    <div class="flex justify-content-end gap-2">
+      <button
+        pButton
+        type="button"
+        label="Cancelar"
+        icon="pi pi-times"
+        class="p-button-text"
+        (click)="hideDialog()"
+      ></button>
+      <button
+        pButton
+        type="submit"
+        label="Enviar"
+        icon="pi pi-check"
+        class="p-button-primary"
+        [disabled]="!recoveryForm.valid"
+      ></button>
+    </div>
+  </form>
+</p-dialog>

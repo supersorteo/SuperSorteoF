@@ -1,0 +1,231 @@
+
+body{
+  background-color: linear-gradient(356deg, rgb(197 174 219 / 72%) 0%, rgba(255, 255, 255, 1) 100%);
+}
+
+.edit-raffle-container {
+  max-width: 600px;
+  margin: 2rem auto;
+  padding: 1.5rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  //background-color: #fff;
+  //background: linear-gradient(356deg, rgba(181, 0, 255, 0.72) 0%, rgba(255, 255, 255, 1) 100%);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+
+  h2, h3 {
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+
+  .field {
+    margin-bottom: 1rem;
+
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: bold;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 0.5rem;
+      box-sizing: border-box;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+  }
+
+
+
+
+
+
+  @media screen and (max-width: 600px) {
+    padding: 2rem;
+
+    .field {
+      input, textarea {
+        padding: 0.5rem;
+        font-size: 0.9rem;
+      }
+    }
+  }
+}
+
+/*
+
+.format-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.format-toolbar button,
+.format-toolbar p-dropdown,
+.format-toolbar input[type="number"],
+.format-toolbar input[type="color"] {
+  margin: 5px;
+}
+
+
+@media (max-width: 600px) {
+  .format-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+
+.editable {
+  min-height: 150px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 0.5rem;
+  overflow: auto;
+  font-size: 1rem;
+  line-height: 1.4;
+  margin-bottom: 1rem;
+  //background-color: aliceblue;
+  color: #563b3b;
+}
+
+
+.format-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.format-toolbar button,
+.format-toolbar p-dropdown,
+.format-toolbar input[type="number"],
+.format-toolbar input[type="color"] {
+  margin: 5px;
+}
+
+
+@media (max-width: 600px) {
+  .format-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .editable {
+    min-height: 120px !important;
+  }
+}
+
+*/
+
+.format-toolbar {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+/* Grupo de botones (para formato básico y alineación) */
+.button-group {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* Tres columnas iguales */
+  gap: 0.5rem;
+ // margin-bottom: 15px;
+
+}
+
+/*
+.button-group {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1.5rem;
+}*/
+
+/* Grupo de controles adicionales (opciones de fuente, tamaño y color) */
+.options-group {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* Estilos para el editor modal */
+.editable {
+  min-height: 150px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 0.5rem;
+  overflow: auto;
+  font-size: 1rem;
+  line-height: 1.4;
+  margin-bottom: 1rem;
+}
+
+
+/* Contenedor que envuelve el editor y permite posicionar el botón de formato */
+.editor-container {
+  position: relative;
+}
+
+/* Área editable */
+.editable {
+  min-height: 150px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 0.5rem;
+  overflow: auto;
+  font-size: 1rem;
+  line-height: 1.4;
+  margin-bottom: 1rem;
+}
+
+/* Estilos para el botón de formato flotante */
+.format-button {
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+  padding: 0.3rem;        // Ajusta el padding para que el botón sea pequeño
+  min-width: auto;        // Evita que el botón se expanda más de lo necesario
+  border-radius: 50%;      // Forma circular
+  z-index: 10;
+  font-size: 1.2rem;       // Tamaño de ícono (ajustable)
+}
+
+/* Responsividad: reduce tamaño del botón en pantallas pequeñas */
+@media (max-width: 600px) {
+  .format-button {
+    font-size: 1rem;
+    padding: 0.2rem;
+  }
+}
+
+
+/* Responsividad para pantallas pequeñas */
+@media (max-width: 600px) {
+  .button-group {
+    grid-template-columns: repeat(3, 1fr); /* O puedes dejarlo en 3 columnas si lo prefieres */
+
+  }
+
+  .editable {
+    min-height: 120px !important;
+  }
+
+  .options-group p {
+    font-size: 12px;
+  }
+}
+
+/* Sobrescribe el font-size de los botones en pantallas pequeñas */
+@media (max-width: 600px) {
+  .button-group .p-button {
+    font-size: 10px !important; /* Ajusta el valor según tus necesidades */
+    //padding: 0.3rem 0.5rem !important; /* Opcional: reducir también el padding */
+  }
+}

@@ -1,0 +1,99 @@
+<!--div class="card">
+  <p-toolbar>
+    <div class="p-toolbar-group-start">
+      <div class="floating-button">
+
+
+        <img src="assets/logoSorteo.jpg" alt="Logo Sorteo" class="toolbar-logo" />
+      </div>
+    </div>
+    <div class="p-toolbar-group-center">
+      <div class="toolbar-center-content">
+        <img src="assets/logoSorteo.jpg" alt="Logo Sorteo" class="toolbar-logo" />
+        <ng-container *ngIf="isExternal; else normalGreeting">
+          <h3 class="toolbar-greeting">
+            Rifa perteneciente al administrador <span id="usuario-registrado" class="text-primary">{{ userName }}</span>
+          </h3>
+        </ng-container>
+        <ng-template #normalGreeting>
+          <h3 class="toolbar-greeting">
+            Hola, <span id="usuario-registrado" class="text-primary">{{ userName }}</span>!
+          </h3>
+        </ng-template>
+      </div>
+    </!--div-->
+
+    <!--div class="p-toolbar-group-center">
+      <div class="toolbar-center-content">
+
+        <ng-container *ngIf="isExternal; else normalGreeting">
+          <h3 class="toolbar-greeting">
+            Rifa del administrador <span id="usuario-registrado" class="text-primary">{{ userName }}</span>
+          </h3>
+        </ng-container>
+        <ng-template #normalGreeting>
+          <h3 class="toolbar-greeting">
+            Hola, <span id="usuario-registrado" class="text-primary">{{ userName }}</span>!
+          </h3>
+        </ng-template>
+      </div>
+    </!--div>
+
+
+    <div class="p-toolbar-group-end">
+
+
+    </div>
+  </p-toolbar>
+</!--div-->
+
+<div class="card">
+  <p-toolbar>
+    <div class="p-toolbar-group-start">
+      <!-- Cuando es externo -->
+      <ng-container *ngIf="isExternal; else showLogoOnly">
+        <div class="external-header">
+
+          <span class="external-text">Este sorteo se hizo con:</span>
+               <a href="http://localhost:4200/" target="_blank" rel="noopener">
+                <img
+                  src="assets/logoSorteo.jpg"
+                  alt="Logo Sorteo"
+                  class="toolbar-logo external-logo"
+                />
+              </a>
+        </div>
+      </ng-container>
+      <!-- Versión normal -->
+      <ng-template #showLogoOnly>
+        <div class="floating-button">
+          <img src="assets/logoSorteo.jpg"
+               alt="Logo Sorteo"
+               class="toolbar-logo" routerLink="/home" />
+        </div>
+      </ng-template>
+    </div>
+
+    <div class="p-toolbar-group-center">
+      <div class="toolbar-center-content">
+        <ng-container *ngIf="isExternal; else normalGreeting">
+          <!--h3 class="toolbar-greeting">
+            Rifa del administrador
+            <span id="usuario-registrado" class="text-primary">{{ userName }}</span>
+          </!--h3-->
+        </ng-container>
+        <ng-template #normalGreeting>
+          <h3 class="toolbar-greeting">
+            Hola,
+            <span id="usuario-registrado" class="text-primary">{{ userName }}</span>!
+          </h3>
+        </ng-template>
+      </div>
+    </div>
+
+    <div class="p-toolbar-group-end">
+      <!-- … -->
+    </div>
+  </p-toolbar>
+</div>
+

@@ -1,0 +1,199 @@
+<!--div class="card">
+  <p-tabMenu [model]="items">
+      <ng-template pTemplate="item" let-item>
+          <ng-container *ngIf="item.route; else elseBlock">
+              <a [routerLink]="item.route" class="p-menuitem-link">
+                  <span [class]="item.icon"></span>
+                  <span class="ml-2">
+                      {{ item.label }}
+                  </span>
+              </a>
+          </ng-container>
+          <ng-template #elseBlock>
+              <a [href]="item.url" class="p-menuitem-link">
+                  <span [class]="item.icon"></span>
+                  <span class="ml-2">
+                      {{ item.label }}
+                  </span>
+              </a>
+          </ng-template>
+      </ng-template>
+  </p-tabMenu>
+</!--div-->
+
+
+
+
+
+<div class="contenedor-header">
+  <header>
+    <div class="logo">
+      <a (click)="scrollToSection('inicio')" class="cursor-pointer">
+        <div class="logo-container">
+          <img src="assets/logoSorteo.jpg" alt="Logo Sorteo" class="logo-img" />
+          <!--span>Super Sorteo</!span-->
+          <!--img src="assets/logoSorteo.jpg" alt="Logo Sorteo" class="logo-img" /-->
+        </div>
+      </a>
+    </div>
+
+    <nav [ngClass]="{ 'responsive': menuVisible }" id="nav">
+      <ul>
+        <li><a (click)="scrollToSection('inicio')">Inicio</a></li>
+        <li><a (click)="scrollToSection('beneficios')">Beneficios</a></li>
+        <li><a [routerLink]="(['/login'])">Login</a></li>
+        <li><a (click)="scrollToSection('participar')">Participar</a></li>
+        <li><a (click)="scrollToSection('formulario')">Formulario</a></li>
+      </ul>
+
+    </nav>
+
+    <div class="nav-responsive" (click)="mostrarOcultarMenu()">☰</div>
+  </header>
+</div>
+
+<section id="inicio" class="full-page">
+
+
+
+
+  <div >
+    <p-carousel
+        [value]="products"
+        [numVisible]="1"
+        [numScroll]="1"
+        [circular]="false"
+        autoplayInterval="3000"
+        [responsiveOptions]="responsiveOptions">
+
+        <ng-template let-product pTemplate="item">
+            <div class="image-container">
+                <img [src]="product.image" [alt]="product.name" class="carousel-image"/>
+            </div>
+        </ng-template>
+
+    </p-carousel>
+
+</div>
+
+  <h1>Sorteá tus productos de la manera más rápida</h1>
+  <p>Llegá facilmente a miles de compradores en todo el país</p>
+  <p>Usando SUPERSORTEO hacé despegar tus ganancias!!</p>
+  <p>Ahorrá tiempo, obtené ingresos extras!</p>
+  <!--button pButton label="Quiero Registrarme" class="p-button-warning mt-3" (click)="scrollToSection('participar')" ></!--button-->
+
+  <p-button label="Quiero Registrarme" [raised]="true" severity="warning" (click)="scrollToSection('participar')" />
+
+
+  <h2 class="section-title">
+    Ampliá el alcance de tus rifas inmediatamente
+  </h2>
+  <p class="lead mb-4">
+   Al crear tu sorteo tenés un link personal para compartir con todos tus contactos o audiencia por redes sociales y whatapps. Esto les permite visualizar comodamente y en tiempo real los detalles de tu sorteo
+
+  </p>
+
+  <p-button label="Me gusta la idea" [raised]="true" severity="contrast" (click)="scrollToSection('formulario')" />
+</section>
+
+<section id="sobremi" class="full-page">
+  <div *ngIf="videos.length > 0; else noVideos" class="video-container">
+    <!--h2>Lista de Videos</!--h2-->
+    <div >
+      <ul>
+        @for (video of videos; track $index) {
+          <li>
+            <h3>{{ video }}</h3>
+            <video width="100%" height="400" controls>
+              <source [src]="getVideoUrl(video)" [attr.type]="getVideoType(video)">
+              Tu navegador no soporta la etiqueta de video.
+            </video>
+          </li>
+        }
+
+      </ul>
+
+    </div>
+  </div>
+
+  <ng-template #noVideos>
+    <p>No hay videos disponibles.</p>
+  </ng-template>
+</section>
+
+<section id="participar" class="full-page center-content">
+  <h1 >Quedan pocos números disponibles</h1>
+  <p class="large-text">Reserva el tuyo antes de que se agoten</p>
+  <p-button label="Reserva ahora" severity="warning" class="m-3"></p-button>
+</section>
+
+
+
+
+<section id="beneficios" class="full-page">
+  <h2 class="beneficios-title">Llevá tus sorteos al siguiente nivel</h2>
+  <div class="beneficios-grid">
+    <div class="card">
+      <img
+        src="https://cdn-icons-png.flaticon.com/512/864/864685.png"
+        alt="Premios Increíbles"
+        class="card-avatar"
+      />
+      <h3 class="card-title">Sorteos más atractivos</h3>
+      <p class="card-text">Cargá las imagenes de tus productos y agregales una descripción. Vos elegís la cantidad de participantes.</p>
+    </div>
+    <div class="card">
+      <img
+        src="https://cdn-icons-png.flaticon.com/512/3416/3416073.png"
+        alt="Participación Fácil"
+        class="card-avatar"
+      />
+      <h3 class="card-title">Es más fácil participar</h3>
+      <p class="card-text">Compartiendo tu propio link de sorteo llegá a todo el pais. Tus participantes reservan facilemnte su número y ven los registros en vivo</p>
+    </div>
+    <div class="card">
+      <img
+        src="https://cdn-icons-png.flaticon.com/512/5953/5953378.png"
+        alt="100% Transparente"
+        class="card-avatar"
+      />
+      <h3 class="card-title">Mayor Transparencia</h3>
+      <p class="card-text">Seguimiento en vivo del sorteo. Tabla con participantes verificados</p>
+    </div>
+  </div>
+</section>
+
+<section id="formulario" class="full-page">
+  <h1>¡Registrate gratis y tené un sorteo al mes sin ningun tipo de gasto asociado. Todas las ganancias son para vos.!</h1>
+  <p>Animate a cambiar la forma en la que hacés tus sorteos y elevá tus ganancias .</p>
+  <p-button label="Registrarme gratis" severity="contrast" class="m-3"></p-button>
+</section>
+
+
+
+
+<p-button label="Primary"  [outlined]="true" severity="help" class="floating-button" (onClick)="showDialog()" ></p-button>
+
+
+<p-dialog
+  header="Header"
+  [(visible)]="visible"
+  [modal]="true"
+  [style]="{ width: '80%' }"
+  styleClass="custom-dialog">
+  <p-accordion>
+    <p-accordionTab [header]="tab.title" *ngFor="let tab of tabs">
+      <p class="m-0">
+        {{ tab.content }}
+      </p>
+    </p-accordionTab>
+  </p-accordion>
+</p-dialog>
+
+
+
+
+<!-- FOOTER -->
+<footer class="text-center p-pt-3 p-pb-3">
+  © 2025 Súper Sorteo | Todos los derechos reservados.
+</footer>
