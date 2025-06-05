@@ -10,15 +10,15 @@ import { RifaGanadorDTO } from '../interfaces/rifa-ganador-dto';
 })
 export class RaffleService {
 
-  private baseUrl = 'http://localhost:8080/api/images';
-  //private baseUrl = 'https://pruebaback-5.onrender.com/api/images';
+  //private baseUrl = 'http://localhost:8080/api/images';
+  private baseUrl = 'https://sweet-laughter-production.up.railway.app/api/images';
 
-  private apiUrl = 'http://localhost:8080/api/rifas';
-  //private apiUrl = 'https://pruebaback-5.onrender.com/api/rifas';
+  //private apiUrl = 'http://localhost:8080/api/rifas';
+  private apiUrl = 'https://sweet-laughter-production.up.railway.app/api/rifas';
 
-  private VIPUrl ='http://localhost:8080/codigos-vip'
+  //private VIPUrl ='http://localhost:8080/codigos-vip'
 
-  //private VIPUrl ='https://pruebaback-5.onrender.com/codigos-vip';
+  private VIPUrl ='https://sweet-laughter-production.up.railway.app/codigos-vip';
 
   constructor(private http: HttpClient) { }
 
@@ -98,7 +98,7 @@ export class RaffleService {
 
   deleteImage(fileName: string): Observable<void> {
 
-      const url = `http://localhost:8080/api/images/${fileName}`;
+      const url = `https://sweet-laughter-production.up.railway.app/api/images/${fileName}`;
     return this.http.delete<void>(url);
   }
 
