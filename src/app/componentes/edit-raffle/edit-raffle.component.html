@@ -153,8 +153,8 @@
 
     <!-- Controles adicionales: Fuente, tamaño y color (se muestran horizontalmente tal y como estaban) -->
     <div class="options-group">
-      <p-dropdown [options]="fontOptions" [(ngModel)]="selectedFont" placeholder="Fuente" (onChange)="applyFont()" appendTo="body" ></p-dropdown>
-      <p-dropdown [options]="fontSizes" [(ngModel)]="selectedFontSize" placeholder="Tamaño" (onChange)="applyFontSize()" appendTo="body" ></p-dropdown>
+      <p-dropdown [options]="fontOptions" [(ngModel)]="selectedFont" placeholder="Fuente" (onChange)="applyFont()"  ></p-dropdown>
+      <p-dropdown [options]="fontSizes" [(ngModel)]="selectedFontSize" placeholder="Tamaño" (onChange)="applyFontSize()"  ></p-dropdown>
       <input type="color" [(ngModel)]="textColor" (change)="applyTextColor()" />
     </div>
 

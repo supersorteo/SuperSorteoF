@@ -1330,7 +1330,7 @@ this.loadWinningInfo();
 
 
 
-checkRifasParaAutoEjecutar(): void {
+checkRifasParaAutoEjecutar0(): void {
   const now = Date.now(); // 🔥 Obtener la fecha actual en milisegundos
 
   this.activeRaffles.forEach(raffle => {
@@ -1359,6 +1359,47 @@ checkRifasParaAutoEjecutar(): void {
     });
   });
 }
+
+checkRifasParaAutoEjecutar(): void {
+  const now = Date.now(); // Obtener la fecha actual en milisegundos
+
+  this.activeRaffles.forEach(raffle => {
+    // Recargar participantes desde el backend para cada rifa
+    this.participanteService.getParticipantesByRaffleId(raffle.id!).subscribe({
+      next: participantesRifa => {
+        console.log(`✅ Participantes recargados para rifa ${raffle.id}:`, participantesRifa);
+
+        // Convertir la fecha de ejecución a milisegundos y determinar si ya ha vencido
+        const raffleTime = new Date(raffle.fechaSorteo).getTime();
+        const overdue = now >= raffleTime;
+        const hasParticipants = participantesRifa.length > 0;
+        // Comprobar si todos los números han sido reservados:
+        const allReserved = participantesRifa.length === Number(raffle.cantidadParticipantes);
+
+        console.log(`📌 Rifa ${raffle.id}: overdue: ${overdue}, participantes: ${participantesRifa.length}, cantidad permitida: ${raffle.cantidadParticipantes}, allReserved: ${allReserved}`);
+
+        // Si la rifa está activa y tiene participantes, y se cumple la condición de fecha vencida o que se hayan reservado todos los números,
+        // se procede a su ejecución automática.
+        if (raffle.active && hasParticipants && (overdue || allReserved)) {
+          console.log(`🚀 Auto–ejecutando rifa ${raffle.id}: vencida? ${overdue}, completa? ${allReserved}`);
+          this.selectedRaffle = raffle;
+          this.showCountdown = true;
+          // Inicia el conteo regresivo para ejecutar la rifa automáticamente (por ejemplo, 5 segundos)
+          this.raffleExecutionService.startCountdown(5);
+          // Actualiza el estado de las rifas y carga la información del ganador (si aplica)
+          this.updateRafflesByStatus();
+          this.loadWinningInfo();
+        } else if (raffle.active && !hasParticipants && overdue) {
+          console.log(`⚠️ Rifa ${raffle.id} vencida sin participantes.`);
+        }
+      },
+      error: err => {
+        console.error(`❌ No se pudo recargar participantes para rifa ${raffle.id}:`, err);
+      }
+    });
+  });
+}
+
 
 
 private executeAutoRaffle(raffle: Raffle): void {

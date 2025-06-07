@@ -177,14 +177,7 @@
         <ng-container *ngIf="reservationForm.get('phone')?.hasError('pattern')">El formato debe ser 99-99999999.</ng-container>
       </small>
 
-      <!--input type="text" pInputText placeholder="DNI" formControlName="dni" />
-      <small-- class="error" *ngIf="isInvalid('dni')">El DNI es obligatorio.</small-->
 
-      <!--input type="text" pInputText placeholder="Código de reserva" formControlName="code" />
-      <small-- class="error" *ngIf="isInvalid('code')">
-        <ng-container *ngIf="reservationForm.get('code')?.hasError('required')">El código es obligatorio.</ng-container>
-        <ng-container *ngIf="reservationForm.get('code')?.hasError('incorrectCode')">Código incorrecto, verifica e intenta de nuevo.</ng-container>
-      </small-->
 
 
         <div class="input-with-info">
@@ -212,11 +205,13 @@
 
 
 
-      <!--input type="text" pInputText formControlName="reservedNumber" /-->
+
     </div>
     <div class="modal-buttons">
       <p-button label="Cancelar" (click)="closeModal()" severity="danger"></p-button>
-      <p-button type="submit" label="Reservar" severity="primary" [disabled]="reservationForm.invalid"></p-button>
+      <!--p-button-- type="submit" label="Reservar" severity="primary" [disabled]="reservationForm.invalid"></!--p-button-->
+      <p-button type="submit" label="Reservar" severity="primary" [disabled]="reservationForm.invalid || loading"></p-button>
+
     </div>
   </form>
 </p-dialog>

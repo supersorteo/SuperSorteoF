@@ -168,6 +168,12 @@ obtenerRifasPorUsuarioId(usuarioId: number): Observable<Raffle[]> {
   );
 }
 
+obtenerRifaPorId1(id: number): Observable<RifaGanadorDTO> {
+  return this.http.get<RifaGanadorDTO>(`${this.apiUrl}/${id}`).pipe(
+    tap(response => console.log("📌 Rifa obtenida con participantes:", response)),
+    catchError((error) => this.handleError(error))
+  );
+}
 
 
 

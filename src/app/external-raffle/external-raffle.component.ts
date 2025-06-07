@@ -53,7 +53,7 @@ export class ExternalRaffleComponent implements OnInit{
   winningNumber: number | null = null;
   winningParticipant: string | null = null;
   phone:string | null = null
-
+  loading:boolean = false;
   winningData: { raffleId: number; winningNumber: number; winningParticipant: string}[] = [];
 
  private modalShown = false;
@@ -435,7 +435,7 @@ isInvalid(field: string): boolean {
 
 
 
-    saveData(): void {
+    saveData0(): void {
   if (this.reservationForm.valid) {
     const newReservation: Participante = {
       ...this.reservationForm.getRawValue(),
@@ -479,6 +479,51 @@ isInvalid(field: string): boolean {
   }
 }
 
+ saveData(): void {
+  if (this.reservationForm.valid) {
+    this.loading = true; // 🔥 Deshabilita el botón mientras se reserva el número
+
+    const newReservation: Participante = {
+      ...this.reservationForm.getRawValue(),
+      raffleId: this.raffleId
+    };
+
+    this.participanteService.createParticipante(newReservation).subscribe({
+      next: (data) => {
+        console.log("✅ Reserva guardada correctamente en el backend:", data);
+
+        this.participanteService.refreshParticipants(this.raffleId!);
+        this.reservationForm.reset();
+        this.displayModal = false;
+        this.loading = false; // 🔥 Habilita el botón nuevamente
+
+        Swal.fire({
+          icon: "success",
+          title: "¡Reserva exitosa!",
+          text: "Tu número ha sido reservado correctamente.",
+          confirmButtonText: "Aceptar"
+        });
+      },
+      error: (err) => {
+        console.error("❌ Error al reservar número:", err);
+        this.loading = false; // 🔥 Habilita el botón nuevamente
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "No se pudo reservar el número. Por favor, inténtalo de nuevo.",
+          confirmButtonText: "Aceptar"
+        });
+      }
+    });
+  } else {
+    Swal.fire({
+      icon: "warning",
+      title: "Formulario inválido",
+      text: "Por favor, completa todos los campos requeridos.",
+      confirmButtonText: "Aceptar"
+    });
+  }
+}
 
 
     closeModal() {
