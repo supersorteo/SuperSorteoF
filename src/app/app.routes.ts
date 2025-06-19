@@ -12,6 +12,8 @@ import { ExternalRaffleComponent } from './external-raffle/external-raffle.compo
 import { HomeComponent } from './componentes/home/home.component';
 import { UploadVideoComponent } from './componentes/upload-video/upload-video.component';
 import { EditRaffleComponent } from './componentes/edit-raffle/edit-raffle.component';
+import { AdminGuard } from './admin.guard';
+import { ChangeAdminPasswordComponent } from './componentes/change-admin-password/change-admin-password.component';
 
 export const routes: Routes = [
   {path:'home', component: HomeComponent},
@@ -21,10 +23,12 @@ export const routes: Routes = [
   {path:'lista', component:ListaComponent},
   {path:'register', component:RegisterComponent},
   {path:'sorteo', component:SorteoComponent},
-  {path:'codigos', component:CodigosVipComponent},
+  {path:'codigos', component:CodigosVipComponent, canActivate: [AdminGuard]},
   { path: 'datos-rifa/:id', component: DatosRifaComponent },
   { path: 'external-raffle/:id', component: ExternalRaffleComponent },
   {path:'upload', component: UploadVideoComponent},
   { path: 'edit-raffle/:id', component: EditRaffleComponent },
+  { path: 'cambiar-password-admin', component: ChangeAdminPasswordComponent, canActivate: [AdminGuard] },
+
   { path: '**', redirectTo: 'home' }
 ];

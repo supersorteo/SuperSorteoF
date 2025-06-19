@@ -1,7 +1,7 @@
 
 
 
-<p-dialog header="Generar Imagen" [(visible)]="displayModal" [modal]="true" [style]="{ width: '95%' }">
+<p-dialog header="Banner del Sorteo" [(visible)]="displayModal" [modal]="true" [style]="{ width: '95%' }">
   <!-- Contenedor padre para el contenido y las imágenes en las esquinas -->
   <div #banner class="modal-content-wrapper">
     <!-- Banner central (puedes incluir aquí lo que desees mostrar) -->
@@ -17,7 +17,7 @@
         </!--div-->
         <div class="product-description" [innerHTML]="raffle?.producto?.descripcion"></div>
         <div class="contact">
-          <p class="contact-number">Reservá tu número</p>
+          <p class="contact-number">Valor</p>
           <div class="contact-number">(55) 1234-5678</div>
           <p class="contact-number">Reservá tu número por:</p>
         </div>
@@ -35,10 +35,39 @@
     </div>
   </div>
 
-  <!-- Footer del modal con botones -->
-  <p-footer>
-    <button pButton type="button" label="Descargar" icon="pi pi-download" (click)="downloadImage()"></button>
-    <button pButton type="button" label="Cerrar" icon="pi pi-times" (click)="displayModal = false"></button>
-  </p-footer>
+
+  <!--p-footer>
+
+    <button pButton type="button" label="Cerrar" icon="pi pi-times" (click)="displayModal = false" [disabled]="!imageDataUrl" ></button>
+    <button pButton type="button" label="Descargar" icon="pi pi-download" (click)="downloadImage()" [disabled]="!imageDataUrl" ></button>
+
+  </p-footer-->
+
+<p-footer>
+  <ng-container *ngIf="isGenerating; else botonesDescarga">
+    <p>Generando imagen...</p>
+    <p-progressSpinner styleClass="custom-spinner" strokeWidth="4"></p-progressSpinner>
+  </ng-container>
+
+  <ng-template #botonesDescarga>
+    <button
+      pButton
+      type="button"
+      label="Descargar"
+      icon="pi pi-download"
+      (click)="downloadImage()"
+      [disabled]="!imageDataUrl"
+    ></button>
+
+    <button
+      pButton
+      type="button"
+      label="Cerrar"
+      icon="pi pi-times"
+      (click)="displayModal = false"
+    ></button>
+  </ng-template>
+</p-footer>
+
 </p-dialog>
 

@@ -65,8 +65,8 @@ export class HomeComponent  implements OnInit{
 
 
     this.products = [
-      { name: 'Imagen 1', image: 'assets/descarga.jpeg' },
-      { name: 'Imagen 2', image: 'assets/casa.jpeg' }
+      { name: 'Imagen 1', image: 'assets/home1.jpg' },
+      { name: 'Imagen 2', image: 'assets/home2.jpg' }
   ];
 
 

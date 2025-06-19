@@ -1,7 +1,7 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
-import { catchError, map, Observable, throwError } from 'rxjs';
+import { catchError, map, Observable, tap, throwError } from 'rxjs';
 import { User } from '../interfaces/user';
 import { environment } from '../../environment/environment';
 
@@ -59,13 +59,24 @@ export class AuthenticationService {
 
 
    // Método para iniciar sesión
-   login(credentials: { email: string, password: string }): Observable<User> {
+   login0(credentials: { email: string, password: string }): Observable<User> {
     // Enviamos una solicitud POST al backend con las credenciales
     return this.http.post<User>(`${this.apiUrl}/login`, credentials).pipe(
       // Manejo de errores
       catchError(this.handleError1)
     );
   }
+
+  login(credentials: { email: string, password: string }): Observable<{ usuario: User, primerInicioSesion: boolean }> {
+  return this.http.post<{ usuario: User, primerInicioSesion: boolean }>(`${this.apiUrl}/login`, credentials).pipe(
+    tap(res => {
+      // 🔥 Guardamos en `localStorage` el usuario junto con `primerInicioSesion`
+      localStorage.setItem(this.CURRENT_USER_KEY, JSON.stringify(res.usuario));
+      localStorage.setItem('primerInicioSesion', JSON.stringify(res.primerInicioSesion));
+    }),
+    catchError(this.handleError1)
+  );
+}
 
 
 

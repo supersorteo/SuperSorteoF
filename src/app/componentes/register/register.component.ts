@@ -27,6 +27,7 @@ export class RegisterComponent {
     });
   }
 
+  /*
   onSubmit1(): void {
     if (this.registerForm.valid) {
       const user: User = this.registerForm.value;
@@ -54,5 +55,5 @@ export class RegisterComponent {
           this.router.navigate(['/dashboard']); }); }, (error) => { this.showRegistrationError(error); } ); } else { this.showClientSideErrors(); } }
   private showRegistrationError(error: string): void { if (error.includes('El correo ya está registrado')) { Swal.fire({ icon: 'error', title: 'Error', text: 'El correo ya está registrado.' }); } else if (error.includes('Las contraseñas no coinciden')) { Swal.fire({ icon: 'error', title: 'Error', text: 'Las contraseñas no coinciden.' }); } else { Swal.fire({ icon: 'error', title: 'Error', text: error || 'Error desconocido.' }); } }
   private showClientSideErrors(): void { if (this.registerForm.get('name')?.errors?.['required']) { this.showErrorAlert('Debe ingresar un nombre.'); } else if (this.registerForm.get('name')?.errors?.['pattern']) { this.showErrorAlert('El nombre debe ser un string.'); } else if (this.registerForm.get('email')?.errors?.['required']) { this.showErrorAlert('Debe ingresar un correo electrónico.'); } else if (this.registerForm.get('email')?.errors?.['email']) { this.showErrorAlert('Formato de correo electrónico incorrecto.'); } else if (this.registerForm.get('password')?.errors?.['required']) { this.showErrorAlert('Debe ingresar una contraseña.'); } else if (this.registerForm.get('password')?.errors?.['minlength']) { this.showErrorAlert('La contraseña debe tener al menos 6 caracteres.'); } else if (this.registerForm.get('confirmPassword')?.errors?.['required']) { this.showErrorAlert('Debe llenar el campo de confirmar contraseña.'); } else { this.showErrorAlert('Error desconocido.'); } } private showErrorAlert(message: string): void { Swal.fire({ icon: 'error', title: 'Error', text: message }); }
-
+*/
 }

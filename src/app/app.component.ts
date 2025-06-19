@@ -27,7 +27,8 @@ export class AppComponent {
         this.shouldShowToolbar = !(currentUrl === '/login' ||
           currentUrl.startsWith('/codigos') ||
           currentUrl.startsWith('/datos-rifa') ||
-          currentUrl.startsWith('/home')
+          currentUrl.startsWith('/home') ||
+          currentUrl.startsWith('/cambiar-password-admin')
         );
 
       }

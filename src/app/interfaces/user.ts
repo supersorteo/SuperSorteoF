@@ -12,4 +12,5 @@ export interface User {
   codigoVip?: CodigoVip // Código VIP del usuario (opcional)
   fechaRegistro?: Date; // Fecha de registro (opcional)
   telefono?: string;
+  primeraVez?: boolean;
 }

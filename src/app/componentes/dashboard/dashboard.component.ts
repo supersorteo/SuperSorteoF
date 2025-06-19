@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, ElementRef, HostListener, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, HostListener, OnInit, QueryList, ViewChild, ViewChildren, AfterViewInit } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { ToolbarModule } from 'primeng/toolbar';
@@ -34,7 +34,7 @@ import { RaffleExecutionService } from '../../services/raffle-execution.service'
 import { RaffleResultService } from '../../services/raffle-result.service';
 import { WebSocketService } from '../../services/web-socket.service';
 import { RifaGanadorDTO } from '../../interfaces/rifa-ganador-dto';
-
+import { CardModule } from 'primeng/card';
 /*
 interface WinningEntry {
   raffleId: number;
@@ -73,7 +73,7 @@ export interface WinningEntry {
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, ToolbarModule, ReactiveFormsModule, FormsModule, DialogModule, ButtonModule, InputTextModule,
+  imports: [CommonModule, ToolbarModule, ReactiveFormsModule, FormsModule, DialogModule, ButtonModule, InputTextModule, CardModule,
     TableModule, TagModule,
     CalendarModule, InputTextareaModule, ListboxModule, FileUploadModule, CarouselModule, TagModule, SidebarModule, ToastModule,
     SpeedDialModule, RaffleBannerComponent, DropdownModule, CountdownComponent],
@@ -87,6 +87,9 @@ export class DashboardComponent implements OnInit {
   @ViewChild(RaffleBannerComponent) raffleBannerComponent!: RaffleBannerComponent;
 
   @ViewChild('raffleBanner') raffleBanner!: RaffleBannerComponent;
+
+ // @ViewChild('carousel', { static: false }) carousel!: ElementRef;
+
   userName: string = '';
   userId!: any;
   daysLeft: number = 30;
@@ -96,7 +99,7 @@ export class DashboardComponent implements OnInit {
 
  newRaffle: Raffle = {
    nombre: '',
-   cantidadParticipantes: 0, // 🔥 Inicializamos como número
+   cantidadParticipantes: null, // 🔥 Inicializamos como número
    //fechaSorteo: new Date(),
   fechaSorteo: new Date().toISOString().split('T')[0],
    usuario: { id: this.userId, esVip: false },
@@ -107,7 +110,7 @@ export class DashboardComponent implements OnInit {
    },
    active: true,
    executed: false,
-   precio: 0,
+   precio: null,
    code: ''
  };
 
@@ -150,6 +153,7 @@ participantes: any[] = [];
 numerosReservados: number[] = [];
 raffleId: any | null = null;
   codigoVip: string = '';
+  fechaRegistro!: string;
   raffle: Raffle | null = null;
   cantidadRifas: number = 0;
   isVip!: boolean | null;
@@ -243,13 +247,27 @@ availableNumbersMap: { [raffleId: number]: number[] } = {};
 
 
   showCountdown: boolean = false;
-
+expiryDate!: Date;
 
   selectedRaffleId: number | null = null;
   participantesPorMisRifas: Record<number, Participante[]> = {};
   participantsByRaffle = new Map<number, Participante[]>();
   cantidadRifasPermitidas:any
   countdownValue: number | null = null;
+  mostrarVideo: boolean = false;
+
+ // imagenes = ['10.jpg', '15.jpg', '30.jpg'];
+
+imagenes = [
+  { id: '10', src: '10.jpg', rifas: 10 },
+  { id: '15', src: '15.jpg', rifas: 15 },
+  { id: '30', src: '30.jpg', rifas: 30 }
+];
+
+
+ // imagenSeleccionada: string = '';
+  imagenSeleccionada: any = this.imagenes[0];
+  activeIndex: number = 0;
 
   constructor(
     private authService: AuthenticationService,
@@ -269,6 +287,16 @@ availableNumbersMap: { [raffleId: number]: number[] } = {};
   ngOnInit(): void {
     window.addEventListener('storage', this.onStorageEvent.bind(this));
     this.loadUserId()
+
+    const primerInicioSesion = JSON.parse(localStorage.getItem('primerInicioSesion') || 'false');
+
+    if (primerInicioSesion) {
+      this.mostrarVideo = true;
+
+      // 🔥 Después de mostrar el video una vez, actualizamos `localStorage` para futuras sesiones.
+      localStorage.setItem('primerInicioSesion', JSON.stringify(false));
+    }
+
     this.loadWinningInfo();
    // this.loadWinningEntries();
   this.listenForRaffleExecution();
@@ -298,6 +326,8 @@ availableNumbersMap: { [raffleId: number]: number[] } = {};
 
 
 
+
+
   setInterval(() => {
     this.checkRifasParaAutoEjecutar();
   }, 60000); // 60000 ms = 1 minuto
@@ -315,6 +345,11 @@ availableNumbersMap: { [raffleId: number]: number[] } = {};
 
 
 
+
+
+  ocultarVideo(): void {
+    this.mostrarVideo = false;
+  }
 
 private onStorageEvent(event: StorageEvent) {
   if (event.key === 'participantsUpdated') {
@@ -585,6 +620,9 @@ startCountdown(expiryDate: Date): void {
 
   }
 
+
+
+
   openBanner(raffle: Raffle): void {
     this.selectedRaffle = raffle;
 
@@ -754,7 +792,7 @@ startCountdown(expiryDate: Date): void {
     }
   }
 
-  loadUserId(): void {
+  loadUserId2(): void {
   let currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
   if (!currentUser || !currentUser.id) {
     console.error("❌ No se encontró el usuario logueado en localStorage.");
@@ -790,6 +828,38 @@ startCountdown(expiryDate: Date): void {
     console.error("❌ El userId no está definido.");
   }
 }
+
+loadUserId(): void {
+  let currentUserRaw = localStorage.getItem('currentUser');
+  if (!currentUserRaw) {
+    console.error("❌ No se encontró el usuario logueado en localStorage.");
+    return;
+  }
+
+  const currentUser = JSON.parse(currentUserRaw);
+  this.userId = currentUser.id;
+
+  if (!this.userId) {
+    console.error("❌ No se pudo obtener el ID del usuario.");
+    return;
+  }
+
+  // 🔥 🚀 Obtener datos actualizados desde el backend
+  this.raffleService.obtenerUsuarioPorId(this.userId).subscribe({
+    next: (usuarioActualizado) => {
+      // 🔥 Actualizamos localStorage y variables de sesión
+      localStorage.setItem('currentUser', JSON.stringify(usuarioActualizado));
+      this.actualizarDatosUsuario(usuarioActualizado);
+
+      // 🔥 Cargar rifas del usuario después de actualizarlo
+      this.loadUserRaffles();
+    },
+    error: (error) => {
+      console.error("❌ Error al obtener el usuario:", error);
+    }
+  });
+}
+
 
 
 
@@ -869,7 +939,7 @@ startCountdown(expiryDate: Date): void {
 
 
  // Validar y asignar código VIP
-validarYAsignarCodigoVip(): void {
+validarYAsignarCodigoVip0(): void {
   if (!this.codigoVip.trim()) {
     this.mostrarMensaje('error', 'Código VIP requerido', 'Por favor, ingrese un código VIP.');
     return;
@@ -901,6 +971,76 @@ validarYAsignarCodigoVip(): void {
 
   this.hideProductDialog();
 }
+
+validarYAsignarCodigoVip(): void {
+  if (!this.codigoVip.trim()) {
+    this.mostrarMensaje('error', 'Código VIP requerido', 'Por favor, ingrese un código VIP.');
+    return;
+  }
+
+  const userId = this.userId;
+  if (!userId) {
+    this.mostrarMensaje('error', 'Usuario no identificado', 'No se ha encontrado información del usuario.');
+    return;
+  }
+
+  this.raffleService.activarVip(userId, this.codigoVip.trim()).subscribe({
+    next: (usuarioActualizado) => {
+      console.log('✅ Usuario actualizado:', usuarioActualizado);
+
+      // Actualizar variables del usuario en el frontend
+      this.actualizarDatosUsuario(usuarioActualizado);
+      this.sidebarVisible = false
+      this.mostrarMensaje('success', '¡VIP activado!', `Ahora puedes crear ${usuarioActualizado.cantidadRifas} rifas.`);
+    },
+    error: (error) => {
+      console.error('❌ Error al activar VIP:', error);
+      this.mostrarMensaje('error', 'Error en la activación', error.message || 'No se pudo activar el VIP.');
+    }
+  });
+
+  this.hideProductDialog();
+
+
+}
+
+
+private actualizarDatosUsuario(usuarioActualizado: any): void {
+  // Guardar usuario actualizado en localStorage
+  localStorage.setItem('currentUser', JSON.stringify(usuarioActualizado));
+
+  // Actualizar variables del frontend
+  this.isVip = usuarioActualizado.esVip;
+  this.cantidadRifasPermitidas = usuarioActualizado.cantidadRifas;
+  this.codigoVip = usuarioActualizado.codigoVip;
+  this.fechaRegistro = usuarioActualizado.fechaRegistro;
+
+  console.log('🔹 Datos del usuario actualizados:', usuarioActualizado);
+
+  this.cdRef.detectChanges(); // 🔥 Refrescar vista
+
+}
+
+private actualizarDatosUsuario0(usuarioActualizado: any): void {
+  localStorage.setItem('currentUser', JSON.stringify(usuarioActualizado));
+
+  this.isVip = usuarioActualizado.esVip;
+  this.cantidadRifasPermitidas = usuarioActualizado.cantidadRifas;
+  this.codigoVip = usuarioActualizado.codigoVip;
+  this.fechaRegistro = usuarioActualizado.fechaRegistro; // 🔥 Guardamos la fecha nueva
+
+  console.log('🔹 Datos del usuario actualizados:', usuarioActualizado);
+
+  // 🔥 Actualizar fecha sin reiniciar el temporizador
+  if (usuarioActualizado.fechaRegistro) {
+    const nuevaFechaExpiracion = new Date(usuarioActualizado.fechaRegistro);
+    this.expiryDate = nuevaFechaExpiracion; // 🔥 Solo cambiamos la fecha
+  }
+
+  this.cdRef.detectChanges(); // 🔥 Refrescar vista sin reiniciar nada
+}
+
+
 
 
 
@@ -969,6 +1109,10 @@ private asignarCodigoVipAlUsuario(cantidadRifas: number): void {
   this.mostrarMensaje('success', '¡VIP activado!', `Tienes permiso para crear ${cantidadRifas} rifas.`);
   this.cdRef.detectChanges();
 }
+
+
+
+
 
 
 
@@ -2291,6 +2435,86 @@ mostrarParticipantesTerminados(raffleId: number): void {
           error: (err) => console.error('Error al eliminar participante:', err)
         });
       }
+
+
+
+
+
+getCategoria(id: string): string {
+  const categorias: { [key: string]: string } = {
+    '10': 'Mini',
+    '15': 'Medium',
+    '30': 'Large'
+  };
+  return categorias[id] || 'Desconocido'; // Ahora compara con ID directo
+}
+
+
+
+getDescripcion(id: string): string {
+  const descripciones: { [key: string]: string } = {
+    '10': 'Paquete pequeño ideal para necesidades básicas.',
+    '15': 'Paquete mediano con equilibrio entre precio y capacidad.',
+    '30': 'Paquete grande para los que buscan máxima cobertura.'
+  };
+  return descripciones[id] || 'Sin descripción'; // Usa ID directo
+}
+
+
+onPageChange(event: any): void {
+  const index = event.page; // Obtiene el índice de la imagen activa
+  console.log('Índice activo:', index);
+
+  if (index >= 0 && index < this.imagenes.length) {
+    this.imagenSeleccionada = this.imagenes[index];
+    console.log('Imagen seleccionada:', this.imagenSeleccionada.id);
+    console.log('Cantidad de rifas:', this.imagenSeleccionada.rifas);
+  } else {
+    console.error('Error: Índice fuera de rango.');
+  }
+}
+
+
+comprarRifas0(): void {
+  if (!this.imagenSeleccionada) {
+    console.log('No hay imagen seleccionada');
+    return;
+  }
+
+  console.log(`Comprando ${this.imagenSeleccionada.rifas} rifas para el paquete ${this.imagenSeleccionada.id}`);
+
+  const numeroWhatsApp = '+54 9 11 3339-2207';
+  const mensaje = `Quiero comprar ${this.imagenSeleccionada.rifas} rifas del paquete ${this.imagenSeleccionada.id}.`;
+
+  const enlaceWhatsApp = `https://wa.me/${numeroWhatsApp.replace(/\D/g, '')}?text=${encodeURIComponent(mensaje)}`;
+
+  window.open(enlaceWhatsApp, '_blank');
+}
+
+
+comprarRifas(img: any): void {
+  if (!img) {
+    console.log('No hay imagen seleccionada.');
+    return;
+  }
+
+  console.log(`Comprando ${img.rifas} rifas para el paquete ${img.id}`);
+
+  const numeroWhatsApp = '+54 9 11 3339-2207';
+  const mensaje = `Hola! me interesa comprar un código VIP para el plan de ${img.rifas} rifas.`;
+
+  const enlaceWhatsApp = `whatsapp://send?phone=${numeroWhatsApp.replace(/\D/g, '')}&text=${encodeURIComponent(mensaje)}`;
+
+  window.location.href = enlaceWhatsApp; // Esto intentará abrir directamente la app de WhatsApp
+}
+
+
+
+seleccionarImagen(img: string): void {
+  this.imagenSeleccionada = img;
+  console.log('Imagen seleccionada:', this.imagenSeleccionada); // Para depuración
+}
+
 
       ngOnDestroy(): void {
         window.removeEventListener('storage', this.onStorageEvent.bind(this));

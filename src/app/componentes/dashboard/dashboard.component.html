@@ -1,32 +1,55 @@
 <div class="container p-2 bg-light rounded shadow-sm page-dashboard">
   <p-toast/>
 
-  <div class="grid">
+  <div *ngIf="mostrarVideo" class="video-container">
+  <video width="100%" controls autoplay (ended)="ocultarVideo()">
+    <source src="assets/videos/Supersorteo.mp4" type="video/mp4">
+    Tu navegador no soporta la reproducción de video.
+  </video>
+</div>
+
+  <div *ngIf="!mostrarVideo" class="grid">
 
 
-    <div class="col-6 p-md-6">
+
+    <div  class="col-6 p-md-6">
       <div class="active-raffles-container">
         <h3>Rifas Activas</h3>
       </div>
       <div *ngFor="let raffle of activeRaffles" class="p-card mb-5" style="position: relative">
 
-        <div class="price-tag" style="position: absolute; top: 10px; left: 10px; background: #445367; color: #fff; padding: 0.5rem 0.75rem; border-radius: 5px; font-weight: bold; z-index: 100;">
+        <!--div class="price-tag" style="position: absolute; top: 10px; left: 10px; background: #445367; color: #fff; padding: 0.5rem 0.75rem; border-radius: 5px; font-weight: bold; z-index: 100;">
           {{ raffle.precio | currency:'USD':'symbol':'1.0-0' }}
-        </div>
+        </!--div>
+
+        <p-button icon="pi pi-pencil" [rounded]="true" [text]="true" severity="contrast" class="edit" [routerLink]="['/edit-raffle', raffle.id]" /-->
+
+
+<!-- Nuevo contenedor superior con transparencia -->
+<div class="top-bar">
+  <div class="price-text">
+    {{ raffle.precio | currency:'USD':'symbol':'1.0-0' }}
+  </div>
+  <p-button
+    icon="pi pi-pencil"
+    [rounded]="true"
+    [text]="true"
+    severity="contrast"
+    class="editar"
+    [routerLink]="['/edit-raffle', raffle.id]"
+  />
+</div>
 
 
 
-
-
-          <p-button icon="pi pi-pencil" [rounded]="true" [text]="true" severity="contrast" class="edit" [routerLink]="['/edit-raffle', raffle.id]" />
 
         <div class="p-card-body"
              style="box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.897); border-radius: 10px; text-align: center;">
 
-          <h4 class="fw-bold">{{ raffle.nombre }}</h4>
-          <p>{{ raffle.producto.nombre }}</p>
+          <h2 class="fw-bold" style="margin-top: 65px;" >{{ raffle.nombre }}</h2>
+          <h4 class="fw-bold" >{{ raffle.producto.nombre }}</h4>
 
-          <div class="formatted-description" [innerHTML]="raffle.producto.descripcion"></div>
+          <div class="formatted-description fw-bold" [innerHTML]="raffle.producto.descripcion"></div>
 
 
           <p-carousel
@@ -102,10 +125,10 @@
 
 
         <div class="p-card-body" style="box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.897); border-radius: 10px; text-align: center;">
-          <h4 class="fw-bold">{{ raffle.nombre }}</h4>
-          <p>{{ raffle.producto.nombre }}</p>
+          <h2 class="fw-bold">{{ raffle.nombre }}</h2>
+          <h4 class="fw-bold" >{{ raffle.producto.nombre }}</h4>
           <!--p>{{ raffle.producto.descripcion }}</!--p-->
-          <div class="formatted-description" [innerHTML]="raffle.producto.descripcion"></div>
+          <div class="formatted-description fw-bold" [innerHTML]="raffle.producto.descripcion"></div>
 
 
 
@@ -277,6 +300,7 @@ header="Crear Nueva Rifa"
         <input id="participants" type="number" pInputText [(ngModel)]="newRaffle.cantidadParticipantes" placeholder="Este sorteo aún no tiene participantes" name="participants" required class="w-full"
         (input)="validarCantidadParticipantes()"
         />
+
         <small class="text-red-500" *ngIf="cantidadInvalida">No pueden haber más de 100 participantes.</small>
       </div>
       <div class="col-12">
@@ -351,7 +375,7 @@ header="Crear Nueva Rifa"
 </p-dialog>
 
 
-<p-dialog
+<!--p-dialog--
 header="Ingresar Código VIP"
 [(visible)]="displayDialog1"
 [modal]="true"
@@ -359,21 +383,94 @@ header="Ingresar Código VIP"
 
   <div class="p-fluid grid flex-col gap-2">
     <div class="col-12">
-      <!--label-- for="productName" class="block font-bold mb-3">Ingrese el codigo VIP</!--label-->
+
       <input type="text" pInputText id="codigoVip" [(ngModel)]="codigoVip" name="productName" class="w-full" />
     </div>
+
+
+
+
+
 
   </div>
   <div class="flex justify-content-end gap-2">
     <button pButton type="button" label="Cancelar" icon="pi pi-times" class="p-button-text" (click)="hideProductDialog()"></button>
     <button pButton type="button" label="Validar Código" icon="pi pi-check" class="p-button-primary" [disabled]="!codigoVip"  (click)="validarYAsignarCodigoVip()"></button>
   </div>
+
+
+
+
+</!--p-dialog-->
+
+
+<p-dialog header="Ingresar Código VIP" [(visible)]="displayDialog1" [modal]="true" [style]="{ width: '90%' }">
+  <div class="p-fluid grid gap-2 justify-content-center">
+
+
+    <div class="col-12 flex justify-content-center">
+      <p-carousel
+      [value]="imagenes"
+      [numVisible]="1"
+      [numScroll]="1"
+      [responsiveOptions]="responsiveOptions"
+      (onPageChange)="onPageChange($event)">
+        <ng-template let-img pTemplate="item">
+          <div class="border-1 surface-border border-round m-2 p-3">
+            <div class="relative mx-auto">
+              <img [src]="'assets/' +  img.src" alt="Imagen" class="w-full border-round" />
+            </div>
+            <h1 class="text-center font-bold text-lg">{{ getCategoria(img.id) }}</h1>
+            <!--div-- class="mt-0 font-semibold text-xl text-center">
+              {{ '$' }}
+            </!--div-->
+
+              <p class="text-center text-sm text-gray-600">{{ getDescripcion(img.id) }}</p>
+            <p-button label="Comprar" [rounded]="true" [outlined]="true" severity="help" styleClass="w-full" (click)="comprarRifas(img)" />
+          </div>
+        </ng-template>
+      </p-carousel>
+
+
+    </div>
+
+
+
+    <!--div class="m-2 w-full">
+      <p-button label="Comprar" [rounded]="true" [outlined]="true" severity="help" styleClass="w-full" (click)="comprarRifas()" />
+    </div-->
+  </div>
+
+      <!--div class="col-12">
+      <label for="codigoVip" class="block font-bold mb-3">Ingrese el código VIP</label>
+      <input type="text" pInputText id="codigoVip" [(ngModel)]="codigoVip" name="codigoVip" class="w-full" />
+    </!--div>
+
+  <div-- class="flex justify-content-end gap-2">
+    <button pButton type="button" label="Cancelar" icon="pi pi-times" class="p-button-text" (click)="hideProductDialog()"></button>
+    <button pButton type="button" label="Validar Código" icon="pi pi-check" class="p-button-primary" [disabled]="!codigoVip" (click)="validarYAsignarCodigoVip()"></button>
+  </div-->
+
+<div class="col-12">
+  <div class="shadow-xl border-2 border-round-xl surface-border p-2 text-center">
+    <label for="codigoVip" class="block font-bold mb-3 text-lg">Ingrese el código VIP</label>
+    <input type="text" pInputText id="codigoVip" [(ngModel)]="codigoVip" name="codigoVip" class="w-full text-center border-round-xl p-3 shadow-md" />
+
+    <div class="flex justify-content-center gap-2 mt-4">
+      <button pButton type="button" label="Cancelar" icon="pi pi-times" class="p-button-text" (click)="hideProductDialog()"></button>
+      <button pButton type="button" label="Validar" icon="pi pi-check" class="p-button-primary" [disabled]="!codigoVip" (click)="validarYAsignarCodigoVip()"></button>
+    </div>
+  </div>
+</div>
+
+
 </p-dialog>
+
 
 
 <div class="card flex justify-content-center">
   <p-sidebar [(visible)]="sidebarVisible" >
-   <h3 class="align-items-center text-center">Opciones</h3>
+   <!--h3 class="align-items-center text-center">Opciones</!--h3-->
    <div class="overflow-y-auto">
     <div class="list-none py-3 m-0">
 
@@ -387,7 +484,13 @@ header="Ingresar Código VIP"
         <div class="separator">m</div>
         <div class="time-box">{{ remainingTime.seconds | number:'2.0-0' }}</div>
         <div class="separator">s</div>
+
+
       </div>
+
+        <p class="dias-restantes-text">Días restantes hasta el vencimiento</p>
+
+
       <ng-template #expiredTemplate>
         <div class="expired">La cuenta ha expirado.</div>
       </ng-template>
@@ -398,14 +501,14 @@ header="Ingresar Código VIP"
             <button pButton type="button" label="Ser VIP" class="p-button-success" (click)="abrirModal()"></button>
           </div>
         </li>
-        <li>
+        <!--li>
           <div class="sidebar-buttons">
             <button pButton type="button" label="Guardar"  class="p-button-primary" (click)="shareOnWhatsApp()"></button>
           </div>
-        </li>
+        </!--li-->
         <li>
           <div class="sidebar-buttons">
-            <button pButton type="button" label="Logout" class="p-button-danger p-button-sm" (click)="logout()"></button>
+            <button pButton type="button" label="Salir" class="p-button-danger p-button-sm" (click)="logout()"></button>
           </div>
         </li>
       </ul>

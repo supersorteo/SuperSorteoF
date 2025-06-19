@@ -1,6 +1,11 @@
 .centered h2,
 .centered small {
   text-align: center;
+
+}
+
+.fw-bold{
+  color: #5b5757;
 }
 
 .container{
@@ -48,6 +53,7 @@
 
 .link {
   text-decoration: none;
+  color: #5b5757;
 }
 
 
@@ -82,7 +88,52 @@
   //transition: background-color 0.3s;
   display: flex;
   align-items: center;
+  color: #51575e;
 }
+
+.editar{
+   position: absolute;
+  //top: 10px;
+  right: 10px;
+
+  font-size: 0.9em;
+  cursor: pointer;
+  //transition: background-color 0.3s;
+  display: flex;
+  align-items: center;
+  color: #51575e !important;
+}
+
+
+
+.top-bar {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  right: 10px;
+  z-index: 100;
+  background: rgba(34, 34, 34, 0.05);  /* Fondo oscuro con transparencia */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0.75rem;
+  border-radius: 5px;
+}
+
+.price-text {
+  color: #dcdfe1;
+  font-weight: bold;
+  background: #445367;
+  padding: 0.5rem 0.75rem;
+  border-radius: 5px;
+  font-weight: bold;
+  z-index: 100;
+}
+
+.top-bar:hover {
+  background: rgba(34, 34, 34, 0.1);
+}
+
 
 .raffle-code:hover {
   background-color: rgba(0, 0, 0, 0.9);
@@ -363,7 +414,7 @@ p{
   gap: 5px;
   font-size: 1rem;
   text-decoration: none;
-  color: #3c4249;
+  color: #5b5757;
   font-weight: bold;
 }
 
@@ -379,6 +430,7 @@ p{
   gap: 5px;
   cursor: pointer;
 }*/
+
 
 .raffle-code1 {
   background-color: #51575e;
@@ -419,6 +471,13 @@ p{
   font-family: 'Courier New', Courier, monospace;
   font-size: 1.5rem;
   margin-bottom: 5px;
+}
+
+.dias-restantes-text {
+  margin-top: 10px;
+  font-weight: bold;
+  color: #272020;
+  text-align: center;
 }
 
 .time-box {
@@ -467,7 +526,7 @@ p{
 
 @media screen and (max-width: 600px) {
   .raffle-container {
-    flex-direction: column;
+   // flex-direction: column;
     align-items: center;
   }
 
@@ -698,6 +757,10 @@ p{
   font-size: 1.5rem;               /* Ajusta según tus preferencias */
 }
 
+
+
+
+
 /* Puedes ajustar los estilos responsivos si lo consideras necesario */
 @media (max-width: 600px) {
   .active-raffles-container {
@@ -745,3 +808,14 @@ p{
   width: 0.5rem;
 margin: 0;
 }
+
+
+
+
+
+::ng-deep .p-sidebar {
+ background: rgba(255, 255, 255, 0.25) !important; /* 🔥 Blanco con 25% de opacidad */
+  backdrop-filter: blur(10px); /* 🔥 Suaviza el fondo */
+}
+
+

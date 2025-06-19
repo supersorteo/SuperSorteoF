@@ -5,11 +5,11 @@ import { Raffle } from '../../interfaces/raffle';
 import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
-
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 @Component({
   selector: 'app-raffle-banner',
   standalone: true,
-  imports: [CommonModule, ButtonModule, DialogModule],
+  imports: [CommonModule, ButtonModule, DialogModule, ProgressSpinnerModule],
   templateUrl: './raffle-banner.component.html',
   styleUrl: './raffle-banner.component.scss'
 })
@@ -24,15 +24,16 @@ export class RaffleBannerComponent  implements AfterViewInit{
   imageDataUrl: string | null = null;
   displayModal: boolean = false;
   safeDescription!: SafeHtml;
+  isGenerating: boolean = false;
 
   constructor(private sanitizer: DomSanitizer) { }
 
   ngAfterViewInit(): void {
-    setTimeout(() => this.captureBanner(), 2000);
+    //setTimeout(() => this.captureBanner(), 2000);
     this.loadDescription();
   }
 
-  captureBanner(): void {
+  captureBanner0(): void {
     html2canvas(this.banner.nativeElement, {
       allowTaint: true,
       useCORS: true
@@ -46,16 +47,47 @@ export class RaffleBannerComponent  implements AfterViewInit{
     });
   }
 
+  captureBanner(): void {
+  html2canvas(this.banner.nativeElement, {
+    allowTaint: true,
+    useCORS: true
+  })
+    .then(canvas => {
+      this.imageDataUrl = canvas.toDataURL('image/png');
+      this.isGenerating = false;
+      console.log('Imagen generada correctamente');
+    })
+    .catch(error => {
+      console.error('Error capturando banner:', error);
+      this.isGenerating = false;
+    });
+}
 
-  openBanner(): void {
+
+
+  openBanner0(): void {
     this.displayModal = true;
 
     setTimeout(() => {
       if (this.banner) {
         this.captureBanner();
       }
-    }, 500);
+    }, 1000);
   }
+
+openBanner(): void {
+  this.displayModal = true;
+  this.imageDataUrl = null; // resetear para evitar mostrar imagen anterior
+  this.isGenerating = true;
+
+  // Esperar a que el DOM del modal esté completamente renderizado
+  setTimeout(() => {
+    if (this.banner?.nativeElement) {
+      this.captureBanner();
+    }
+  }, 700); // suficiente para renderizar el modal y sus imágenes
+}
+
 
   // Método para capturar la imagen del banner
 

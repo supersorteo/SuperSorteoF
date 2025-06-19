@@ -1,6 +1,6 @@
 {
   "configVersion": 1,
-  "timestamp": 1749158444554,
+  "timestamp": 1750367671058,
   "index": "/index.html",
   "assetGroups": [
     {
@@ -15,11 +15,11 @@
         "/favicon.ico",
         "/index.html",
         "/light.css",
-        "/main-QAX5Y3UZ.js",
+        "/main-URXCJ3KM.js",
         "/manifest.webmanifest",
         "/polyfills-6EAL64PA.js",
         "/scripts-QD6RIN27.js",
-        "/styles-NBEYUZBU.css"
+        "/styles-PQVR4VPW.css"
       ],
       "patterns": []
     },
@@ -31,20 +31,11 @@
         "ignoreVary": true
       },
       "urls": [
-        "/assets/casa.jpeg",
-        "/assets/descarga.jpeg",
-        "/assets/equipo.jpeg",
-        "/assets/foto.jpg",
-        "/assets/icons/icon-128x128.png",
-        "/assets/icons/icon-144x144.png",
-        "/assets/icons/icon-152x152.png",
-        "/assets/icons/icon-192x192.png",
-        "/assets/icons/icon-384x384.png",
-        "/assets/icons/icon-512x512.png",
-        "/assets/icons/icon-72x72.png",
-        "/assets/icons/icon-96x96.png",
-        "/assets/logoOscuro.jpg",
-        "/assets/logoSorteo.jpg",
+        "/assets/icons/fondo1.png",
+        "/assets/icons/fondo2.png",
+        "/assets/icons/fondo3.png",
+        "/assets/icons/fondo4.png",
+        "/assets/icons/fondo5.png",
         "/media/color-3LUHUBGQ.png",
         "/media/hue-RMMBQOAC.png",
         "/media/primeicons-4GST5W3O.woff2",
@@ -63,26 +54,17 @@
   ],
   "dataGroups": [],
   "hashTable": {
-    "/assets/casa.jpeg": "b84e2099ae60b0e8fa2c75f645fd83d26218abf7",
-    "/assets/descarga.jpeg": "267353b7867eb07888b3dd598a02090480147750",
-    "/assets/equipo.jpeg": "fddc48b8645e037160316d148d73748e2d46e3ba",
-    "/assets/foto.jpg": "6a7fa68f34491b91f10534c483f182ebb943dc1c",
-    "/assets/icons/icon-128x128.png": "f912963bdc6d5a38d8f1dd0afbaab2ce8d657acb",
-    "/assets/icons/icon-144x144.png": "b155fd5f2fd5d2ea7760721063003c4cd95fd783",
-    "/assets/icons/icon-152x152.png": "eae6e0f0c8afb8aaae339e2a569b43e9238e5e6c",
-    "/assets/icons/icon-192x192.png": "15c4180454633880d98674aa7394656196c91584",
-    "/assets/icons/icon-384x384.png": "94a915751ef6c9282df9aea405ad679230631814",
-    "/assets/icons/icon-512x512.png": "1de182f76f7329dfa8f9fcdd1fdcdd695bea6a99",
-    "/assets/icons/icon-72x72.png": "aa88a6096bd973be7f6d7a5489bfa6bc2463f8c4",
-    "/assets/icons/icon-96x96.png": "7fb8f59c30ce2ff12c700321a0b39e14b3dc8f95",
-    "/assets/logoOscuro.jpg": "b43403e100b89af62138b9ab4371c5b0ed427435",
-    "/assets/logoSorteo.jpg": "0925c301ffe8f13d5228936466d3d45a03d0cd88",
+    "/assets/icons/fondo1.png": "7cd709f655aba1ec0c85a7baee0713f7d59883e3",
+    "/assets/icons/fondo2.png": "ad0cf4109a63525da520b75072c42e73427671ee",
+    "/assets/icons/fondo3.png": "c0803158382cf35cd44616927c0615e639282ce6",
+    "/assets/icons/fondo4.png": "f6901095fc048ba0467a6905f132164b9b4964a0",
+    "/assets/icons/fondo5.png": "ded5f53f9c2ec6d127f35b8b187f07ac4bade11b",
     "/dark.css": "70cf028d297c6cb37dab09e048c58a0a2c722c48",
     "/favicon.ico": "9c39f434fe1261f68c5e3eefdf734630d99c5670",
-    "/index.html": "353fc18a680b575c8433a48fa6d59e6562d4165f",
+    "/index.html": "2b5c84410ecc11d662531654c5a310a99dfed96f",
     "/light.css": "db65c64cc44ae4dfb8d7d3f47bc7ec29be266273",
-    "/main-QAX5Y3UZ.js": "07ce657be6ce73c81e04f917e38886dcb57e6978",
-    "/manifest.webmanifest": "6dda8255f7ddd0a1918da1f9565401e813637edb",
+    "/main-URXCJ3KM.js": "980bf31215e420128e8e4a4c370a150c05114a04",
+    "/manifest.webmanifest": "4696839a6d7bdea6121f8ec95bc0f5d929c0c0a1",
     "/media/color-3LUHUBGQ.png": "ff4c4bcb2207891b292f544edb4da9d2df5d45cf",
     "/media/hue-RMMBQOAC.png": "f81ae627637a684614aa726e206c73ce099a01fd",
     "/media/primeicons-4GST5W3O.woff2": "837c1279b6af9d297f34fdb43e6fcc9206a79f32",
@@ -97,7 +79,7 @@
     "/media/roboto-v20-latin-ext_latin-regular-ZEDEYGV7.woff": "c574d647bbf9412b82b0cdcb0e702a3a93ffd022",
     "/polyfills-6EAL64PA.js": "d874147a12a6570d9b44e99935e9de8b7f3cabbc",
     "/scripts-QD6RIN27.js": "c47e1278096df0f4cdd0c264b6867f98f688df4e",
-    "/styles-NBEYUZBU.css": "cb1f124b99ce9cb963d870b2eac955e099d33b42"
+    "/styles-PQVR4VPW.css": "1779cda08f7553951b4efc0e1573cc9eec68714a"
   },
   "navigationUrls": [
     {

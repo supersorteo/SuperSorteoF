@@ -20,6 +20,8 @@ export class RaffleService {
 
   private VIPUrl ='https://sweet-laughter-production.up.railway.app/codigos-vip';
 
+  private api = 'https://sweet-laughter-production.up.railway.app/usuarios'
+
   constructor(private http: HttpClient) { }
 
 
@@ -63,6 +65,21 @@ export class RaffleService {
         .pipe(catchError(this.handleError));
     }
 
+
+  activarVip(userId: number, codigoVip: string): Observable<any> {
+  const url = `${this.api}/${userId}/activar-vip`; // 🔥 Usamos la propiedad `api`
+  return this.http.put<any>(url, { codigoVip }).pipe(
+    catchError((error) => this.handleError(error))
+  );
+}
+
+
+obtenerUsuarioPorId(userId: number): Observable<any> {
+  const url = `${this.api}/${userId}`;
+  return this.http.get<any>(url).pipe(
+    catchError((error) => this.handleError(error))
+  );
+}
 
 
 

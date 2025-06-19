@@ -151,7 +151,7 @@ export class LoginComponent implements OnInit {
   }
 
 
-    onLogin(): void {
+    onLogin0(): void {
       if (this.loginForm.valid) {
       const user: User = this.loginForm.value;
       this.authService.login(user).subscribe(
@@ -171,6 +171,43 @@ export class LoginComponent implements OnInit {
         this.showClientSideErrorsLogin();
       }
     }
+
+
+     onLogin(): void {
+  if (this.loginForm.valid) {
+    const user: { email: string, password: string } = this.loginForm.value;
+
+    this.authService.login(user).subscribe({
+      next: (res) => {
+        console.log("✅ Usuario logueado:", res.usuario);
+        console.log("🔍 ¿Es primer login?", res.primerInicioSesion);
+
+        // 🔥 Guardamos el usuario en `localStorage`
+        localStorage.setItem('currentUser', JSON.stringify(res.usuario));
+        localStorage.setItem('primerInicioSesion', JSON.stringify(res.primerInicioSesion));
+
+        // 🔥 Si es la primera vez que inicia sesión, mostrar un mensaje especial
+        if (res.primerInicioSesion) {
+         /* Swal.fire({
+            icon: "info",
+            title: "¡Bienvenido!",
+            text: "Este es tu primer inicio de sesión. ¡Explora el sistema!",
+            confirmButtonText: "Aceptar"
+          });*/
+          console.log("Este es tu primer inicio de sesión.")
+
+        }
+
+        this.router.navigate(['/dashboard']);
+      },
+      error: (error) => {
+        this.showLoginError(error);
+      }
+    });
+  } else {
+    this.showClientSideErrorsLogin();
+  }
+}
 
 
     private showLoginError(error: string): void {

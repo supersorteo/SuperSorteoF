@@ -1,19 +1,32 @@
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { catchError, Observable, throwError } from 'rxjs';
-import { User } from '../interfaces/user';
+import { Observable } from 'rxjs';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class AuthService {
-  private apiUrl = 'http://localhost:8080/auth';
 
-  constructor(private http: HttpClient) { }
+   private readonly baseUrl = 'https://sweet-laughter-production.up.railway.app/api/admin';
+  constructor(private http: HttpClient) {}
 
-  register(user: User): Observable<string> { return this.http.post<string>(`${this.apiUrl}/register`, user).pipe( catchError(this.handleError) ); }
-  private handleError(error: HttpErrorResponse): Observable<never> { let errorMsg = 'Error desconocido'; if (error.error instanceof ErrorEvent) { errorMsg = `Error: ${error.error.message}`; } else { errorMsg = error.error || 'Error desconocido'; } return throwError(errorMsg); }
+  // 🔐 Login de administrador
+  loginAdmin(username: string, password: string): Observable<any> {
+    return this.http.post(`${this.baseUrl}/login`, { username, password });
+  }
 
+  // 🔁 Cambiar contraseña
+  cambiarPassword0(username: string, newPassword: string): Observable<any> {
+    return this.http.put(`${this.baseUrl}/password`, { username, newPassword });
+  }
 
+  cambiarPassword1(username: string, newPassword: string): Observable<string> {
+  return this.http.put(`${this.baseUrl}/password`, { username, newPassword }, { responseType: 'text' });
+}
+
+  cambiarPassword(username: string, newPassword: string): Observable<{ success: boolean, message: string }> {
+    return this.http.put<{ success: boolean, message: string }>(
+      `${this.baseUrl}/password`,
+      { username, newPassword }
+    );
+  }
 
 }
