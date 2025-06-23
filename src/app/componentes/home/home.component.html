@@ -44,6 +44,8 @@
         <li><a [routerLink]="(['/login'])">Login</a></li>
         <li><a (click)="scrollToSection('participar')">Participar</a></li>
         <li><a (click)="scrollToSection('formulario')">Formulario</a></li>
+        <li><a (click)="abrirTerminosLegales()">Términos Legales</a></li>
+
       </ul>
 
     </nav>
@@ -170,20 +172,112 @@
 </section>
 
 
+<p-dialog
+
+  [(visible)]="visibleTerminos"
+  (onShow)="onDialogShow()"
+  (onHide)="onDialogHide()"
+  [modal]="true"
+  [style]="{ width: '60vw' }"
+  [breakpoints]="{ '1199px': '75vw', '575px': '95vw' }"
+  [maximizable]="true"
+  [draggable]="false"
+  [resizable]="false"
+  [dismissableMask]="true">
 
 
-<p-button label="Primary"  [outlined]="true" severity="help" class="floating-button" (onClick)="showDialog()" ></p-button>
+
+ <div #contenidoTexto id="terminos-legales" class="terminos-container">
+    <img
+    src="assets/logoOsc.jpg"
+    alt="Logo Supersorteo"
+    class="logo-dialog-img"
+  />
+  <h2>Términos y Condiciones de Servicio</h2>
+
+  <h3>1. Aceptación de los Términos</h3>
+  <p>
+    Al acceder o utilizar este sitio web y/o nuestros servicios, usted acepta quedar legalmente vinculado por estos Términos y Condiciones. Si no está de acuerdo con alguno de estos términos, por favor no utilice nuestros servicios.
+  </p>
+
+  <h3>2. Descripción del Servicio</h3>
+  <p>
+    [Nombre de la empresa o proyecto] ofrece [breve descripción del servicio: por ejemplo, "una plataforma digital para realizar presupuestos de construcción"]. El uso de este servicio puede requerir el registro y aceptación de condiciones adicionales.
+  </p>
+
+  <h3>3. Uso del Servicio</h3>
+  <p>
+    El usuario se compromete a utilizar este servicio únicamente con fines lícitos y conforme a la normativa vigente. Está prohibido el uso del sitio para actividades fraudulentas, ilícitas o que puedan dañar el funcionamiento del sistema o afectar a otros usuarios.
+  </p>
+
+  <h3>4. Propiedad Intelectual</h3>
+  <p>
+    Todos los contenidos del sitio, incluyendo textos, imágenes, logos, marcas, bases de datos, y software, son propiedad de [Nombre de la empresa o proyecto] o de sus respectivos titulares y están protegidos por las leyes de propiedad intelectual. Queda prohibida su reproducción, distribución o modificación sin autorización previa.
+  </p>
+
+  <h3>5. Privacidad de los Datos</h3>
+  <p>
+    Los datos personales que el usuario proporcione serán tratados conforme a nuestra Política de Privacidad, la cual forma parte integral de estos Términos y Condiciones. Al usar el servicio, usted autoriza la recopilación y tratamiento de sus datos conforme a dicha política.
+  </p>
+
+  <h3>6. Responsabilidad</h3>
+  <p>
+    El servicio se presta “tal cual” y “según disponibilidad”. No garantizamos que el servicio esté libre de errores, interrupciones o fallos técnicos. [Nombre de la empresa] no será responsable por daños directos o indirectos derivados del uso del sitio o de los contenidos publicados.
+  </p>
+
+  <h3>7. Modificaciones</h3>
+  <p>
+    Nos reservamos el derecho de modificar estos Términos y Condiciones en cualquier momento. Los cambios entrarán en vigor desde el momento en que se publiquen en este sitio. El uso continuado del servicio implica la aceptación de las modificaciones.
+  </p>
+
+  <h3>8. Terminación</h3>
+  <p>
+    Nos reservamos el derecho de suspender o cancelar el acceso al servicio a cualquier usuario que incumpla estos términos o realice un uso indebido del sitio.
+  </p>
+
+  <h3>9. Legislación Aplicable y Jurisdicción</h3>
+  <p>
+    Estos Términos y Condiciones se regirán por las leyes de la República Argentina. Cualquier controversia será sometida a la jurisdicción de los tribunales ordinarios con asiento en la Ciudad Autónoma de Buenos Aires, renunciando el usuario a cualquier otro fuero que pudiera corresponderle.
+  </p>
+</div>
+
+
+
+
+<ng-template pTemplate="footer">
+  <ng-container *ngIf="isReady; else esperando">
+    <div class="flex justify-content-center gap-2">
+      <p-button icon="pi pi-times" label="Cerrar" class="p-button-text" (click)="visibleTerminos = false"></p-button>
+      <p-button icon="pi pi-download" label="Descargar PDF" severity="primary" (click)="descargarPDF()"></p-button>
+        <!--p-button icon="pi pi-download" label="Descargar Word" severity="help" (click)="descargarWord()"></p-button-->
+    </div>
+  </ng-container>
+
+  <ng-template #esperando>
+    <div class="flex justify-content-center align-items-center gap-2" style="min-height: 2rem;">
+      <p>Preparando contenido...</p>
+      <p-progressSpinner styleClass="custom-spinner" strokeWidth="4" ></p-progressSpinner>
+    </div>
+  </ng-template>
+</ng-template>
+
+
+
+</p-dialog>
+
+
+<p-button label="Preguntas"  [outlined]="true" severity="contrast" class="floating-button" (onClick)="showDialog()" ></p-button>
 
 
 <p-dialog
-  header="Header"
+  header="Preguntas frecuentes"
   [(visible)]="visible"
   [modal]="true"
-  [style]="{ width: '80%' }"
+  [style]="{ width: '90%' }"
   styleClass="custom-dialog">
   <p-accordion>
     <p-accordionTab [header]="tab.title" *ngFor="let tab of tabs">
-      <p class="m-0">
+      <p class="m-0 respuesta-texto">
         {{ tab.content }}
       </p>
     </p-accordionTab>

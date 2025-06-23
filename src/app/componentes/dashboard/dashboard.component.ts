@@ -1771,7 +1771,7 @@ compartirRifa(raffle: any) {
   }
 
   shareOnWhatsApp(): void {
-    const url = 'https://pruebafront-bzli.onrender.com/';
+    const url = 'https://sweet-laughter-production.up.railway.app/';
     const text = `Necesito un codigo VIP. ${url}`;
     const whatsappUrl = `whatsapp://send?text=${encodeURIComponent(text)}`; window.location.href = whatsappUrl;
   }
