@@ -1,5 +1,7 @@
-<div class="container p-2 bg-light rounded shadow-sm page-dashboard">
+<div class="background-layer"></div>
   <p-toast/>
+<div class="container p-2 bg-light rounded shadow-sm page-dashboard">
+
 
   <div *ngIf="mostrarVideo" class="video-container">
   <video width="100%" controls autoplay (ended)="ocultarVideo()">
@@ -140,9 +142,9 @@
 
 
        <div *ngIf="getWinningEntry(raffle.id) as winnerEntry" class="winning-info">
-  <h5>🏆 Resultado del Sorteo</h5>
-  <p><strong>Número ganador:</strong> {{ winnerEntry.rifa.winningNumber ?? 'N/A' }}</p>
-  <p><strong>Ganador:</strong>
+  <h5 style="color: aliceblue;">🏆 Resultado del Sorteo</h5>
+  <p  style="color: aliceblue;" ><strong>Número ganador:</strong> {{ winnerEntry.rifa.winningNumber ?? 'N/A' }}</p>
+  <p  style="color: aliceblue;" ><strong>Ganador:</strong>
     <span *ngIf="winnerEntry.ganador; else noWinner">
       {{ winnerEntry.ganador.name }} {{ winnerEntry.ganador.lastName }}
     </span>
@@ -229,11 +231,11 @@
 
 
   <div class="floating-button-container">
-    <button pButton type="button" label="Crear Nueva Rifa" icon="pi pi-plus" class="p-button-success" (click)="showDialog()"></button>
+    <button pButton type="button" label="NUEVA RIFA" icon="pi pi-plus" class="botoncrear" (click)="showDialog()"></button>
   </div>
 
   <div class="floating-button">
-    <p-button (onClick)="sidebarVisible = true" icon="pi pi-bars" [rounded]="true" severity="secondary"[text]="true" />
+    <p-button (onClick)="sidebarVisible = true" icon="pi pi-bars" [rounded]="true"  severity="secondary"[text]="true" />
   </div>
 
 </div>
@@ -315,12 +317,12 @@ header="Crear Nueva Rifa"
       </div>
 
       <div class="col-12">
-        <button pButton type="button" label="Agregar Producto" icon="pi pi-plus" class="p-button-primary" (click)="showProductDialog()"></button>
+        <button pButton type="button" label="Agregar Producto" icon="pi pi-plus" class="p-button-success" (click)="showProductDialog()"></button>
       </div>
     </div>
     <div class="flex justify-content-end gap-2">
       <button pButton type="button" label="Cancelar" icon="pi pi-times" class="p-button-danger" (click)="hideDialog()"></button>
-      <button pButton type="submit" label="Guardar" icon="pi pi-check" class="p-button-primary" [disabled]="!raffleForm.form.valid || !newRaffle.producto"></button>
+      <button pButton type="submit" label="Guardar" icon="pi pi-check" class="p-button-success" [disabled]="!raffleForm.form.valid || !newRaffle.producto"></button>
     </div>
   </form>
 </p-dialog>
@@ -363,13 +365,13 @@ header="Crear Nueva Rifa"
 
 
       <div class="col-12">
-        <button pButton type="button" label="Subir Imagenes" icon="pi pi-upload" (click)="openSubir()"></button>
+        <button pButton type="button" label="Subir Imagenes" icon="pi pi-upload" class="p-button-success" (click)="openSubir()"></button>
       </div>
     </div>
 
     <div class="flex justify-content-end gap-2">
       <button pButton type="button" label="Cancelar" icon="pi pi-times" class="p-button-danger" (click)="hideProductDialog()"></button>
-      <button pButton type="submit" label="Guardar" icon="pi pi-check" class="p-button-primary" [disabled]="!productForm.form.valid"></button>
+      <button pButton type="submit" label="Guardar" icon="pi pi-check" class="p-button-success" [disabled]="!productForm.form.valid"></button>
     </div>
   </form>
 </p-dialog>
@@ -458,7 +460,7 @@ header="Ingresar Código VIP"
 
     <div class="flex justify-content-center gap-2 mt-4">
       <button pButton type="button" label="Cancelar" icon="pi pi-times" class="p-button-text" (click)="hideProductDialog()"></button>
-      <button pButton type="button" label="Validar" icon="pi pi-check" class="p-button-primary" [disabled]="!codigoVip" (click)="validarYAsignarCodigoVip()"></button>
+      <button pButton type="button" label="Validar" icon="pi pi-check" class="p-button-success" [disabled]="!codigoVip" (click)="validarYAsignarCodigoVip()"></button>
     </div>
   </div>
 </div>
@@ -571,7 +573,7 @@ header="Ingresar Código VIP"
 
 
     <div class="flex justify-content-center">
-      <p-button label="Cerrar" severity="contrast" (click)="hideProductDialog1()" />
+      <p-button label="Cerrar" severity="success" class="p-button-success" (click)="hideProductDialog1()" />
 
   </div>
   </p-dialog>

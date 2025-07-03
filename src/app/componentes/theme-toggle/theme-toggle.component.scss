@@ -13,7 +13,8 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background-color: #759460; /* Color de fondo (modo claro) */
+  //background-color: #759460; /* Color de fondo (modo claro) */
+  background-color: rgba(181, 0, 255, 0.72);;
   transition: background-color 0.3s ease-in-out;
   z-index: 1000;
 }

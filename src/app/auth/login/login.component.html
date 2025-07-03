@@ -55,15 +55,16 @@
   <div class="auth-card">
 
     <div class="logo-container">
-      <img src="assets/logoSorteo.jpg" alt="Logo Sorteo" class="logo" />
+      <img src="assets/logoSorteo.jpg" alt="Logo Sorteo" class="logo" routerLink="/home" />
     </div>
 
     <form [formGroup]="loginForm" (ngSubmit)="onLogin()" *ngIf="isLogin">
       <h1>Inicia Sesión</h1>
-      <span>Ingresa tus credenciales</span>
+      <!--span>Ingresa tus credenciales</!--span-->
 
       <input type="email" pInputText placeholder="Correo" formControlName="email" />
-      <input type="password" pInputText placeholder="Contraseña" formControlName="password" />
+      <!--input type="password" pInputText placeholder="Contraseña" formControlName="password" /-->
+      <p-password placeholder="Contraseña" formControlName="password" [toggleMask]="true" />
       <a (click)="showDialog()">¿Olvidaste tu contraseña?</a>
 
       <button pButton type="submit" label="Ingresar" class="p-button-success w-full mt-2"></button>
@@ -76,9 +77,10 @@
 
       <input type="text" pInputText placeholder="Nombre" formControlName="name" />
       <input type="email" pInputText placeholder="Correo" formControlName="email" />
-      <input type="password" pInputText placeholder="Contraseña" formControlName="password" />
-      <input type="password" pInputText placeholder="Confirmar Contraseña" formControlName="confirmarPassword" />
-
+      <!--input type="password" pInputText placeholder="Contraseña" formControlName="password" /-->
+      <p-password placeholder="Contraseña" formControlName="password" [toggleMask]="true" />
+      <!--input type="password" pInputText placeholder="Confirmar Contraseña" formControlName="confirmarPassword" /-->
+      <p-password placeholder="Confirmar Contraseña" formControlName="confirmarPassword" [toggleMask]="true" />
       <!--p-inputMask-- mask="99999999" placeholder="Teléfono" formControlName="telefono"  ></!--p-inputMask-->
 
       <p-inputMask

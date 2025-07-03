@@ -1,61 +1,15 @@
-<!--div class="card">
+
+
+
+<!--div-- class="card">
   <p-toolbar>
     <div class="p-toolbar-group-start">
-      <div class="floating-button">
 
-
-        <img src="assets/logoSorteo.jpg" alt="Logo Sorteo" class="toolbar-logo" />
-      </div>
-    </div>
-    <div class="p-toolbar-group-center">
-      <div class="toolbar-center-content">
-        <img src="assets/logoSorteo.jpg" alt="Logo Sorteo" class="toolbar-logo" />
-        <ng-container *ngIf="isExternal; else normalGreeting">
-          <h3 class="toolbar-greeting">
-            Rifa perteneciente al administrador <span id="usuario-registrado" class="text-primary">{{ userName }}</span>
-          </h3>
-        </ng-container>
-        <ng-template #normalGreeting>
-          <h3 class="toolbar-greeting">
-            Hola, <span id="usuario-registrado" class="text-primary">{{ userName }}</span>!
-          </h3>
-        </ng-template>
-      </div>
-    </!--div-->
-
-    <!--div class="p-toolbar-group-center">
-      <div class="toolbar-center-content">
-
-        <ng-container *ngIf="isExternal; else normalGreeting">
-          <h3 class="toolbar-greeting">
-            Rifa del administrador <span id="usuario-registrado" class="text-primary">{{ userName }}</span>
-          </h3>
-        </ng-container>
-        <ng-template #normalGreeting>
-          <h3 class="toolbar-greeting">
-            Hola, <span id="usuario-registrado" class="text-primary">{{ userName }}</span>!
-          </h3>
-        </ng-template>
-      </div>
-    </!--div>
-
-
-    <div class="p-toolbar-group-end">
-
-
-    </div>
-  </p-toolbar>
-</!--div-->
-
-<div class="card">
-  <p-toolbar>
-    <div class="p-toolbar-group-start">
-      <!-- Cuando es externo -->
       <ng-container *ngIf="isExternal; else showLogoOnly">
         <div class="external-header">
 
           <span class="external-text">Este sorteo se hizo con:</span>
-               <a href="http://localhost:4200/" target="_blank" rel="noopener">
+               <a href="https://supersorteo-5f1f3.firebaseapp.com/" target="_blank" rel="noopener">
                 <img
                   src="assets/logoSorteo.jpg"
                   alt="Logo Sorteo"
@@ -64,7 +18,7 @@
               </a>
         </div>
       </ng-container>
-      <!-- Versión normal -->
+
       <ng-template #showLogoOnly>
         <div class="floating-button">
           <img src="assets/logoSorteo.jpg"
@@ -77,10 +31,7 @@
     <div class="p-toolbar-group-center">
       <div class="toolbar-center-content">
         <ng-container *ngIf="isExternal; else normalGreeting">
-          <!--h3 class="toolbar-greeting">
-            Rifa del administrador
-            <span id="usuario-registrado" class="text-primary">{{ userName }}</span>
-          </!--h3-->
+
         </ng-container>
         <ng-template #normalGreeting>
           <h3 class="toolbar-greeting">
@@ -92,8 +43,54 @@
     </div>
 
     <div class="p-toolbar-group-end">
-      <!-- … -->
+
     </div>
   </p-toolbar>
-</div>
+</!--div-->
 
+
+<!-- navbar.component.html -->
+<div class="card" *ngIf="!isExternal">
+  <p-toolbar>
+    <div class="p-toolbar-group-start">
+      <ng-container *ngIf="isExternal; else showLogoOnly">
+        <div class="external-header">
+          <span class="external-text">Este sorteo se hizo con:</span>
+          <a href="https://supersorteo-5f1f3.firebaseapp.com/" target="_blank" rel="noopener">
+            <img
+              src="assets/logoSorteo.jpg"
+              alt="Logo Sorteo"
+              class="toolbar-logo external-logo"
+            />
+          </a>
+        </div>
+      </ng-container>
+
+      <ng-template #showLogoOnly>
+        <div class="floating-button">
+          <img
+            src="assets/logoSorteo.jpg"
+            alt="Logo Sorteo"
+            class="toolbar-logo"
+            routerLink="/home"
+          />
+        </div>
+      </ng-template>
+    </div>
+
+    <div class="p-toolbar-group-center">
+      <div class="toolbar-center-content">
+        <ng-container *ngIf="isExternal; else normalGreeting">
+        </ng-container>
+        <ng-template #normalGreeting>
+          <h3 class="toolbar-greeting">
+            Hola,
+            <span id="usuario-registrado" class="text-primary">{{ userName }}</span>!
+          </h3>
+        </ng-template>
+      </div>
+    </div>
+
+    <div class="p-toolbar-group-end"></div>
+  </p-toolbar>
+</div>

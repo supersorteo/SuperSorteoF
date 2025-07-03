@@ -58,14 +58,6 @@ export class AuthenticationService {
 
 
 
-   // Método para iniciar sesión
-   login0(credentials: { email: string, password: string }): Observable<User> {
-    // Enviamos una solicitud POST al backend con las credenciales
-    return this.http.post<User>(`${this.apiUrl}/login`, credentials).pipe(
-      // Manejo de errores
-      catchError(this.handleError1)
-    );
-  }
 
   login(credentials: { email: string, password: string }): Observable<{ usuario: User, primerInicioSesion: boolean }> {
   return this.http.post<{ usuario: User, primerInicioSesion: boolean }>(`${this.apiUrl}/login`, credentials).pipe(

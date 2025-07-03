@@ -716,6 +716,7 @@ shareRaffleViaWhatsApp(): void {
 }
 
 
+
 whatsappAppLink(): string {
   const phone = this.raffle?.usuario?.telefono ?? '';
   const clean = phone.replace(/\D+/g, '');

@@ -234,31 +234,46 @@ input {
   width: 40px;
 }*/
 
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+  background: radial-gradient(circle, rgba(27, 116, 250, 1) 0%, rgba(137, 94, 180, 1) 61%, rgba(255, 36, 61, 1) 100%);
+}
+
+/* Asegurar que el componente raíz no interfiera */
+:host {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
 .auth-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
+  height: 100vh;
+  width: 100vw;
+  margin: 0;
+  padding: 0;
+  position: fixed; /* Asegura que cubra toda la ventana */
   padding: 2rem;
-  //background: linear-gradient(to right, #ff4b2b, #ff416c);
-
-
-
-
+  top: 0;
+  left: 0;
+  background: radial-gradient(circle, rgba(27, 116, 250, 1) 0%, rgba(137, 94, 180, 1) 61%, rgba(255, 36, 61, 1) 100%);
 }
 
 .auth-card {
   background: #d2c6c6;
   padding: 2rem;
   border-radius: 15px;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
   width: 100%;
   max-width: 400px;
   box-sizing: border-box;
   text-align: center;
-  box-shadow: 0 14px 28px rgba(0,0,0,0.25),
-              0 10px 10px rgba(0,0,0,0.22);
-
 }
 
 .logo-container {
@@ -268,7 +283,7 @@ input {
 }
 
 .logo {
-  max-width: 120px;    /* Tamaño máximo para pantallas grandes */
+  max-width: 160px;    /* Tamaño máximo para pantallas grandes */
   width: 100%;         /* Se adapta al ancho del contenedor */
   height: auto;
   transition: all 0.3s ease;
@@ -326,7 +341,7 @@ input {
   }
 
   .logo {
-    max-width: 80px; /* Reduce el tamaño del logo en pantallas pequeñas */
+    max-width: 140px; /* Reduce el tamaño del logo en pantallas pequeñas */
   }
 }
 
@@ -335,4 +350,77 @@ input {
   width: 100%;
   border-radius: 8px;
   margin-bottom: 5px;
+}
+
+
+/* Style inputs and p-password to match */
+.auth-card input,
+:host ::ng-deep .p-inputtext,
+:host ::ng-deep .p-password input {
+  width: 100%;
+  margin: 0.5rem 0;
+  padding: 0.75rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+  font-size: 1rem;
+}
+
+/* Ensure p-password container takes full width */
+:host ::ng-deep .p-password {
+  width: 100%;
+  margin-bottom: 5px;
+}
+
+/* Style placeholder for consistency */
+.auth-card input::placeholder,
+:host ::ng-deep .p-inputtext::placeholder,
+:host ::ng-deep .p-password input::placeholder {
+  color: #6c757d;
+  opacity: 1;
+}
+
+/* Focus styles for consistency */
+.auth-card input:focus,
+:host ::ng-deep .p-inputtext:focus,
+:host ::ng-deep .p-password input:focus {
+  outline: none;
+  border-color: #ff4b2b;
+  box-shadow: 0 0 5px rgba(255, 75, 43, 0.5);
+}
+
+/* Style the toggle mask icon in p-password */
+:host ::ng-deep .p-password .p-password-toggle-mask-icon {
+  margin-right: 0.5rem;
+  color: #672433;
+}
+
+/* Ensure p-inputmask matches other inputs */
+:host ::ng-deep .p-inputmask input {
+  width: 100%;
+  margin: 0.5rem 0;
+  padding: 0.75rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+  font-size: 1rem;
+}
+
+.auth-card a:hover {
+  text-decoration: underline;
+}
+
+:host ::ng-deep .p-button.w-full {
+  width: 100%;
+  margin: 0.5rem 0;
+  border-radius: 8px;
+}
+
+@media (max-width: 480px) {
+  .auth-card input,
+  :host ::ng-deep .p-inputtext,
+  :host ::ng-deep .p-password input,
+  :host ::ng-deep .p-inputmask input {
+    padding: 0.6rem;
+  }
 }

@@ -1,3 +1,27 @@
+:host {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.raffle-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+ // background: radial-gradient(circle, rgba(27, 116, 250, 1) 0%, rgba(137, 94, 180, 1) 61%, rgba(255, 36, 61, 1) 100%);
+ // background: rgba(181, 0, 255, 0.72);
+  background: #523c5c;
+  background: linear-gradient(180deg, rgba(247, 45, 180, 1) 2%, rgba(143, 226, 242, 1) 100%);
+  overflow-x: hidden;
+  z-index: 0;
+
+}
+
+
+
+
 .image-container {
   width: 100%;
   //height: 250px;
@@ -37,6 +61,7 @@
   /* Otros estilos existentes */
 }
 
+/*
 :host ::ng-deep .custom-button {
   background-color: #0dcaf0 !important;
   border-color: #0dcaf0 !important;
@@ -46,27 +71,61 @@
   background: radial-gradient(circle, #0dcaf0 40%, #4f5557 100%) !important;
   border: none !important;
   height: 60px;
-  line-height: 60px; /* Para centrar verticalmente el texto */
+  line-height: 60px;
   font-size: 1rem;
   width: 100%;
   box-shadow: inset 0px 2px 5px rgba(0, 0, 0, 0.3);
 
+}*/
+
+:host ::ng-deep .custom-button {
+  width: 100%;
+  font-weight: bold !important;
+  //background: radial-gradient(circle, rgb(27, 49, 250) 0%, rgba(137, 94, 180, 1) 61%, rgba(255, 36, 61, 1) 100%);
+ // background: radial-gradient(circle, rgb(27, 49, 250) 0%, rgb(137, 94, 180) 61%, rgb(36 148 255) 100%);
+   color: #4b484a !important;
+
+ // border: none; /* Elimina el borde predeterminado de PrimeNG */
+  height: 60px;
+  line-height: 60px;
+  font-size: 1.2rem;
+  border-radius: 20px; /* Redondea los bordes para un mejor efecto */
+  transition: all 0.3s ease; /* Suaviza la transición al hover */
+ // border-color: #0e0e0f !important;
+
+  border-color: solid 2px white;
+  background: #f72d85;
+  background: linear-gradient(266deg, rgba(247, 45, 133, 1) 10%, rgba(247, 186, 45, 1) 40%, rgba(143, 226, 242, 1) 100%);
+
+
+
+}
+
+.custom-button:hover {
+  opacity: 0.9; /* Efecto al pasar el mouse */
 }
 
 
 :host ::ng-deep .custom-button1 {
-  background-color: #0dcaf0 !important;
-  border-color: #0dcaf0 !important;
-  border-radius: 10px !important;
-  color: #fff !important;
+  //background-color: #0dcaf0 !important;
+ // border-color: #0dcaf0 !important;
+  border-radius: 20px !important;
+  //color: #fff !important;
+  color: #4b484a !important;
   font-weight: bold !important;
-  background: radial-gradient(circle, #0dcaf0 40%, #4f5557 100%) !important;
-  border: none !important;
+  //background: radial-gradient(circle, #0dcaf0 40%, #4f5557 100%) !important;
+ // background: radial-gradient(circle, rgb(27, 49, 250) 0%, rgb(137, 94, 180) 61%, rgb(36 148 255) 100%);
+  //border: none !important;
   height: 50px;
   line-height: 60px; /* Para centrar verticalmente el texto */
   font-size: 1.2rem;
   //width: 100%;
-  box-shadow: inset 0px 2px 5px rgba(0, 0, 0, 0.3);
+  //box-shadow: inset 0px 2px 5px rgba(0, 0, 0, 0.3);
+
+  border: solid 2px #ffffff;
+    background: #f72d85;
+    background: linear-gradient(266deg, rgba(247, 45, 133, 1) 0%, rgba(143, 242, 235, 1) 33%, rgb(189 245 106) 73%);
+
 
 }
 
@@ -107,28 +166,25 @@
   margin: 0;
 }
 
-/*
-.scroll-container {
-  //max-height: 600px;
-  overflow-y: auto;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  padding: 10px;
 
-  max-height: 80vh;
-
-
-}
-*/
 
 
 .scroll-container {
   overflow-y: auto;
   //border: 1px solid #ddd;
-  border-radius: 10px;
+  //border-radius: 10px;
   padding: 10px;
-  max-height: 100vh; /* o el valor que necesites */
+  //max-height: 100vh; /* o el valor que necesites */
   padding-bottom: 70px; /* espacio adicional para el botón fijo */
+
+
+ // max-width: 800px;
+  margin: 2rem auto;
+  //padding: 1.5rem;
+ // background-color: rgba(255, 255, 255, 0.9); /* Fondo semi-transparente para legibilidad */
+  border-radius: 10px;
+  //box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+
 }
 
 
@@ -151,26 +207,25 @@
 
 
 .grid-button {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%; /* Se adapta automáticamente */
-  max-width: 80px; /* Evita que los botones sean demasiado anchos */
-  height: 80px; /* Hace que el botón sea más alto */
-  font-size: 28px;
-  font-weight: bold;
-  border-radius: 10px;
-  text-align: center;
-  //background: radial-gradient(circle, #0dcaf0 40%, #b2e0f4 100%);
-  background: radial-gradient(circle, #0dcaf0 40%, #4f5557 100%);
-  border: 2px solid black;
-  border: none;
-  box-shadow: inset 0px 2px 5px rgba(0, 0, 0, 0.3);
-  transition: transform 0.2s ease-in-out;
-  color: #fff !important;
-  &:hover {
-    transform: scale(1.05);
-  }
+
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-width: 80px;
+    height: 80px;
+    font-size: 28px;
+    font-weight: 700;
+    text-align: center;
+    background: radial-gradient(circle, #c104a0 40%, #4f5557);
+    border: 2px solid black;
+    border: solid 4px #ffffffed;
+    /* box-shadow: inset 0 2px 5px #0000004d; */
+    transition: transform .2s ease-i;
+    color: #fff !important;
+
+
 }
 
 
@@ -192,6 +247,13 @@
   gap: 10px;
 }
 
+
+:host {
+  display: block;
+}
+
+
+
 .modal-buttons {
   display: flex;
   justify-content: center;
@@ -199,10 +261,54 @@
   margin-top: 20px;
 }
 
+:host ::ng-deep input[pInputText] {
+  width: 100%;
+ // padding: 0.75rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+  font-size: 1rem;
+}
+
+:host ::ng-deep p-inputmask {
+  width: 100%;
+}
+
+:host ::ng-deep p-inputmask .p-inputmask {
+  width: 100% !important;
+ // padding: 0.75rem !important;
+  border-radius: 8px !important;
+  border: 1px solid #ccc !important;
+  box-sizing: border-box !important;
+  font-size: 1rem !important;
+}
+
+/* Estilo de foco similar al login */
+:host ::ng-deep p-inputmask .p-inputmask:focus {
+  outline: none;
+  border-color: #ff4b2b !important;
+  box-shadow: 0 0 5px rgba(255, 75, 43, 0.5) !important;
+}
+
+/* Placeholder similar al login */
+:host ::ng-deep p-inputmask .p-inputmask::placeholder {
+  color: #6c757d !important;
+  opacity: 1 !important;
+}
 
 
+@media (max-width: 480px) {
+  input[pInputText],
+  :host ::ng-deep .p-inputmask,
+  :host ::ng-deep .p-inputmask {
+    padding: 0.6rem !important;
+    font-size: 0.9rem !important;
+  }
 
-
+  .info-button {
+    padding: 0.4rem;
+  }
+}
 
 .error {
   color: red;
@@ -288,41 +394,8 @@
 
 }
 
-/*
-@media (max-width: 599px) {
-  .number-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-
-  .image-container{
-    height: 20vh;
-    width: 100%;
-  }
-
-  .image-container img{
-    width: 100%;
-  }
-}
 
 
-@media (max-width: 359px) {
-  .number-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .image-container{
-    height: 15vh;
-    width: 100%;
-  }
-
-  .image-container img{
-    width: 100%;
-  }
-
-}*/
-
-/* En pantallas medianas (de 400px a 599px), usar 3 columnas */
-/* Para pantallas pequeñas (menos de 600px) */
 @media (max-width: 599px) {
   .image-container {
     width: 100%; /* Mantener ancho completo */
@@ -388,21 +461,25 @@
 }
 
 .price-info {
-  text-align: right;
-  margin-top: 10px;        /* Espacio superior para separar del carrusel */
-  font-size: 1rem;
-  font-weight: bold;
-  color: #333;             /* Ajusta el color según tu diseño */
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px #0003;
+    background-color: #d328be;
+    color: #fff;
+    font-weight: bold;
+
 }
 
+/*
 .price-info span {
   display: inline-block;
   padding: 5px 10px;
   border-radius: 5px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   background-color: #445367;
-  color: #fff;          /* O el color que prefieras para el texto del precio */
-}
+  color: #fff;
+}*/
 
 
 
@@ -430,7 +507,11 @@
   margin-top: 1rem; /* Espaciado superior */
 }
 
-
+:host ::ng-deep .p-button.p-button-danger, .p-button-group.p-button-danger > .p-button, .p-splitbutton.p-button-danger > .p-button {
+    color: #ffffff;
+    background: #af5e3a;
+    border: 0 none;
+}
 
 :host ::ng-deep .share-whatsapp-button {
   width: 60px !important;
@@ -442,6 +523,7 @@
 
 :host ::ng-deep .share-whatsapp-button .p-button-icon {
   font-size: 1.8rem !important;
+  color: #9cf54d;
 }
 
 
@@ -481,4 +563,27 @@
 :host ::ng-deep .p-carousel .p-carousel-content .p-carousel-next{
   width: 0.5rem;
 
+}
+
+
+:host ::ng-deep .p-dialog .p-dialog-header {
+    border-bottom: 0 none;
+    background: linear-gradient(317deg, rgba(131, 58, 180, 1) 0%, rgba(253, 29, 204, 1) 37%, rgba(252, 176, 69, 1) 100%);;
+    color: rgba(252, 245, 245, 0.87);
+    padding: 1.5rem;
+    border-top-right-radius: 15px;
+    border-top-left-radius: 15px;
+    //margin-bottom: 5px;
+}
+
+:host ::ng-deep .p-dialog .p-dialog-content {
+    background: linear-gradient(207deg, rgba(237, 161, 194, 1) 0%, rgb(173 243 238) 47%, rgba(202, 242, 143, 1) 87%);;
+    color: rgba(0, 0, 0, 0.87);
+   // padding: 0 1.5rem 1.5rem 1.5rem;
+   padding-top: 10px;
+}
+
+:host ::ng-deep .p-dialog .p-dialog-content:last-of-type {
+    border-bottom-right-radius: 15px;
+    border-bottom-left-radius: 15px;
 }

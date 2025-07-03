@@ -40,11 +40,23 @@ body {
 
 
 
+
 ::ng-deep .p-sidebar {
  background: rgba(255, 255, 255, 0.25) !important; /* 🔥 Blanco con 25% de opacidad */
   backdrop-filter: blur(10px); /* 🔥 Suaviza el fondo */
 }
 
 
+.p-toast {
+  z-index: 2000 !important; /* Mayor que el z-index predeterminado de p-dialog (~1000) */
+}
+
+.p-toast .p-toast-message {
+  z-index: 2000 !important; /* Asegura que los mensajes individuales estén por encima */
+}
+
+ .p-dialog {
+  z-index: 1000 !important; /* Opcional: fija el z-index del modal para evitar conflictos */
+}
 
 

@@ -1,6 +1,24 @@
 
-body{
-  background-color: linear-gradient(356deg, rgb(197 174 219 / 72%) 0%, rgba(255, 255, 255, 1) 100%);
+:host {
+ // display: block;
+ // width: 100%;
+  height: 100vh; /* Ocupa toda la altura de la pantalla */
+  margin: 0; /* Elimina márgenes */
+  padding: 0; /* Ocupa toda la altura de la pantalla */
+  position: relative;
+}
+
+.background-layer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: linear-gradient(to left bottom, #f689c7, #ea9edf, #deb1f0, #d4c2fa, #d0d2fe, #ccdbff, #cbe2ff, #cee9ff, #c9edfe, #c5f0fc, #c4f3f8, #c6f6f2);
+  //background: linear-gradient(180deg, #ff69b4 0%, #c71585 50%, #9370db 75%, #87ceeb 100%);
+  background-size: cover;
+  background-position: center;
+  z-index: -1; /* Coloca el fondo detrás de todo */
 }
 
 .edit-raffle-container {
@@ -9,9 +27,11 @@ body{
   padding: 1.5rem;
   border: 1px solid #ccc;
   border-radius: 8px;
-  //background-color: #fff;
-  //background: linear-gradient(356deg, rgba(181, 0, 255, 0.72) 0%, rgba(255, 255, 255, 1) 100%);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+  z-index: 1;
+  background: linear-gradient(180deg, #ad1286 35%, #fd66b2);
+  box-shadow: 0 4px 10px #391875;
+  margin-bottom: 2rem;
+  //box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
 
   h2, h3 {
     text-align: center;
@@ -53,75 +73,6 @@ body{
   }
 }
 
-/*
-
-.format-toolbar {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 1rem;
-}
-
-.format-toolbar button,
-.format-toolbar p-dropdown,
-.format-toolbar input[type="number"],
-.format-toolbar input[type="color"] {
-  margin: 5px;
-}
-
-
-@media (max-width: 600px) {
-  .format-toolbar {
-    flex-direction: column;
-    align-items: stretch;
-  }
-}
-
-
-.editable {
-  min-height: 150px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  padding: 0.5rem;
-  overflow: auto;
-  font-size: 1rem;
-  line-height: 1.4;
-  margin-bottom: 1rem;
-  //background-color: aliceblue;
-  color: #563b3b;
-}
-
-
-.format-toolbar {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 1rem;
-}
-
-.format-toolbar button,
-.format-toolbar p-dropdown,
-.format-toolbar input[type="number"],
-.format-toolbar input[type="color"] {
-  margin: 5px;
-}
-
-
-@media (max-width: 600px) {
-  .format-toolbar {
-    flex-direction: column;
-    align-items: stretch;
-  }
-  .editable {
-    min-height: 120px !important;
-  }
-}
-
-*/
 
 .format-toolbar {
   display: flex;
@@ -155,17 +106,7 @@ body{
   flex-wrap: wrap;
 }
 
-/* Estilos para el editor modal */
-.editable {
-  min-height: 150px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  padding: 0.5rem;
-  overflow: auto;
-  font-size: 1rem;
-  line-height: 1.4;
-  margin-bottom: 1rem;
-}
+
 
 
 /* Contenedor que envuelve el editor y permite posicionar el botón de formato */
@@ -174,16 +115,29 @@ body{
 }
 
 /* Área editable */
+
+
+
 .editable {
   min-height: 150px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--input-border, var(--surface-d, #dee2e6)); /* Matches pInputText border */
   border-radius: 4px;
   padding: 0.5rem;
   overflow: auto;
   font-size: 1rem;
   line-height: 1.4;
   margin-bottom: 1rem;
+  background: var(--surface-a, #ffffff); /* Matches pInputText background */
+  color: var(--text-color, #212529); /* Matches pInputText text color */
+  transition: border-color 0.2s, box-shadow 0.2s; /* Smooth transition for focus */
+
+  &:focus {
+    outline: none; /* Remove default outline */
+    border-color: var(--primary-color, #007bff); /* Matches pInputText focus border */
+    box-shadow: 0 0 0 0.2rem var(--primary-color-light, rgba(0, 123, 255, 0.2)); /* Matches pInputText focus shadow */
+  }
 }
+
 
 /* Estilos para el botón de formato flotante */
 .format-button {
@@ -229,3 +183,40 @@ body{
     //padding: 0.3rem 0.5rem !important; /* Opcional: reducir también el padding */
   }
 }
+
+
+:host ::ng-deep .p-button.p-button-danger, .p-button-group.p-button-danger > .p-button, .p-splitbutton.p-button-danger > .p-button {
+    color: #ffffff;
+    background: #af5e3a;
+    border: 0 none;
+}
+
+:host ::ng-deep .p-dialog .p-dialog-footer {
+    border-bottom-right-radius: 20px;
+    border-bottom-left-radius: 20px;
+    background: linear-gradient(317deg, rgba(131, 58, 180, 1) 0%, rgba(253, 29, 204, 1) 37%, rgba(252, 176, 69, 1) 100%);
+}
+
+:host ::ng-deep .p-dialog .p-dialog-header {
+    border-bottom: 0 none;
+    background: linear-gradient(317deg, rgba(131, 58, 180, 1) 0%, rgba(253, 29, 204, 1) 37%, rgba(252, 176, 69, 1) 100%);
+    color: rgba(252, 245, 245, 0.87);
+    padding: 1.5rem;
+    border-top-right-radius: 15px;
+    border-top-left-radius: 15px;
+    //margin-bottom: 5px;
+}
+
+:host ::ng-deep .p-dialog .p-dialog-content {
+    background: linear-gradient(207deg, rgba(237, 161, 194, 1) 0%, rgb(173 243 238) 47%, rgba(202, 242, 143, 1) 87%);;
+    color: rgba(0, 0, 0, 0.87);
+   // padding: 0 1.5rem 1.5rem 1.5rem;
+   padding-top: 10px;
+}
+
+:host ::ng-deep .p-dialog .p-dialog-content:last-of-type {
+    border-bottom-right-radius: 15px;
+    border-bottom-left-radius: 15px;
+}
+
+

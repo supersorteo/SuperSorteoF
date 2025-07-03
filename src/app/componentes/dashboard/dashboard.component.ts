@@ -153,7 +153,7 @@ participantes: any[] = [];
 numerosReservados: number[] = [];
 raffleId: any | null = null;
   codigoVip: string = '';
-  fechaRegistro!: string;
+  fechaRegistro!: any;
   raffle: Raffle | null = null;
   cantidadRifas: number = 0;
   isVip!: boolean | null;
@@ -268,7 +268,7 @@ imagenes = [
  // imagenSeleccionada: string = '';
   imagenSeleccionada: any = this.imagenes[0];
   activeIndex: number = 0;
-
+private countdownInterval: any;
   constructor(
     private authService: AuthenticationService,
     private cdRef: ChangeDetectorRef,
@@ -599,7 +599,7 @@ applyTextColor(): void {
 
 
 
-startCountdown(expiryDate: Date): void {
+startCountdown0(expiryDate: Date): void {
   this.timerInterval = setInterval(() => {
     const now = new Date().getTime();
     const distance = expiryDate.getTime() - now;
@@ -620,7 +620,30 @@ startCountdown(expiryDate: Date): void {
 
   }
 
+private startCountdown(expiryDate: Date): void {
+    // Limpia cualquier intervalo previo para evitar duplicados
+    if (this.countdownInterval) {
+      clearInterval(this.countdownInterval);
+    }
 
+    this.countdownInterval = setInterval(() => {
+      const now = new Date().getTime();
+      const distance = expiryDate.getTime() - now;
+
+      if (distance <= 0) {
+        this.remainingTime = { days: 0, hours: 0, minutes: 0, seconds: 0 };
+        clearInterval(this.countdownInterval);
+      } else {
+        this.remainingTime = {
+          days: Math.floor(distance / (1000 * 60 * 60 * 24)),
+          hours: Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
+          minutes: Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)),
+          seconds: Math.floor((distance % (1000 * 60)) / 1000)
+        };
+      }
+      this.cdRef.detectChanges();
+    }, 1000);
+  }
 
 
   openBanner(raffle: Raffle): void {
@@ -1005,7 +1028,7 @@ validarYAsignarCodigoVip(): void {
 }
 
 
-private actualizarDatosUsuario(usuarioActualizado: any): void {
+private actualizarDatosUsuario1(usuarioActualizado: any): void {
   // Guardar usuario actualizado en localStorage
   localStorage.setItem('currentUser', JSON.stringify(usuarioActualizado));
 
@@ -1040,7 +1063,25 @@ private actualizarDatosUsuario0(usuarioActualizado: any): void {
   this.cdRef.detectChanges(); // 🔥 Refrescar vista sin reiniciar nada
 }
 
+private actualizarDatosUsuario(usuarioActualizado: any): void {
+    localStorage.setItem('currentUser', JSON.stringify(usuarioActualizado));
+    this.isVip = usuarioActualizado.esVip;
+    this.cantidadRifasPermitidas = usuarioActualizado.cantidadRifas;
+    this.codigoVip = usuarioActualizado.codigoVip;
+    // Convertir fechaRegistro de string ISO a Date
+    this.fechaRegistro = usuarioActualizado.fechaRegistro ? new Date(usuarioActualizado.fechaRegistro) : null;
+    console.log('🔹 Datos del usuario actualizados:', usuarioActualizado);
 
+    // Reiniciar el contador con la nueva fecha
+    if (this.fechaRegistro) {
+      const expiryDate = new Date(this.fechaRegistro.getTime() + 30 * 24 * 60 * 60 * 1000);
+      this.startCountdown(expiryDate);
+    } else {
+      this.remainingTime = { days: 0, hours: 0, minutes: 0, seconds: 0 };
+    }
+
+    this.cdRef.detectChanges();
+  }
 
 
 
@@ -1078,7 +1119,7 @@ private asignarCodigoVip(cantidadRifas: number): void {
 }
 
 
-private asignarCodigoVipAlUsuario(cantidadRifas: number): void {
+private asignarCodigoVipAlUsuario1(cantidadRifas: number): void {
   const currentUserRaw = localStorage.getItem('currentUser');
   if (!currentUserRaw) {
     console.error('No hay usuario logueado en localStorage');
@@ -1107,9 +1148,46 @@ private asignarCodigoVipAlUsuario(cantidadRifas: number): void {
   this.cantidadRifasPermitidas = cantidadRifas;
 
   this.mostrarMensaje('success', '¡VIP activado!', `Tienes permiso para crear ${cantidadRifas} rifas.`);
+
   this.cdRef.detectChanges();
 }
 
+
+private asignarCodigoVipAlUsuario(cantidadRifas: number): void {
+    const currentUserRaw = localStorage.getItem('currentUser');
+    if (!currentUserRaw) {
+      console.error('No hay usuario logueado en localStorage');
+      return;
+    }
+
+    const currentUser = JSON.parse(currentUserRaw);
+    currentUser.esVip = true;
+    currentUser.codigoVip = this.codigoVip.trim();
+    currentUser.cantidadRifas = cantidadRifas;
+
+    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+
+    const vipData = {
+      esVip: true,
+      codigoVip: currentUser.codigoVip,
+      cantidadRifas: cantidadRifas
+    };
+    localStorage.setItem(`vip_${currentUser.id}`, JSON.stringify(vipData));
+
+    this.isVip = true;
+    this.cantidadRifasPermitidas = cantidadRifas;
+
+    this.mostrarMensaje('success', '¡VIP activado!', `Tienes permiso para crear ${cantidadRifas} rifas.`);
+
+    // Actualizar fechaRegistro y reiniciar contador
+    currentUser.fechaRegistro = new Date().toISOString();
+    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+    this.fechaRegistro = new Date(currentUser.fechaRegistro);
+    const expiryDate = new Date(this.fechaRegistro.getTime() + 30 * 24 * 60 * 60 * 1000);
+    this.startCountdown(expiryDate);
+
+    this.cdRef.detectChanges();
+  }
 
 
 
@@ -1755,6 +1833,7 @@ compartirRifa(raffle: any) {
       };
     }
   }
+
 
 
   removeSelectedImage(index: number): void {

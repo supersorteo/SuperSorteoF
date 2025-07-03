@@ -11,11 +11,12 @@ import { CalendarModule } from 'primeng/calendar';
 import Swal from 'sweetalert2';
 import { User } from '../../interfaces/user';
 import { InputMaskModule } from 'primeng/inputmask';
+import { PasswordModule } from 'primeng/password';
 @Component({
   selector: 'app-login',
   standalone: true,
   imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, InputTextModule,
-    ButtonModule, DialogModule, ReactiveFormsModule, CalendarModule, InputMaskModule
+    ButtonModule, DialogModule, ReactiveFormsModule, CalendarModule, InputMaskModule, PasswordModule
   ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'
@@ -151,26 +152,7 @@ export class LoginComponent implements OnInit {
   }
 
 
-    onLogin0(): void {
-      if (this.loginForm.valid) {
-      const user: User = this.loginForm.value;
-      this.authService.login(user).subscribe(
-        (res) => {
-          console.log(user)
-          localStorage.setItem('currentUser', JSON.stringify(res));
 
-
-          this.router.navigate(['/dashboard']);
-          //console.log(res)
-
-        },
-        (error) => {
-          this.showLoginError(error);
-        } );
-      } else {
-        this.showClientSideErrorsLogin();
-      }
-    }
 
 
      onLogin(): void {
