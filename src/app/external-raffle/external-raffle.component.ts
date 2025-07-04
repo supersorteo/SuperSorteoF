@@ -727,4 +727,20 @@ whatsappAppLink(): string {
 
 
 
+contactAdminViaWhatsApp(): void {
+  const phone = this.raffle?.usuario?.telefono ?? '';
+  const clean = phone.replace(/\D+/g, '');
+  const adminName = this.raffle?.usuario?.name ?? 'Administrador';
+  const text = encodeURIComponent(`Hola ${adminName}, quisiera participar en su sorteo.`);
+  const whatsappUrl = `whatsapp://send?phone=${clean}&text=${text}`;
+  window.location.href = whatsappUrl;
+  setTimeout(() => {
+    if (document.hidden) {
+      alert('Asegúrate de tener WhatsApp instalado.');
+    }
+  }, 1000);
 }
+
+
+}
+

@@ -25,6 +25,7 @@ export class AppComponent {
 
         const currentUrl = this.router.url;
         this.shouldShowThemeToggle = currentUrl !== '/login';
+        this.shouldShowThemeToggle = currentUrl !== '/home';
         this.shouldShowToolbar = !(currentUrl === '/login' ||
           currentUrl.startsWith('/codigos') ||
           currentUrl.startsWith('/datos-rifa') ||

@@ -227,12 +227,22 @@
         <p>
           Para poder reservar necesita el código único referente a la rifa,
           y para obtener este código, póngase en contacto con el administrador al teléfono:
-          <a
+          <!--a
           [href]="whatsappAppLink()"
           style="font-weight: bold; text-decoration: none; color: inherit;"
         >
+
           {{ raffle?.usuario?.telefono }}
-        </a>.
+        </a-->.
+
+<p-button
+      label="{{ raffle?.usuario?.telefono }}"
+      icon="pi pi-whatsapp"
+      severity="success"
+      class="whatsapp-button1"
+      (click)="contactAdminViaWhatsApp()"
+    ></p-button>.
+
         </p>
 </p-dialog>
 

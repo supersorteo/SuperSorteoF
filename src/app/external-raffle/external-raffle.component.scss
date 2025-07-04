@@ -587,3 +587,24 @@
     border-bottom-right-radius: 15px;
     border-bottom-left-radius: 15px;
 }
+
+
+.whatsapp-button1 {
+  //background-color: #25d366; /* Color verde de WhatsApp */
+  border: none;
+  color: rgb(41, 38, 38);
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: transform 0.3s ease;
+  &:hover {
+   transform: translateY(-2px);
+  }
+
+  .pi-whatsapp {
+    font-size: 1.2rem; /* Ajusta el tamaño del ícono si es necesario */
+  }
+}
