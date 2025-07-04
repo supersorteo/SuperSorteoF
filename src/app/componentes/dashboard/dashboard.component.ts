@@ -1849,11 +1849,24 @@ compartirRifa(raffle: any) {
     this.selectedFiles[index] = null;
   }
 
-  shareOnWhatsApp(): void {
+  shareOnWhatsApp1(): void {
     const url = 'https://sweet-laughter-production.up.railway.app/';
     const text = `Necesito un codigo VIP. ${url}`;
     const whatsappUrl = `whatsapp://send?text=${encodeURIComponent(text)}`; window.location.href = whatsappUrl;
   }
+
+
+
+  shareOnWhatsApp(): void {
+  const message = encodeURIComponent('Hola! 🎉 Estoy usando Súper Sorteo 📈, una app que te permite crear rifas 🎁 y venderlas rápidamente ⏱. Si necesitas ingresos extra 💸, te invito a visitarla 🌐 https://supersorteo-5f1f3.firebaseapp.com/ 😊 ¡Espero que te sea útil!');
+  const whatsappUrl = `whatsapp://send?text=${message}`;
+  window.location.href = whatsappUrl;
+  setTimeout(() => {
+    if (document.hidden) {
+      alert('Asegúrate de tener WhatsApp instalado.');
+    }
+  }, 1000); // Verifica después de 1 segundo si no se abrió
+}
 
 
   /** Envía WhatsApp al ganador de la rifa */
