@@ -259,9 +259,9 @@ expiryDate!: Date;
  // imagenes = ['10.jpg', '15.jpg', '30.jpg'];
 
 imagenes = [
-  { id: '10', src: '10.jpg', rifas: 10 },
-  { id: '15', src: '15.jpg', rifas: 15 },
-  { id: '30', src: '30.jpg', rifas: 30 }
+  { id: '10', src: '101.png', rifas: 10 },
+  { id: '15', src: '150.png', rifas: 15 },
+  { id: '30', src: '300.png', rifas: 30 }
 ];
 
 

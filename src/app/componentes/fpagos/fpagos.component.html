@@ -1,0 +1,146 @@
+  <div class="raffle-background">
+  <div class="button-container">
+    <p-button
+      icon="pi pi-plus"
+      label="Agregar opción de pago"
+      [raised]="true"
+      styleClass="custom-button3"
+      (onClick)="mostrar()"
+    ></p-button>
+    <p-button
+      icon="pi pi-eye"
+      label="Ver opciones de pago"
+      [raised]="true"
+      severity="success"
+      styleClass="custom-button3"
+      (onClick)="listar()"
+    ></p-button>
+    <p-button
+      icon="pi pi-shopping-cart"
+      label="Opciones para compradores"
+       [raised]="true"
+       severity="help"
+      styleClass="custom-button3"
+    ></p-button>
+  </div>
+  </div>
+
+
+
+
+<p-dialog
+  header="Agregar Opción de Pago"
+  [(visible)]="metodoPago"
+  [modal]="true"
+  [style]="{ width: '85%' }">
+  <form [formGroup]="paymentForm" (ngSubmit)="onSubmit()">
+    <div class="p-fluid grid flex-col gap-2">
+      <div class="col-12">
+        <label class="block font-bold mb-3">Nombre de la Billetera/Banco:</label>
+        <p-dropdown
+          [options]="bancos"
+          formControlName="bancoSeleccionado"
+          optionLabel="name"
+          [showClear]="true"
+          placeholder="Selecciona una opción"
+          name="bancoSeleccionado"
+          (onChange)="paymentForm.get('bancoSeleccionado')?.updateValueAndValidity()"
+        >
+          <ng-template pTemplate="selectedItem">
+            <div class="flex align-items-center gap-2" *ngIf="paymentForm.get('bancoSeleccionado')?.value">
+              <img
+                [src]="paymentForm.get('bancoSeleccionado')?.value.image"
+                style="width: 20px; height: 20px"
+                (error)="onImgError($event)"
+              />
+              <div>{{ paymentForm.get('bancoSeleccionado')?.value.name }}</div>
+            </div>
+          </ng-template>
+          <ng-template let-country pTemplate="item">
+            <div class="flex align-items-center gap-2">
+              <img
+                [src]="country.image"
+                style="width: 20px; height: 20px"
+                (error)="onImgError($event)"
+              />
+              <div>{{ country.name }}</div>
+            </div>
+          </ng-template>
+        </p-dropdown>
+        <small class="p-error" *ngIf="paymentForm.get('bancoSeleccionado')?.touched && paymentForm.get('bancoSeleccionado')?.invalid">
+          Este campo es requerido.
+        </small>
+      </div>
+      <div class="col-12">
+        <label class="block font-bold mb-3">Alias:</label>
+        <input type="text" pInputText class="w-full rounded-input" formControlName="alias" />
+        <small class="p-error" *ngIf="paymentForm.get('alias')?.touched && paymentForm.get('alias')?.invalid">
+          Este campo es requerido.
+        </small>
+      </div>
+      <div class="col-12">
+        <label class="block font-bold mb-3">CBU/CVU:</label>
+        <input
+          type="text"
+          pInputText
+          placeholder="0"
+          class="w-full rounded-input"
+          formControlName="cbu"
+        />
+        <small class="p-error" *ngIf="paymentForm.get('cbu')?.touched && paymentForm.get('cbu')?.invalid">
+          El CBU debe tener exactamente 22 dígitos.
+        </small>
+      </div>
+    </div>
+    <div class="flex col-12 justify-content-end mt-3">
+      <button
+        pButton
+        type="submit"
+        [label]="editingId ? 'Actualizar' : 'Guardar'"
+        icon="pi pi-check"
+        class="p-button-success w-full custom-save-button"
+        [disabled]="paymentForm.invalid"
+      ></button>
+    </div>
+  </form>
+</p-dialog>
+
+
+
+
+<p-dialog
+  header="Opciones de Pago Creadas"
+  [(visible)]="lista"
+  [modal]="true"
+  [style]="{ width: '85%' }"
+  (onHide)="hideListDialog()"
+>
+  <div class="payment-grid">
+    <div class="payment-card" *ngFor="let option of paymentOptions">
+      <div class="card-actions">
+        <p-button
+          icon="pi pi-pencil"
+          styleClass="p-button-rounded p-button-text"
+          (onClick)="mostrar(option.id)"
+        ></p-button>
+        <p-button
+          icon="pi pi-trash"
+          styleClass="p-button-rounded p-button-danger p-button-text"
+          (onClick)="option.id !== undefined && deletePayment(option.id)"
+        ></p-button>
+      </div>
+      <div class="card-content">
+        <img
+          [src]="getBankImage(option.bankCode)"
+          style="width: 70px; height: 70px; object-fit: contain; margin-right: 1rem"
+          (error)="onImgError($event)"
+        />
+        <h3>{{ getBankName(option.bankCode) }}</h3>
+      </div>
+      <div class="card-details">
+        <p><strong>Alias:</strong> {{ option.alias }}</p>
+        <p><strong>CBU:</strong> {{ option.cbu }}</p>
+      </div>
+    </div>
+  </div>
+</p-dialog>

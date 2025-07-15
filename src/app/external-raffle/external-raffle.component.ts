@@ -19,6 +19,9 @@ import { RaffleExecutionService } from '../services/raffle-execution.service';
 import { Subscription } from 'rxjs';
 import { ConfettiComponent } from "../componentes/confetti/confetti.component";
 import { WebSocketService } from '../services/web-socket.service';
+import { PaymentServiceService } from '../services/payment-service.service';
+import { PaymentOption } from '../interfaces/payment-option';
+import { AuthenticationService } from '../services/authentication.service';
 
 
 
@@ -64,17 +67,20 @@ private countdownHandled = false
   showWinner: boolean = false;
   private subscription!: Subscription;
   raffleExecutionStatus: boolean = false;
-
-
-
-
+  metodosPgo: boolean = false;
+  paymentOptions: PaymentOption[] = [];
+  paymentMethods: PaymentOption[] = [];
+  private paymentSubscription: Subscription | undefined;
   constructor(
     private route: ActivatedRoute,
     private rifaService: RaffleService,
     private fb: FormBuilder, private router:Router,
     private raffleExecutionService: RaffleExecutionService,
     private webSocketService: WebSocketService,
-    private participanteService: ParticipanteService) {
+    private participanteService: ParticipanteService,
+    private paymentService: PaymentServiceService,
+    private authService: AuthenticationService
+  ) {
       this.reservationForm = this.fb.group({
         name: ['', Validators.required],
         lastName: ['', Validators.required],
@@ -92,29 +98,6 @@ private countdownHandled = false
 
   ngOnInit(): void {
 
-    /*
-
-      if (history.state && history.state.raffle) {
-        this.raffle = history.state.raffle;
-        this.raffleId = this.raffle?.id ?? null;
-        this.raffleCode = this.raffle?.code ?? '';
-        console.log('🎟️ Código de la rifa obtenido:', this.raffleCode);
-        this.initializeForm();
-        this.loadParticipantes(this.raffleId!);
-      } else {
-        const idParam = this.route.snapshot.paramMap.get('id');
-        if (idParam) {
-          this.raffleId = Number(idParam);
-          this.cargarRifa(this.raffleId).then(() => {
-            this.initializeForm();
-
-            this.loadParticipantes(this.raffleId);
-
-          });
-        } else {
-          console.error('No se encontró el ID de la rifa en la URL.');
-        }
-      }*/
 
          const idParam = this.route.snapshot.paramMap.get('id');
   if (idParam) {
@@ -240,9 +223,13 @@ private countdownHandled = false
         this.webSocketService.client.activate();
     }
 
-
+this.loadPaymentMethods();
 
   }
+
+
+
+//this.loadPaymentMethods();
 }
 
   ngOnDestroy(): void {
@@ -250,9 +237,128 @@ private countdownHandled = false
       this.subscription.unsubscribe();
     }
     window.removeEventListener('storage', this.storageListener);
+
+
+    if (this.paymentSubscription) {
+      console.log('[Dashboard] Unsubscribing from payment updates');
+      this.paymentSubscription.unsubscribe();
+    }
+
   }
 
 
+
+
+
+
+loadPaymentMethods(): void {
+  const currentUser = this.authService.getCurrentUser();
+  if (currentUser && currentUser.id) {
+    console.log('[External] Initial load of payment methods for user ID:', currentUser.id);
+    // Carga inicial desde el backend
+    this.paymentService.getPaymentOptionsByUsuarioId(currentUser.id).subscribe({
+      next: (data: PaymentOption[]) => {
+        this.paymentMethods = [...data];
+        console.log('[External] Initial payment methods loaded from backend:', data);
+      },
+      error: (err) => {
+        console.error('[External] Error loading payment methods from backend:', err);
+        const localOptions = this.paymentService.getLocalPaymentOptions(currentUser.id);
+        if (localOptions.length > 0) {
+          this.paymentMethods = [...localOptions];
+          console.log('[External] Initial payment methods loaded from localStorage:', localOptions);
+        } else {
+          Swal.fire('Error', 'No se pudieron cargar los métodos de pago.', 'error');
+        }
+      }
+    });
+
+    // Suscripción a actualizaciones en tiempo real desde BehaviorSubject
+    this.paymentSubscription = this.paymentService.paymentOptions$.subscribe({
+      next: (data: PaymentOption[]) => {
+        this.paymentMethods = [...data];
+        console.log('[External] Real-time update received:', data);
+      },
+      error: (err) => {
+        console.error('[External] Error in real-time subscription:', err);
+      }
+    });
+
+    // Verificación periódica de localStorage (opcional, cada 1 segundo)
+    setInterval(() => {
+      const localOptions = this.paymentService.getLocalPaymentOptions(currentUser.id);
+      if (JSON.stringify(localOptions) !== JSON.stringify(this.paymentMethods)) {
+        this.paymentMethods = [...localOptions];
+        console.log('[External] Detected localStorage change, updating:', localOptions);
+      }
+    }, 1000);
+  } else {
+    this.paymentMethods = [];
+    console.warn('Usuario no autenticado, no se cargan métodos de pago.');
+    Swal.fire('Error', 'Debes iniciar sesión para ver tus métodos de pago.', 'error');
+  }
+}
+
+
+
+getBankImage(bankCode: string): string {
+    const defaultBanks = [
+      { name: 'Mercado Pago', code: 'MP', image: 'assets/bancos/MP.jpg' },
+      { name: 'Ulala', code: 'UL', image: 'assets/bancos/ulala.jpg' },
+      { name: 'Naranja X', code: 'NX', image: 'assets/bancos/naranjax.jpg' },
+      { name: 'Banco Nacion', code: 'BN', image: 'assets/bancos/banconacion.jpg' },
+      { name: 'Banco Galicia', code: 'BG', image: 'assets/bancos/galicia.jpg' },
+      { name: 'Brubank', code: 'BB', image: 'assets/bancos/brubank.jpg' },
+      { name: 'Rebanking', code: 'RK', image: 'assets/bancos/reba.jpg' },
+      { name: 'Cuenta DNI', code: 'CD', image: 'assets/bancos/dni.jpg' },
+      { name: 'Otras', code: 'OT', image: 'assets/bancos/galicia.jpg' },
+    ];
+    const bank = defaultBanks.find(b => b.code === bankCode);
+    return bank ? bank.image : 'assets/bancos/default.jpg';
+  }
+
+getBankName(bankCode: string): string {
+    const banks = [
+      { name: 'Mercado Pago', code: 'MP' },
+      { name: 'Ulala', code: 'UL' },
+      { name: 'Naranja X', code: 'NX' },
+      { name: 'Banco Nacion', code: 'BN' },
+      { name: 'Banco Galicia', code: 'BG' },
+      { name: 'Brubank', code: 'BB' },
+      { name: 'Rebanking', code: 'RK' },
+      { name: 'Cuenta DNI', code: 'CD' },
+      { name: 'Otras', code: 'OT' },
+    ];
+    const bank = banks.find(b => b.code === bankCode);
+    return bank ? bank.name : bankCode;
+  }
+
+
+
+  onImgError(event: Event): void {
+    const img = event.target as HTMLImageElement;
+    img.src = 'assets/bancos/default.jpg';
+  }
+
+  hideDialog(): void {
+    this.metodosPgo = false;
+  }
+
+
+  onPay(method: PaymentOption): void {
+    console.log('Pagar con:', method);
+    // Aquí puedes agregar la lógica para procesar el pago (por ejemplo, una llamada al backend o una alerta)
+    Swal.fire({
+      title: 'Pago iniciado',
+      text: `Procesando pago con ${method.alias} (CBU: ${method.cbu})`,
+      icon: 'info',
+      confirmButtonText: 'Aceptar'
+    });
+    // Ejemplo: Llamada al backend para procesar el pago (implementar según tu API)
+    // this.paymentService.processPayment(method).subscribe(...);
+
+    this.hideDialog()
+  }
 
   verificarGanadorReservado(): void {
     this.participanteService.getParticipantesByRaffleId(this.raffle!.id!).subscribe({
@@ -739,6 +845,11 @@ contactAdminViaWhatsApp(): void {
       alert('Asegúrate de tener WhatsApp instalado.');
     }
   }, 1000);
+}
+
+
+abrirMetodos(){
+this.metodosPgo = true
 }
 
 

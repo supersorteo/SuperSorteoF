@@ -14,6 +14,7 @@ import { UploadVideoComponent } from './componentes/upload-video/upload-video.co
 import { EditRaffleComponent } from './componentes/edit-raffle/edit-raffle.component';
 import { AdminGuard } from './admin.guard';
 import { ChangeAdminPasswordComponent } from './componentes/change-admin-password/change-admin-password.component';
+import { FpagosComponent } from './componentes/fpagos/fpagos.component';
 
 export const routes: Routes = [
   {path:'home', component: HomeComponent},
@@ -29,6 +30,6 @@ export const routes: Routes = [
   {path:'upload', component: UploadVideoComponent},
   { path: 'edit-raffle/:id', component: EditRaffleComponent },
   { path: 'cambiar-password-admin', component: ChangeAdminPasswordComponent, canActivate: [AdminGuard] },
-
+  { path:'fpagos', component: FpagosComponent},
   { path: '**', redirectTo: 'home' }
 ];

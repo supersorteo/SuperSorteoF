@@ -38,10 +38,13 @@
 
 
 
-        <div class="price-info">
-          <span>{{ raffle.precio | currency:'USD':'symbol':'1.0-0' }}</span>
-        </div>
+        <!--div-- class="price-info">
 
+          <p-button label="{{ raffle.precio | currency:'USD':'symbol':'1.0-0' }}" severity="help" routerLink="/fpagos" />
+
+        </!--div-->
+        <!--p-button label="{{ raffle.precio | currency:'USD':'symbol':'1.0-0' }}" severity="help" styleClass="price-button" (click)="abrirMetodos()" /-->
+        <p-button label="{{ raffle.precio | currency:'USD':'symbol':'1.0-0' }}" severity="help" styleClass="price-button" (click)="abrirMetodos()"  />
       </div>
 
     </div>
@@ -233,7 +236,7 @@
         >
 
           {{ raffle?.usuario?.telefono }}
-        </a-->.
+        </a-->
 
 <p-button
       label="{{ raffle?.usuario?.telefono }}"
@@ -241,9 +244,51 @@
       severity="success"
       class="whatsapp-button1"
       (click)="contactAdminViaWhatsApp()"
-    ></p-button>.
+    ></p-button>
 
         </p>
 </p-dialog>
 
+
+
+
+
+
+
+<p-dialog
+  header="Mis Métodos de Pago"
+  [modal]="true"
+  [(visible)]="metodosPgo"
+  [style]="{ width: '85%' }"
+  [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
+  [maximizable]="true"
+  (onHide)="hideDialog()"
+>
+  <div class="payment-grid">
+    <div class="payment-card" *ngFor="let method of paymentMethods">
+      <div class="card-content">
+        <img
+          [src]="getBankImage(method.bankCode)"
+          style="width: 70px; height: 70px; object-fit: contain; margin-right: 1rem"
+          (error)="onImgError($event)"
+        />
+        <h3>{{ getBankName(method.bankCode) }}</h3>
+      </div>
+      <div class="card-details">
+        <p><strong>Alias:</strong> {{ method.alias }}</p>
+        <p><strong>CBU:</strong> {{ method.cbu }}</p>
+      </div>
+      <div class="card-footer" style="text-align: center; padding: 1rem 0;">
+        <p-button
+          label="Pagar $"
+          styleClass="p-button-primary p-button-sm"
+          (onClick)="onPay(method)"
+        ></p-button>
+      </div>
+    </div>
+  </div>
+  <ng-template #noMethods>
+    <p>No tienes métodos de pago registrados.</p>
+  </ng-template>
+</p-dialog>
 

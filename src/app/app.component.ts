@@ -26,11 +26,14 @@ export class AppComponent {
         const currentUrl = this.router.url;
         this.shouldShowThemeToggle = currentUrl !== '/login';
         this.shouldShowThemeToggle = currentUrl !== '/home';
+       // this.shouldShowThemeToggle = currentUrl !== '/fpagos';
         this.shouldShowToolbar = !(currentUrl === '/login' ||
           currentUrl.startsWith('/codigos') ||
           currentUrl.startsWith('/datos-rifa') ||
           currentUrl.startsWith('/home') ||
-          currentUrl.startsWith('/cambiar-password-admin')
+          currentUrl.startsWith('/cambiar-password-admin') ||
+          currentUrl.startsWith('/fpagos')
+
 
         );
 
