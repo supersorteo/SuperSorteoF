@@ -549,7 +549,7 @@
 
 /* 1) Apunta al p-carousel y a su container interno */
 :host ::ng-deep .p-carousel .p-carousel-container {
-  display: grid !important;
+  //display: grid !important;
   grid-template-columns: 2.5% 95% 2.5% !important;
   align-items: center;
 }

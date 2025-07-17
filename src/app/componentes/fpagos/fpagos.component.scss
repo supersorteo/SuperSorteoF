@@ -31,7 +31,8 @@
 
   .custom-button3 {
     flex: 0 0 auto; /* Evita que se estiren, usa tamaño fijo */
-    min-width: 250px; /* Tamaño mínimo más amplio para mejor visibilidad */
+   // min-width: 250px; /* Tamaño mínimo más amplio para mejor visibilidad */
+    width: 250px;
     height: 3rem; /* Altura aumentada para equilibrio */
     display: flex;
     align-items: center;
@@ -58,19 +59,26 @@
     }
 
     @media (max-width: 768px) {
-      min-width: 180px; /* Reduce tamaño en pantallas medianas */
+      //min-width: 180px; /* Reduce tamaño en pantallas medianas */
+      width: 180px;
       height: 2.5rem;
       font-size: 0.9rem;
       padding: 0 0.75rem;
     }
 
     @media (max-width: 480px) {
-      min-width: 140px; /* Reduce más en pantallas pequeñas */
+      //min-width: 140px; /* Reduce más en pantallas pequeñas */
+      width: 140px;
       height: 2rem;
       font-size: 0.8rem;
       padding: 0 0.5rem;
     }
   }
+}
+
+:host ::ng-deep  .p-button {
+
+    width: 250px;
 }
 
 :host ::ng-deep .p-dialog {

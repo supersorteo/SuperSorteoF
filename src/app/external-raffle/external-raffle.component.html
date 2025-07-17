@@ -1,4 +1,4 @@
-<div *ngIf="raffle" class="raffle-background">
+<div *ngIf="raffle" (touchstart)="handleScreenTouch($event)" class="raffle-background">
 
   <div class="scroll-container">
     <div class="card">
@@ -44,7 +44,14 @@
 
         </!--div-->
         <!--p-button label="{{ raffle.precio | currency:'USD':'symbol':'1.0-0' }}" severity="help" styleClass="price-button" (click)="abrirMetodos()" /-->
-        <p-button label="{{ raffle.precio | currency:'USD':'symbol':'1.0-0' }}" severity="help" styleClass="price-button" (click)="abrirMetodos()"  />
+        <p-button
+        label="{{ raffle.precio | currency:'USD':'symbol':'1.0-0' }}"
+        severity="help"
+        styleClass="price-button"
+        pTooltip="Ver Opciones de Pago"
+        tooltipPosition="left"
+        [tooltipOptions]="{ showDelay: 500, hideDelay: 100, disabled: isMobile() }"
+        (click)="abrirMetodos()"/>
       </div>
 
     </div>

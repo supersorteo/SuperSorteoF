@@ -22,6 +22,7 @@ import { WebSocketService } from '../services/web-socket.service';
 import { PaymentServiceService } from '../services/payment-service.service';
 import { PaymentOption } from '../interfaces/payment-option';
 import { AuthenticationService } from '../services/authentication.service';
+import { TooltipModule } from 'primeng/tooltip';
 
 
 
@@ -29,7 +30,7 @@ import { AuthenticationService } from '../services/authentication.service';
   selector: 'app-external-raffle',
   standalone: true,
   imports: [CommonModule, RouterModule, CarouselModule, ButtonModule, TagModule, DialogModule, TableModule, InputTextModule,
-    FormsModule, ReactiveFormsModule, InputMaskModule, CountdownComponent, ConfettiComponent],
+    FormsModule, ReactiveFormsModule, InputMaskModule, CountdownComponent, ConfettiComponent, TooltipModule],
   templateUrl: './external-raffle.component.html',
   styleUrl: './external-raffle.component.scss'
 })
@@ -850,6 +851,28 @@ contactAdminViaWhatsApp(): void {
 
 abrirMetodos(){
 this.metodosPgo = true
+}
+
+
+
+handleScreenTouch(event: TouchEvent): void {
+  const target = event.target as HTMLElement;
+  // Verifica si el toque fue en un elemento con eventos o clase específica (por ejemplo, botones)
+  if (!target.closest('button') && !target.closest('.interactive-element')) {
+    if (this.isMobile()) {
+      const tooltipMessage = document.createElement('div');
+      tooltipMessage.textContent = 'Ver método de pago';
+      tooltipMessage.style.cssText = 'position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: rgba(0, 0, 0, 0.7); color: white; padding: 0.5rem 1rem; border-radius: 4px; z-index: 1000; font-size: 1rem;';
+      document.body.appendChild(tooltipMessage);
+      setTimeout(() => {
+        document.body.removeChild(tooltipMessage);
+      }, 1500); // Muestra por 1.5 segundos
+    }
+  }
+}
+
+isMobile(): boolean {
+  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 }
 
 
