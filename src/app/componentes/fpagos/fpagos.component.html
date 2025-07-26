@@ -15,13 +15,14 @@
       styleClass="custom-button3"
       (onClick)="listar()"
     ></p-button>
-    <!--p-button
-      icon="pi pi-shopping-cart"
-      label="Opciones para compradores"
+    <p-button
+      icon="pi pi-chevron-left"
+      label="Volver"
        [raised]="true"
        severity="help"
       styleClass="custom-button3"
-    ></!--p-button-->
+      routerLink="/dashboard"
+    ></p-button>
   </div>
   </div>
 
@@ -78,7 +79,7 @@
           Este campo es requerido.
         </small>
       </div>
-      <div class="col-12">
+      <!--div class="col-12">
         <label class="block font-bold mb-3">CBU/CVU:</label>
         <input
           type="text"
@@ -90,7 +91,23 @@
         <small class="p-error" *ngIf="paymentForm.get('cbu')?.touched && paymentForm.get('cbu')?.invalid">
           El CBU debe tener exactamente 22 dígitos.
         </small>
-      </div>
+      </!--div-->
+
+<div class="col-12">
+  <label class="block font-bold mb-3">CBU/CVU:</label>
+  <input
+    type="text"
+    pInputText
+    placeholder="Opcional (exactamente 22 números)"
+    class="w-full rounded-input"
+    formControlName="cbu"
+    (ngModelChange)="onCbuChange()"
+  />
+  <small class="p-error" *ngIf="paymentForm.get('cbu')?.touched && paymentForm.get('cbu')?.errors?.['pattern']">
+    Deben ser exactamente 22 números.
+  </small>
+</div>
+
     </div>
     <div class="flex col-12 justify-content-end mt-3">
       <button
@@ -132,7 +149,7 @@
       <div class="card-content">
         <img
           [src]="getBankImage(option.bankCode)"
-          style="width: 70px; height: 70px; object-fit: contain; margin-right: 1rem"
+          style="width: 70px; height: 70px; object-fit: contain; margin-right: 1rem ; border-radius: 20px;"
           (error)="onImgError($event)"
         />
         <h3>{{ getBankName(option.bankCode) }}</h3>

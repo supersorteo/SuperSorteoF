@@ -36,8 +36,6 @@ import { TooltipModule } from 'primeng/tooltip';
 })
 export class ExternalRaffleComponent implements OnInit{
 
-
-
   raffle: any = null;
   raffleId: any | null = null;
   responsiveOptions: any[] | undefined;
@@ -72,6 +70,9 @@ private countdownHandled = false
   paymentOptions: PaymentOption[] = [];
   paymentMethods: PaymentOption[] = [];
   private paymentSubscription: Subscription | undefined;
+
+ // private paymentSubscription: any;
+
   constructor(
     private route: ActivatedRoute,
     private rifaService: RaffleService,
@@ -96,7 +97,7 @@ private countdownHandled = false
       });
     }
 
-
+/*
   ngOnInit(): void {
 
 
@@ -112,11 +113,13 @@ private countdownHandled = false
       console.log('🎟️ Código de la rifa obtenido desde state:', this.raffleCode);
       this.initializeForm();
       this.loadParticipantes(this.raffleId);
+      this.loadPaymentMethods();
     } else {
       // 🔁 Obtener la rifa desde el backend si no hay datos en el state
       this.cargarRifa(this.raffleId).then(() => {
         this.initializeForm();
         this.loadParticipantes(this.raffleId!);
+          this.loadPaymentMethods();
       });
     }
 
@@ -127,6 +130,14 @@ private countdownHandled = false
       this.loadParticipantes(raffleId);
     }
   });
+
+  // Suscripción a refreshPayments$ (única y persistente)
+      this.paymentSubscription = this.paymentService.refreshPayments$.subscribe((userId) => {
+        if (this.raffle?.usuario?.id === userId) {
+          console.log(`[External] Refresh triggered for user ID: ${userId}`);
+          this.loadPaymentMethods();
+        }
+      });
 
 
       this.loadWinningInfo();
@@ -224,14 +235,94 @@ private countdownHandled = false
         this.webSocketService.client.activate();
     }
 
-this.loadPaymentMethods();
+//this.loadPaymentMethods();
 
   }
 
 
 
-//this.loadPaymentMethods();
-}
+
+}*/
+
+ngOnInit(): void {
+    const idParam = this.route.snapshot.paramMap.get('id');
+    if (idParam) {
+      this.raffleId = Number(idParam);
+
+      // Intentar obtener la rifa desde el state
+      if (history.state && history.state.raffle) {
+        this.raffle = history.state.raffle;
+        this.raffleId = this.raffle?.id ?? null;
+        this.raffleCode = this.raffle?.code ?? '';
+        console.log('🎟️ Código de la rifa obtenido desde state:', this.raffleCode);
+        this.initializeComponent();
+      } else {
+        this.cargarRifa(this.raffleId).then(() => {
+          this.initializeComponent();
+        });
+      }
+
+      // Suscripción a refreshParticipants$
+      this.participanteService.refreshParticipants$.subscribe((raffleId) => {
+        if (raffleId && raffleId === this.raffleId) {
+          console.log("🔄 Refrescando participantes en tiempo real...");
+          this.loadParticipantes(raffleId);
+        }
+      });
+
+      // Suscripción a refreshPayments$ (única y persistente)
+      this.paymentSubscription = this.paymentService.refreshPayments$.subscribe((userId) => {
+        if (this.raffle?.usuario?.id === userId) {
+          console.log(`[External] Refresh triggered for user ID: ${userId}`);
+          this.loadPaymentMethods();
+        }
+      });
+
+      // Configuración de WebSockets
+      this.webSocketService.client.onConnect = () => {
+        console.log("✅ WebSocket activo, ahora suscribiéndose...");
+        this.webSocketService.subscribeToTopic('raffle-execution').subscribe((message: any) => {
+          if (message && message.estado === "ejecutando" && message.rifaId === this.raffleId) {
+            console.log(`🔔 Sorteo en ejecución para la rifa con ID ${message.rifaId}`);
+            this.raffleExecutionStatus = true;
+          }
+        });
+        this.webSocketService.subscribeToTopic('countdown').subscribe((message: any) => {
+          if (message.rifaId === this.raffleId) {
+            console.log(`⏳ Contador regresivo recibido para la rifa ${message.rifaId}: ${message.countdownValue}`);
+            this.countdownValue = message.countdownValue;
+            this.showCountdown = true;
+          }
+        });
+        this.webSocketService.subscribeToTopic('winner').subscribe((message: any) => {
+          if (message.rifaId === this.raffleId) {
+            console.log(`🏆 Número ganador recibido para la rifa ${message.rifaId}: ${message.winningNumber}`);
+            this.winningNumber = message.winningNumber;
+            this.winningParticipant = message.ganador ? `${message.ganador.name} ${message.ganador.lastName}` : 'Sin ganador';
+            this.showCountdown = false;
+            this.showWinner = true;
+            localStorage.setItem(`winner_${this.raffleId}`, JSON.stringify({
+              winningNumber: this.winningNumber,
+              winningParticipant: this.winningParticipant
+            }));
+            this.verificarGanadorReservado();
+          }
+        });
+      };
+      if (!this.webSocketService.client.connected) {
+        console.warn("⚠️ WebSocket no estaba conectado, activándolo...");
+        this.webSocketService.client.activate();
+      }
+    }
+
+
+setInterval(() => {
+    if (this.raffle?.usuario?.id) {
+      this.loadPaymentMethods();
+    }
+  }, 6000);
+
+  }
 
   ngOnDestroy(): void {
     if (this.subscription) {
@@ -239,67 +330,138 @@ this.loadPaymentMethods();
     }
     window.removeEventListener('storage', this.storageListener);
 
-
+/*
     if (this.paymentSubscription) {
       console.log('[Dashboard] Unsubscribing from payment updates');
       this.paymentSubscription.unsubscribe();
+    }*/
+
+    if (this.paymentSubscription) {
+      this.paymentSubscription.unsubscribe();
+    }
+    if (this.webSocketService.client.connected) {
+      this.webSocketService.client.deactivate();
     }
 
   }
 
+private initializeComponent(): void {
+    this.initializeForm();
+    this.loadParticipantes(this.raffleId!);
+    this.loadPaymentMethods();
+    this.loadWinningInfo();
+    this.responsiveOptions = [
+      { breakpoint: '1400px', numVisible: 1, numScroll: 1 },
+      { breakpoint: '1220px', numVisible: 1, numScroll: 1 },
+      { breakpoint: '1100px', numVisible: 1, numScroll: 1 }
+    ];
+    const storedWinner = localStorage.getItem(`winner_${this.raffleId}`);
+    if (storedWinner) {
+      const winnerData = JSON.parse(storedWinner);
+      this.winningNumber = winnerData.winningNumber;
+      this.winningParticipant = winnerData.winningParticipant;
+      this.showWinner = true;
+      console.log(`💾 Número ganador restaurado: ${this.winningNumber} - ${this.winningParticipant}`);
+    }
+  }
 
 
 
+loadPaymentMethods0(): void {
+  if (this.raffle && this.raffle.usuario && this.raffle.usuario.id) {
+    const usuarioId = this.raffle.usuario.id;
+    console.log(`[External] Loading payment methods for creator ID: ${usuarioId}`);
 
-
-loadPaymentMethods(): void {
-  const currentUser = this.authService.getCurrentUser();
-  if (currentUser && currentUser.id) {
-    console.log('[External] Initial load of payment methods for user ID:', currentUser.id);
-    // Carga inicial desde el backend
-    this.paymentService.getPaymentOptionsByUsuarioId(currentUser.id).subscribe({
+    // Suscripción inicial
+    this.paymentService.getPaymentOptionsByUsuarioId(usuarioId).subscribe({
       next: (data: PaymentOption[]) => {
-        this.paymentMethods = [...data];
         console.log('[External] Initial payment methods loaded from backend:', data);
-      },
-      error: (err) => {
-        console.error('[External] Error loading payment methods from backend:', err);
-        const localOptions = this.paymentService.getLocalPaymentOptions(currentUser.id);
-        if (localOptions.length > 0) {
-          this.paymentMethods = [...localOptions];
-          console.log('[External] Initial payment methods loaded from localStorage:', localOptions);
-        } else {
-          Swal.fire('Error', 'No se pudieron cargar los métodos de pago.', 'error');
-        }
-      }
-    });
-
-    // Suscripción a actualizaciones en tiempo real desde BehaviorSubject
-    this.paymentSubscription = this.paymentService.paymentOptions$.subscribe({
-      next: (data: PaymentOption[]) => {
         this.paymentMethods = [...data];
-        console.log('[External] Real-time update received:', data);
       },
       error: (err) => {
-        console.error('[External] Error in real-time subscription:', err);
+        console.error('[External] Error loading initial payment methods:', err);
+        Swal.fire('Error', 'No se pudieron cargar los métodos de pago.', 'error');
       }
     });
 
-    // Verificación periódica de localStorage (opcional, cada 1 segundo)
-    setInterval(() => {
-      const localOptions = this.paymentService.getLocalPaymentOptions(currentUser.id);
-      if (JSON.stringify(localOptions) !== JSON.stringify(this.paymentMethods)) {
-        this.paymentMethods = [...localOptions];
-        console.log('[External] Detected localStorage change, updating:', localOptions);
+    // Suscripción a actualizaciones en tiempo real
+    this.paymentSubscription = this.paymentService.refreshPayments$.subscribe((userId) => {
+      if (userId === usuarioId) {
+        console.log(`[External] Refresh triggered for user ID: ${userId}`);
+        this.paymentService.getPaymentOptionsByUsuarioId(usuarioId).subscribe({
+          next: (data: PaymentOption[]) => {
+            console.log('[External] Payment methods updated from backend:', data);
+            this.paymentMethods = [...data];
+          },
+          error: (err) => {
+            console.error('[External] Error updating payment methods:', err);
+          }
+        });
       }
-    }, 1000);
+    });
   } else {
+    console.warn('No se encontró usuarioId en la rifa.');
     this.paymentMethods = [];
-    console.warn('Usuario no autenticado, no se cargan métodos de pago.');
-    Swal.fire('Error', 'Debes iniciar sesión para ver tus métodos de pago.', 'error');
   }
 }
 
+loadPaymentMethods1(): void {
+    if (this.raffle && this.raffle.usuario && this.raffle.usuario.id) {
+      const usuarioId = this.raffle.usuario.id;
+      console.log(`[External] Loading payment methods for creator ID: ${usuarioId}`);
+
+      // Suscripción inicial
+      this.paymentService.getPaymentOptionsByUsuarioId(usuarioId).subscribe({
+        next: (data: PaymentOption[]) => {
+          console.log('[External] Initial payment methods loaded from backend:', data);
+          this.paymentMethods = [...data];
+        },
+        error: (err) => {
+          console.error('[External] Error loading initial payment methods:', err);
+          Swal.fire('Error', 'No se pudieron cargar los métodos de pago.', 'error');
+        }
+      });
+
+      // Suscripción a notificaciones de cambio
+      this.paymentSubscription = this.paymentService.refreshPayments$.subscribe((userId) => {
+        if (userId === usuarioId) {
+          console.log(`[External] Refresh triggered for user ID: ${userId}`);
+          this.paymentService.getPaymentOptionsByUsuarioId(usuarioId).subscribe({
+            next: (data: PaymentOption[]) => {
+              console.log('[External] Payment methods updated from backend:', data);
+              this.paymentMethods = [...data];
+            },
+            error: (err) => {
+              console.error('[External] Error updating payment methods:', err);
+            }
+          });
+        }
+      });
+    } else {
+      console.warn('No se encontró usuarioId en la rifa.');
+      this.paymentMethods = [];
+    }
+  }
+
+loadPaymentMethods(): void {
+    if (this.raffle && this.raffle.usuario && this.raffle.usuario.id) {
+      const usuarioId = this.raffle.usuario.id;
+      console.log(`[External] Loading payment methods for creator ID: ${usuarioId}`);
+      this.paymentService.getPaymentOptionsByUsuarioId(usuarioId).subscribe({
+        next: (data: PaymentOption[]) => {
+          console.log('[External] Payment methods loaded from backend:', data);
+          this.paymentMethods = [...data];
+        },
+        error: (err) => {
+          console.error('[External] Error loading payment methods:', err);
+          Swal.fire('Error', 'No se pudieron cargar los métodos de pago.', 'error');
+        }
+      });
+    } else {
+      console.warn('No se encontró usuarioId en la rifa.');
+      this.paymentMethods = [];
+    }
+  }
 
 
 getBankImage(bankCode: string): string {

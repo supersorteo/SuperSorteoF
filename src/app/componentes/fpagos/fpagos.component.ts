@@ -51,7 +51,8 @@ constructor(private fb: FormBuilder, private paymentService: PaymentServiceServi
     this.paymentForm = this.fb.group({
       bancoSeleccionado: [null, Validators.required],
       alias: ['', Validators.required],
-      cbu: ['', [Validators.required, Validators.pattern(/^\d{22}$/)]], // Valida CBU de 22 dígitos
+      //cbu: ['', [Validators.required, Validators.pattern(/^\d{22}$/)]], // Valida CBU de 22 dígitos
+      cbu: ['', [Validators.pattern(/^\d{22}$/)]],
     });
   }
 
@@ -67,7 +68,10 @@ this.loadPayments();
   }
 
 
-
+onCbuChange() {
+  // Forzar la actualización de la validación
+  this.paymentForm.get('cbu')?.updateValueAndValidity();
+}
 
 loadPayments(): void {
     const currentUser = this.authService.getCurrentUser();
@@ -88,6 +92,8 @@ loadPayments(): void {
       Swal.fire('Error', 'Debes iniciar sesión para ver tus métodos de pago.', 'error');
     }
   }
+
+
 
 
 mostrar(id?: number): void {
@@ -148,46 +154,6 @@ hideDialog(){
 
 
 
-
-onSubmit0(): void {
-  if (this.paymentForm.valid) {
-    const formData = this.paymentForm.value;
-    const paymentData: PaymentOption = {
-      id: this.editingId,
-      bankCode: formData.bancoSeleccionado.code,
-      alias: formData.alias,
-      cbu: formData.cbu,
-    };
-
-    this.paymentService.savePaymentOption(paymentData).subscribe({
-      next: (response: PaymentOption) => {
-        this.loadPayments(); // Actualiza inmediatamente
-        this.paymentOptions = [...this.paymentOptions.filter(opt => opt.id !== this.editingId), response]; // Actualiza localmente
-        console.log('Datos del pago guardados:', response);
-        Swal.fire({
-          title: '¡Éxito!',
-          text: `La opción de pago ${this.editingId ? 'actualizada' : 'guardada'} correctamente. Detalles: Banco: ${paymentData.bankCode}, Alias: ${paymentData.alias}, CBU: ${paymentData.cbu}`,
-          icon: 'success',
-          confirmButtonText: 'Aceptar',
-          timer: 5000,
-        }).then(() => this.hideDialog());
-      },
-      error: (err) => {
-        Swal.fire('Error', 'No se pudo guardar la opción de pago.', 'error');
-      }
-    });
-  } else {
-    Swal.fire({
-      title: 'Error de validación',
-      text: 'Por favor, completa todos los campos correctamente. El CBU debe tener exactamente 22 dígitos.',
-      icon: 'error',
-      confirmButtonText: 'Corregir',
-    });
-  }
-  this.hideDialog();
-
-}
-
 onSubmit(): void {
   if (this.paymentForm.valid) {
     const formData = this.paymentForm.value;
@@ -207,12 +173,13 @@ onSubmit(): void {
       id: this.editingId,
       bankCode: formData.bancoSeleccionado.code,
       alias: formData.alias,
-      cbu: formData.cbu,
+      //cbu: formData.cbu,
+      cbu: formData.cbu === '' ? null : formData.cbu,
       usuarioId: currentUser.id // Aseguramos que se envíe el id del usuario autenticado
     };
 
-    this.paymentService.savePaymentOption(paymentData).subscribe({
-      next: (response: PaymentOption) => {
+    this.paymentService.savePaymentOption(paymentData).subscribe(
+      (response: any) => {
         this.loadPayments();
         this.paymentOptions = [...this.paymentOptions.filter(opt => opt.id !== this.editingId), response];
         console.log('Datos del pago guardados:', response);
@@ -224,10 +191,10 @@ onSubmit(): void {
           timer: 5000,
         }).then(() => this.hideDialog());
       },
-      error: (err) => {
+      (err) => {
         Swal.fire('Error', 'No se pudo guardar la opción de pago.', 'error');
       }
-    });
+    );
   } else {
     Swal.fire({
       title: 'Error de validación',
