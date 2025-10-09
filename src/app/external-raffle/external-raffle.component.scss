@@ -507,6 +507,27 @@
   align-items: center; /* Alinea verticalmente el precio y el botón */
   justify-content: space-between; /* Espacio entre los elementos */
   margin-top: 1rem; /* Espaciado superior */
+  gap: 10px;
+}
+
+.price-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.price-button {
+  margin-bottom: 0.5rem; /* Espacio entre el botón y la fecha */
+}
+
+.date-text {
+  color: #dcdfe1; /* Coincide con el estilo de la card */
+  font-size: 0.9rem;
+  text-align: center;
+  background: rgba(131, 58, 180, 1);
+  margin-top: 5px;
+  padding: 0.5rem;
+  border-radius: 5px;
 }
 
 :host ::ng-deep .p-button.p-button-danger, .p-button-group.p-button-danger > .p-button, .p-splitbutton.p-button-danger > .p-button {
@@ -527,6 +548,7 @@
   font-size: 1.8rem !important;
   color: #9cf54d;
 }
+
 
 
 :host ::ng-deep  .price-button {
@@ -597,7 +619,8 @@
 }
 
 :host ::ng-deep .p-dialog .p-dialog-content {
-    background: linear-gradient(207deg, rgba(237, 161, 194, 1) 0%, rgb(173 243 238) 47%, rgba(202, 242, 143, 1) 87%);;
+    background: linear-gradient(207deg, rgba(237, 161, 194, 1) 0%, rgb(173 243 238) 47%, rgba(202, 242, 143, 1) 87%);
+    //background: #ffffff8c ;
     color: rgba(0, 0, 0, 0.87);
    // padding: 0 1.5rem 1.5rem 1.5rem;
    padding-top: 10px;
@@ -607,6 +630,24 @@
     border-bottom-right-radius: 15px;
     border-bottom-left-radius: 15px;
 }
+
+ :host ::ng-deep .p-dialog .p-dialog-header .p-dialog-title {
+    font-weight: 500;
+    font-size: 1rem;
+}
+
+:host ::ng-deep .p-datatable .p-datatable-thead > tr > th {
+
+    font-size: 13px;
+    background: #ffffff8c ;
+}
+
+:host ::ng-deep .p-datatable .p-datatable-tbody > tr > td {
+
+    font-size: 13px;
+    background: #ffffff8c ;
+}
+
 
 
 .whatsapp-button1 {
@@ -727,14 +768,14 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 1rem;
-    margin-top: 2rem; /* Espacio para los botones en la parte superior */
+    //margin-bottom: 1rem;
+    //margin-top: 2rem; /* Espacio para los botones en la parte superior */
     flex-wrap: wrap;
 
     img {
-      margin-right: 1rem;
-      width: 70px;
-      height: 70px;
+     // margin-right: 1rem;
+      width: 90px;
+      height: 90px;
       object-fit: contain;
     }
 
@@ -772,4 +813,57 @@
     }
   }
 
+
+
+
+}
+
+
+:host ::ng-deep .custom-table {
+  background-color: #ffffff5c !important; /* Fondo principal de la tabla */
+
+  // Header (thead)
+  .p-datatable-thead {
+    background-color: #ffffff5c !important;
+    tr th {
+      background-color: #ffffff5c !important;
+    }
+  }
+
+  // Body (tbody)
+  .p-datatable-tbody {
+    background-color: #ffffff5c !important;
+    tr td {
+      background-color: #ffffff5c !important;
+    }
+  }
+
+  // Paginador (si lo hay)
+  .p-datatable-paginator {
+    background-color: #ffffff5c !important;
+  }
+
+  // Responsive scroll (si aplica)
+  .p-datatable-scrollable-wrapper {
+    background-color: #ffffff5c !important;
+  }
+}
+
+:host ::ng-deep .custom-table .p-datatable-thead tr th {
+    background-color: #ffffff5c !important;
+}
+
+:host ::ng-deep .custom-table .p-datatable-tbody tr td {
+    background-color: #9d8f8f5c !important;
+}
+
+
+
+
+:host ::ng-deep .p-paginator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    background: #ffffff5c;
 }

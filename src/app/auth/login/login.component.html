@@ -64,7 +64,17 @@
 
       <input type="email" pInputText placeholder="Correo" formControlName="email" />
       <!--input type="password" pInputText placeholder="Contraseña" formControlName="password" /-->
-      <p-password placeholder="Contraseña" formControlName="password" [toggleMask]="true" />
+      <p-password
+      placeholder="Contraseña"
+      formControlName="password"
+      [toggleMask]="true"
+      [feedback]="true"
+  weakLabel="Débil"
+  mediumLabel="Medio"
+  strongLabel="Fuerte"
+  promptLabel="Ingresa tu contraseña"
+
+      />
       <a (click)="showDialog()">¿Olvidaste tu contraseña?</a>
 
       <button pButton type="submit" label="Ingresar" class="p-button-success w-full mt-2"></button>
@@ -78,9 +88,25 @@
       <input type="text" pInputText placeholder="Nombre" formControlName="name" />
       <input type="email" pInputText placeholder="Correo" formControlName="email" />
       <!--input type="password" pInputText placeholder="Contraseña" formControlName="password" /-->
-      <p-password placeholder="Contraseña" formControlName="password" [toggleMask]="true" />
+      <p-password
+      placeholder="Contraseña"
+      formControlName="password"
+      [toggleMask]="true"
+      weakLabel="Débil"
+      mediumLabel="Medio"
+      strongLabel="Fuerte"
+      promptLabel="Ingresa tu contraseña"
+      />
       <!--input type="password" pInputText placeholder="Confirmar Contraseña" formControlName="confirmarPassword" /-->
-      <p-password placeholder="Confirmar Contraseña" formControlName="confirmarPassword" [toggleMask]="true" />
+      <p-password
+      placeholder="Confirmar Contraseña"
+      formControlName="confirmarPassword"
+      [toggleMask]="true"
+      weakLabel="Débil"
+      mediumLabel="Medio"
+      strongLabel="Fuerte"
+      promptLabel="Ingresa tu contraseña"
+      />
       <!--p-inputMask-- mask="99999999" placeholder="Teléfono" formControlName="telefono"  ></!--p-inputMask-->
 
       <p-inputMask

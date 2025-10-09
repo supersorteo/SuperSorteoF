@@ -1,60 +1,51 @@
 <div *ngIf="raffle" (touchstart)="handleScreenTouch($event)" class="raffle-background">
 
   <div class="scroll-container">
-    <div class="card">
-      <h2 class="product-name" style="text-align: center; margin-bottom: 1rem;color: #fff;">
-        {{ raffle.producto.nombre }}
-      </h2>
+   <div class="card">
+  <h2 class="product-name" style="text-align: center; margin-bottom: 1rem; color: #fff;">
+    {{ raffle.producto.nombre }}
+  </h2>
 
+  <p-carousel
+    [value]="raffle.producto.imagenes"
+    [numVisible]="1"
+    [numScroll]="1"
+    [circular]="true"
+    autoplayInterval="3000"
+    [responsiveOptions]="responsiveOptions">
+    <ng-template let-image pTemplate="item">
+      <div class="image-container">
+        <img [src]="image" alt="{{ raffle.producto.nombre }}" />
+      </div>
+    </ng-template>
+  </p-carousel>
 
-      <p-carousel
-        [value]="raffle.producto.imagenes"
-        [numVisible]="1"
-        [numScroll]="1"
-        [circular]="true"
-        autoplayInterval="3000"
-        [responsiveOptions]="responsiveOptions">
-        <ng-template let-image pTemplate="item">
-          <div class="image-container">
-            <img [src]="image" alt="{{ raffle.producto.nombre }}" />
-          </div>
-        </ng-template>
-      </p-carousel>
+  <div class="price-and-share">
+    <p-button
+      icon="pi pi-whatsapp"
+      [rounded]="true"
+      [text]="true"
+      severity="success"
+      styleClass="share-whatsapp-button"
+      (click)="shareRaffleViaWhatsApp()"
+    ></p-button>
 
-
-
-
-
-      <div class="price-and-share">
-
-        <p-button
-          icon="pi pi-whatsapp"
-          [rounded]="true"
-          [text]="true"
-          severity="success"
-          styleClass="share-whatsapp-button"
-          (click)="shareRaffleViaWhatsApp()"
-        ></p-button>
-
-
-
-        <!--div-- class="price-info">
-
-          <p-button label="{{ raffle.precio | currency:'USD':'symbol':'1.0-0' }}" severity="help" routerLink="/fpagos" />
-
-        </!--div-->
-        <!--p-button label="{{ raffle.precio | currency:'USD':'symbol':'1.0-0' }}" severity="help" styleClass="price-button" (click)="abrirMetodos()" /-->
-        <p-button
+    <div class="price-container">
+      <p-button
         label="{{ raffle.precio | currency:'USD':'symbol':'1.0-0' }}"
         severity="help"
         styleClass="price-button"
         pTooltip="Ver Opciones de Pago"
         tooltipPosition="left"
         [tooltipOptions]="{ showDelay: 500, hideDelay: 100, disabled: isMobile() }"
-        (click)="abrirMetodos()"/>
+        (click)="abrirMetodos()"
+      />
+      <div class="date-text">
+       Se sortea: {{ raffle.fechaSorteo | date:'dd/MM/yyyy' }}
       </div>
-
     </div>
+  </div>
+</div>
 
     <div *ngIf="!showCountdown && getWinningEntry(raffle.id) as winnerEntry" class="winning-number" >
       <span>Número ganador: {{ winnerEntry.winningNumber }}</span>
@@ -99,7 +90,7 @@
 
 
   <p-dialog
-  header="Descripción del producto"
+  header="NOMBRE DELPRODUCTO QUE DEFINIÓ EL USUARIO"
   [modal]="true"
   [(visible)]="visible"
   [style]="{ width: '50rem' }"
@@ -137,21 +128,23 @@
     responsiveLayout="scroll"
     [paginator]="true"
     [rows]="5"
-    [rowsPerPageOptions]="[5, 10, 20]">
+    [rowsPerPageOptions]="[5, 10, 20]"
+    styleClass="custom-table"
+    >
     <ng-template pTemplate="header">
       <tr>
-        <th>#</th>
-        <th>Nombre</th>
-        <th>Teléfono</th>
-        <th># Reservado</th>
+        <!--th>#</th-->
+      <th style="width: 40%;" class="name-column">Nombre</th>
+      <th style="width: 40%;" class="phone-column">Teléfono</th>
+      <th style="width: 20%;" class="reserved-number-column"># Reservado</th>
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-participante let-i="rowIndex">
       <tr>
-        <td>{{ i + 1 }}</td>
-        <td>{{ participante.name }} {{ participante.lastName }}</td>
-        <td>{{ participante.phone }}</td>
-        <td>{{ participante.reservedNumber }}</td>
+        <!--td>{{ i + 1 }}</!--td-->
+      <td style="width: 40%;" class="name-column">{{ participante.name }} {{ participante.lastName }}</td>
+      <td style="width: 40%;" class="phone-column">{{ participante.phone }}</td>
+      <td style="width: 20%;" class="reserved-number-column">{{ participante.reservedNumber }}</td>
       </tr>
     </ng-template>
   </p-table>
@@ -276,12 +269,13 @@
       <div class="card-content">
         <img
           [src]="getBankImage(method.bankCode)"
-          style="width: 70px; height: 70px; object-fit: contain; margin-right: 1rem"
+          style="width: 90px; height: 90px; object-fit: contain; border-radius: 20px;"
           (error)="onImgError($event)"
         />
-        <h3>{{ getBankName(method.bankCode) }}</h3>
+
       </div>
       <div class="card-details">
+        <h3>{{ getBankName(method.bankCode) }}</h3>
         <p><strong>Alias:</strong> {{ method.alias }}</p>
         <p><strong>CBU:</strong> {{ method.cbu }}</p>
       </div>

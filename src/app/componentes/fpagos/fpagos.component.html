@@ -149,12 +149,13 @@
       <div class="card-content">
         <img
           [src]="getBankImage(option.bankCode)"
-          style="width: 70px; height: 70px; object-fit: contain; margin-right: 1rem ; border-radius: 20px;"
+          style="width: 90px; height: 90px; object-fit: contain ; border-radius: 20px;"
           (error)="onImgError($event)"
         />
-        <h3>{{ getBankName(option.bankCode) }}</h3>
+
       </div>
       <div class="card-details">
+         <h3>{{ getBankName(option.bankCode) }}</h3>
         <p><strong>Alias:</strong> {{ option.alias }}</p>
         <p><strong>CBU:</strong> {{ option.cbu }}</p>
       </div>

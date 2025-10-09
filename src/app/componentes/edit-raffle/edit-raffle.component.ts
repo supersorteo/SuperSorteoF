@@ -23,7 +23,7 @@ import Swal from 'sweetalert2';
   styleUrl: './edit-raffle.component.scss',
   providers: [MessageService],
 })
-export class EditRaffleComponent  implements OnInit{
+export class EditRaffleComponent implements OnInit {
   @ViewChild('editableDiv') editableDiv!: ElementRef;
   @ViewChild('modalEditor') modalEditor!: ElementRef;
   descripcionInvalida: boolean = false;
@@ -33,32 +33,14 @@ export class EditRaffleComponent  implements OnInit{
   loading: boolean = false;
   showFormatDialog: boolean = false;
   displayFormatDialog: boolean = false;
-  fontOptions = [
-    { label: 'Arial', value: 'Arial' },
-    { label: 'Times New Roman', value: 'Times New Roman' },
-    { label: 'Courier New', value: 'Courier New' },
-    { label: 'Verdana', value: 'Verdana' },
-    { label: 'Tahoma', value: 'Tahoma' },
-    { label: 'Trebuchet MS', value: 'Trebuchet MS' },
-    { label: 'Impact', value: 'Impact' },
-    { label: 'Comic Sans MS', value: 'Comic Sans MS' }
-  ];
-
-
-  fontSizes = [
-    { label: 'Pequeño', value: '2' },
-    { label: 'Mediano', value: '3' },
-    { label: 'Grande', value: '5' },
-    { label: 'Muy Grande', value: '7' },
-  ];
+  fontOptions = [{ label: 'Arial', value: 'Arial' }, { label: 'Times New Roman', value: 'Times New Roman' }, { label: 'Courier New', value: 'Courier New' }, { label: 'Verdana', value: 'Verdana' }, { label: 'Tahoma', value: 'Tahoma' }, { label: 'Trebuchet MS', value: 'Trebuchet MS' }, { label: 'Impact', value: 'Impact' }, { label: 'Comic Sans MS', value: 'Comic Sans MS' }];
+  fontSizes = [{ label: 'Pequeño', value: '2' }, { label: 'Mediano', value: '3' }, { label: 'Grande', value: '5' }, { label: 'Muy Grande', value: '7' }];
   selectedFontSize: string = '';
   selectedFont: string = '';
   textColor: string = '#000000';
-
   participantes: any[] = [];
-
-
   winningParticipant: string | null = null;
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -68,108 +50,54 @@ export class EditRaffleComponent  implements OnInit{
   ) {}
 
   ngOnInit(): void {
-
- // Obtén el id de la rifa de la URL (ej: /edit-raffle/123)
- const idParam = this.route.snapshot.paramMap.get('id');
- if (idParam) {
-   this.raffleId = +idParam;
-   this.loadRaffle();
- } else {
-   this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No se recibió el ID de la rifa' });
-   this.router.navigate(['/dashboard']);
- }
-
+    const idParam = this.route.snapshot.paramMap.get('id');
+    if (idParam) {
+      this.raffleId = +idParam;
+      this.loadRaffle();
+    } else {
+      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No se recibió el ID de la rifa' });
+      this.router.navigate(['/dashboard']);
+    }
   }
 
+  loadRaffle(): void {
+    console.log("🔍 Iniciando carga de la rifa con ID:", this.raffleId);
 
+    forkJoin([
+      this.raffleService.getRaffleById(this.raffleId),
+      this.participanteService.getParticipantesByRaffleId(this.raffleId)
+    ]).subscribe({
+      next: ([raffleData, participantsData]: [RifaGanadorDTO | Raffle, Participante[]]) => {
+        console.log("📌 Respuesta completa del backend para rifa:", raffleData);
+        console.log("📌 Participantes cargados:", participantsData);
 
+        if ('rifa' in raffleData) {
+          this.raffle = raffleData.rifa as Raffle;
+          this.participantes = raffleData.participantes || participantsData || [];
+          this.winningParticipant = raffleData.ganador ? `${raffleData.ganador.name} ${raffleData.ganador.lastName}` : 'Sin ganador';
+        } else {
+          this.raffle = raffleData as Raffle;
+          this.participantes = participantsData || [];
+          this.winningParticipant = 'Sin ganador';
+        }
 
-  loadRaffle0(): void {
-    this.raffleService.obtenerRifaPorId(this.raffleId).subscribe({
-      next: (data: Raffle) => {
-        this.raffle = data;
-        console.log('datos', this.raffle)
+        console.log("✅ Rifa obtenida:", this.raffle);
+        console.log("✅ Participantes cargados:", this.participantes);
+        console.log("✅ Ganador:", this.winningParticipant);
+
         setTimeout(() => {
           if (this.editableDiv) {
-            this.editableDiv.nativeElement.innerHTML =
-              this.raffle.producto.descripcion || '';
+            this.editableDiv.nativeElement.innerHTML = this.raffle.producto.descripcion || '';
           }
         });
       },
       error: (error) => {
-        console.error('Error al cargar la rifa:', error);
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: 'No se pudo cargar la rifa',
-        });
+        console.error('❌ Error al cargar la rifa o participantes:', error);
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No se pudo cargar la rifa' });
         this.router.navigate(['/dashboard']);
-      },
+      }
     });
   }
-
-
-loadRaffle(): void {
-  console.log("🔍 Iniciando carga de la rifa con ID:", this.raffleId);
-
-  this.raffleService.getRaffleById(this.raffleId).subscribe({
-    next: (data: RifaGanadorDTO | Raffle) => {
-      console.log("📌 Respuesta completa del backend:", data);
-
-      if ('rifa' in data) {
-        // 🔥 La respuesta es un RifaGanadorDTO, extraemos la rifa y los participantes
-        this.raffle = data.rifa;
-        this.participantes = data.participantes || [];
-        this.winningParticipant = data.ganador
-          ? `${data.ganador.name} ${data.ganador.lastName}`
-          : 'Sin ganador';
-      } else {
-        // 🔥 La respuesta es solo un Raffle sin participantes ni ganador
-        this.raffle = data;
-        this.participantes = [];
-        this.winningParticipant = 'Sin ganador';
-      }
-
-      console.log("✅ Rifa obtenida:", this.raffle);
-     // console.log("✅ Participantes cargados:", this.participantes);
-      console.log("✅ Ganador:", this.winningParticipant);
-
-      // 🔥 Hacer una segunda consulta para obtener los participantes si la respuesta fue solo `Raffle`
-      if (!('rifa' in data)) {
-        this.participanteService.getParticipantesByRaffleId(this.raffleId).subscribe({
-          next: (participants) => {
-            this.participantes = participants || [];
-            console.log("✅ Participantes cargados después de la segunda consulta:", this.participantes);
-          },
-          error: (err) => console.error("❌ Error al obtener los participantes:", err)
-        });
-      }
-
-      setTimeout(() => {
-        if (this.editableDiv) {
-          this.editableDiv.nativeElement.innerHTML = this.raffle.producto.descripcion || '';
-        }
-      });
-    },
-    error: (error) => {
-      console.error('❌ Error al cargar la rifa:', error);
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'No se pudo cargar la rifa',
-      });
-      this.router.navigate(['/dashboard']);
-    },
-  });
-}
-
-
-
-
-
-
-
-
 
   onDescriptionChange(): void {
     const html = this.editableDiv?.nativeElement.innerHTML || '';
@@ -177,104 +105,75 @@ loadRaffle(): void {
     this.raffle.producto.descripcion = html;
   }
 
-
-
-
-    onSubmit0(): void {
-      if (!this.raffle || this.descripcionInvalida) {
-        return;
-      }
-
-      this.raffle.producto.descripcion = this.editableDiv.nativeElement.innerHTML;
-
-      this.loading = true;
-      this.raffleService.updateRaffle(this.raffleId, this.raffle).subscribe({
-        next: (updatedRaffle: Raffle) => {
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Éxito',
-            detail: 'Rifa actualizada correctamente',
-          });
-          this.router.navigate(['/dashboard']);
-        },
-        error: (error) => {
-          console.error('Error al actualizar la rifa:', error);
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'No se pudo actualizar la rifa',
-          });
-        },
-        complete: () => {
-          this.loading = false;
-        },
-      });
+  onSubmit(): void {
+    if (!this.raffle || this.descripcionInvalida) {
+      return;
     }
 
-onSubmit(): void {
-  if (!this.raffle || this.descripcionInvalida) {
-    return;
-  }
+    const nuevaCantidad = this.raffle.cantidadParticipantes;
+    console.log(`🔍 Nueva cantidad de participantes: ${nuevaCantidad}`);
 
-  // 🔥 Obtener la nueva cantidad de participantes
-  const nuevaCantidad = this.raffle.cantidadParticipantes;
-  console.log(`🔍 Nueva cantidad de participantes: ${nuevaCantidad}`);
+    const numerosReservados = this.participantes
+      .filter(p => p.reservedNumber !== null)
+      .map(p => p.reservedNumber);
 
-  // 🔥 Obtener todos los números reservados en la rifa
-  const numerosReservados = this.participantes
-    .filter(p => p.reservedNumber !== null)
-    .map(p => p.reservedNumber);
+    console.log("📌 Números reservados en la rifa:", numerosReservados);
 
-  console.log("📌 Números reservados en la rifa:", numerosReservados);
+    const numerosFueraDeRango = numerosReservados.filter(num => num > nuevaCantidad);
+    console.log("⚠️ Números fuera de rango:", numerosFueraDeRango);
 
-  // 🔥 Buscar si algún número reservado está fuera del nuevo rango
-  const numerosFueraDeRango = numerosReservados.filter(num => num > nuevaCantidad);
-  console.log("⚠️ Números fuera de rango:", numerosFueraDeRango);
-
-  if (numerosFueraDeRango.length > 0) {
-    // 🔥 Mostrar error con SweetAlert
-    const numerosFuera = numerosFueraDeRango.join(', ');
-    Swal.fire({
-      icon: 'error',
-      title: 'Error en la edición',
-      text: `No puede reducir la cantidad de participantes a ${nuevaCantidad} porque los números reservados ${numerosFuera} están fuera de rango. Debe eliminar esas reservaciones antes de continuar.`,
-      confirmButtonText: 'Aceptar'
-    });
-
-    return; // 🔥 Impedir la actualización de la rifa
-  }
-
-  // 🔥 Continuar con la actualización si no hay conflictos
-  this.raffle.producto.descripcion = this.editableDiv.nativeElement.innerHTML;
-  this.loading = true;
-
-  this.raffleService.updateRaffle(this.raffleId, this.raffle).subscribe({
-    next: (updatedRaffle: Raffle) => {
-      Swal.fire({
-        icon: 'success',
-        title: 'Rifa actualizada',
-        text: '¡Se ha actualizado correctamente!',
-        confirmButtonText: 'Aceptar'
-      });
-
-      this.router.navigate(['/dashboard']);
-    },
-    error: (error) => {
-      console.error('❌ Error al actualizar la rifa:', error);
+    if (numerosFueraDeRango.length > 0) {
+      const numerosFuera = numerosFueraDeRango.join(', ');
       Swal.fire({
         icon: 'error',
-        title: 'Error en la actualización',
-        text: 'No se pudo actualizar la rifa.',
+        title: 'Error en la edición',
+        text: `No puede reducir la cantidad de participantes a ${nuevaCantidad} porque los números reservados ${numerosFuera} están fuera de rango. Debe eliminar esas reservaciones antes de continuar.`,
         confirmButtonText: 'Aceptar'
       });
-    },
-    complete: () => {
-      this.loading = false;
-    },
-  });
-}
+      return;
+    }
 
+    this.raffle.producto.descripcion = this.editableDiv.nativeElement.innerHTML;
+    this.loading = true;
 
+    this.raffleService.updateRaffle(this.raffleId, this.raffle).subscribe({
+      next: (updatedRaffle: Raffle) => {
+        console.log('✅ Rifa actualizada con éxito:', updatedRaffle);
+
+        // Actualizar en localStorage usando el ID del usuario de la rifa
+        const localKey = `raffles_${this.raffle.usuario.id}`;
+        const localRaffles = JSON.parse(localStorage.getItem(localKey) || '[]');
+        const updatedIndex = localRaffles.findIndex((r: Raffle) => r.id === updatedRaffle.id);
+        if (updatedIndex !== -1) {
+          localRaffles[updatedIndex] = updatedRaffle;
+        } else {
+          localRaffles.push(updatedRaffle);
+        }
+        localStorage.setItem(localKey, JSON.stringify(localRaffles));
+
+        Swal.fire({
+          icon: 'success',
+          title: 'Rifa actualizada',
+          text: '¡Se ha actualizado correctamente!',
+          confirmButtonText: 'Aceptar'
+        });
+
+        this.router.navigate(['/dashboard']);
+      },
+      error: (error) => {
+        console.error('❌ Error al actualizar la rifa:', error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error en la actualización',
+          text: 'No se pudo actualizar la rifa.',
+          confirmButtonText: 'Aceptar'
+        });
+      },
+      complete: () => {
+        this.loading = false;
+      },
+    });
+  }
 
   cancel(): void {
     this.router.navigate(['/dashboard']);
@@ -292,8 +191,6 @@ onSubmit(): void {
     }
     this.displayFormatDialog = false;
   }
-
-
 
   applyFormat(command: string): void {
     document.execCommand(command, false);
@@ -316,6 +213,4 @@ onSubmit(): void {
       document.execCommand('foreColor', false, this.textColor);
     }
   }
-
-
 }

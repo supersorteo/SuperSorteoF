@@ -19,6 +19,9 @@
   color: #e7dddd;
 }
 
+
+
+
 .container{
   max-width: 1200px;
 }
@@ -85,7 +88,8 @@
 }
 
 .p-card-body {
-  background: linear-gradient(180deg, #ff69b4 0%, #c71585 50%, #9370db 75%, #87ceeb 100%);
+  //background: linear-gradient(180deg, #ff69b4 0%, #c71585 50%, #9370db 75%, #87ceeb 100%);
+  background-image: linear-gradient(to top, #f154c8, #ce69db, #a778e4, #7f82e5, #5a89dd);
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.897);
   box-shadow: 0px 4px 10px rgb(163 159 20 / 80%);
   border-radius: 10px;
@@ -161,14 +165,14 @@
 }
 
 
-
+/*
 .top-bar {
   position: absolute;
   top: 10px;
   left: 10px;
   right: 10px;
   z-index: 100;
-  background: rgba(34, 34, 34, 0.05);  /* Fondo oscuro con transparencia */
+  background: rgba(34, 34, 34, 0.05);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -189,8 +193,85 @@
 
 .top-bar:hover {
   background: rgba(34, 34, 34, 0.1);
+}*/
+
+
+.top-bar {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  right: 10px;
+  z-index: 100;
+  background: rgba(34, 34, 34, 0.05);
+  display: flex; /* Flexbox para alineación */
+  align-items: center; /* Alineación vertical centrada */
+  padding: 0.5rem 0.75rem;
+  border-radius: 5px;
+
+  .item {
+    flex: 1; /* Cada elemento ocupa un tercio del ancho */
+    display: flex;
+    justify-content: space-between; /* Centra el contenido dentro de cada item */
+    align-items: center;
+  }
+
+
+
+  &:hover {
+    background: rgba(34, 34, 34, 0.1);
+  }
 }
 
+.top-bar {
+  .item {
+    flex: 1;
+    display: flex;
+    align-items: center;
+
+    &.price-container {
+      justify-content: flex-start; /* Alinea el precio a la izquierda */
+    }
+
+    &.date-container {
+      justify-content: center; /* Alinea la fecha al centro */
+    }
+
+    &.edit-container {
+      justify-content: flex-end; /* Alinea el botón a la derecha */
+    }
+  }
+}
+
+.price-text {
+  color: #dcdfe1;
+  font-weight: bold;
+  background: #e30bf1ed;
+  padding: 0.5rem 0.75rem;
+  border-radius: 5px;
+  z-index: 100;
+}
+
+.date-text {
+  color: #dcdfe1;
+  padding: 0.5rem;
+  font-weight: bold;
+  display: inline-block; /* Asegura que el texto se centre */
+
+}
+
+
+
+.edit-container {
+  .editar {
+    padding: 0.25rem;
+    z-index: 100;
+  }
+}
+
+.editar {
+  padding: 0.5rem;
+  z-index: 100;
+}
 
 .raffle-code:hover {
   background-color: rgba(0, 0, 0, 0.9);
@@ -859,6 +940,7 @@ p{
   display: grid !important;
   grid-template-columns: 2.5% 95% 2.5% !important;
   align-items: center;
+  height: 250px;
 }
 
 /* 2) Cada slide (= .p-carousel-item) se coloca en la columna central */
@@ -977,4 +1059,29 @@ margin: 0;
     color: rgba(0, 0, 0, 0.87);
     box-shadow: 0 2px 1px -1px rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 1px 3px 0 rgba(0, 0, 0, 0.12);
     border-radius: 4px;
+}
+
+.responsable-list {
+  list-style-position: outside; /* Asegura que los bullets se muestren fuera del texto, alineados a la izquierda */
+  padding-left: 1.5rem; /* Espaciado para los bullets, ajusta para más o menos indentación */
+  margin: 1rem 0; /* Separación superior e inferior de la lista */
+  text-align: left; /* Alinea el texto a la izquierda para distribución natural */
+
+  li {
+    margin-bottom: 1.5rem; /* Separación vertical entre puntos (aumenta para más espacio) */
+    line-height: 1.6; /* Espaciado entre líneas para legibilidad */
+    padding: 0.5rem 0; /* Padding vertical en cada fila para uniformidad */
+    display: list-item; /* Fuerza que se muestre como elemento de lista con bullet */
+    align-items: flex-start; /* Alinea el bullet y texto al inicio vertical */
+
+    &::marker { /* Personaliza el bullet point */
+      font-size: 1.2rem; /* Tamaño del bullet para visibilidad */
+      color: #103e51; /* Color del bullet para coincidir con tu tema */
+      content: "• "; /* Fuerza un bullet circular simple si el navegador lo oculta */
+    }
+
+    &:last-child {
+      margin-bottom: 0; /* Sin margen en el último elemento */
+    }
+  }
 }

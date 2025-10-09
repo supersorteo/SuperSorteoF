@@ -50,6 +50,7 @@ export interface WinningEntry {
     cantidadParticipantes: number;
     fechaSorteo: string;
     winningNumber?: number;
+    producto: Producto
   };
   ganador?: {
     id: number;
@@ -210,6 +211,9 @@ winningEntries: Map<number, WinningEntry> = new Map();
   fontSize: number = 14;
   textColor: string = '#000000';
   selectedFontSize: string = '3';
+
+private db: IDBDatabase | null = null;
+
   fontOptions = [
     { label: 'Arial', value: 'Arial' },
     { label: 'Times New Roman', value: 'Times New Roman' },
@@ -269,6 +273,8 @@ imagenes = [
   imagenSeleccionada: any = this.imagenes[0];
   activeIndex: number = 0;
 private countdownInterval: any;
+  juegoResponsableVisible:boolean = false;
+
   constructor(
     private authService: AuthenticationService,
     private cdRef: ChangeDetectorRef,
@@ -281,12 +287,18 @@ private countdownInterval: any;
     private raffleExecutionService: RaffleExecutionService,
     private webSocketService: WebSocketService
 
-  ){ }
+  ){
+
+  }
 
 
   ngOnInit(): void {
     window.addEventListener('storage', this.onStorageEvent.bind(this));
     this.loadUserId()
+
+    this.initIndexedDB().catch(error => {
+      console.error('❌ Error al inicializar IndexedDB, continuando sin almacenamiento local:', error);
+    });
 
     const primerInicioSesion = JSON.parse(localStorage.getItem('primerInicioSesion') || 'false');
 
@@ -341,10 +353,36 @@ private countdownInterval: any;
 
 
 
+
 }
 
 
 
+
+private async initIndexedDB(): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const request = indexedDB.open('RaffleDB', 1);
+
+      request.onupgradeneeded = (event: any) => {
+        this.db = (event.target as IDBOpenDBRequest).result;
+        if (!this.db.objectStoreNames.contains('images')) {
+          this.db.createObjectStore('images', { keyPath: 'productId' });
+        }
+        console.log('📦 IndexedDB actualizado/creado');
+      };
+
+      request.onsuccess = (event: any) => {
+        this.db = (event.target as IDBOpenDBRequest).result;
+        console.log('✅ IndexedDB conectado');
+        resolve();
+      };
+
+      request.onerror = () => {
+        console.error('❌ Error al conectar IndexedDB');
+        reject();
+      };
+    });
+  }
 
 
   ocultarVideo(): void {
@@ -752,107 +790,11 @@ private startCountdown(expiryDate: Date): void {
 
 
 
-  loadUserId0(): void {
-    const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
 
-    // Verifica si el currentUser tiene la propiedad esVip
-    console.log('currentUser en localStorage:', currentUser);
 
-    if (currentUser && currentUser.id) {
-      this.userId = currentUser.id;
-      this.codigoVip = currentUser.codigoVip || null;
-      this.isVip = currentUser.esVip === true; // Aquí usamos esVip en lugar de isVip
 
-      console.log('Detalles del usuario logueado:', currentUser);
-      console.log('ID del usuario logueado:', this.userId);
-      console.log('Código VIP del usuario:', this.codigoVip);
-      console.log('Es VIP?:', this.isVip);
 
-      // Imprimir la cantidad de rifas permitidas
-      if (this.isVip && currentUser.cantidadRifas !== undefined) {
-        console.log('Cantidad de rifas permitidas:', currentUser.cantidadRifas);
-      } else {
-        console.log('El usuario no tiene una cantidad de rifas asignada o no es VIP.');
-      }
-
-      this.loadUserRaffles();
-    } else {
-      console.error('No se encontró el usuario logueado en el localStorage.');
-    }
-  }
-
-  loadUserId1(): void {
-    let currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
-    if (currentUser && currentUser.id) {
-      // Intentamos rescatar los datos VIP de la clave vip_{id}
-      const vipDataRaw = localStorage.getItem(`vip_${currentUser.id}`);
-      if (vipDataRaw) {
-        try {
-          const vipData = JSON.parse(vipDataRaw);
-          // Inyectamos siempre estos tres valores
-          currentUser.esVip = vipData.esVip;
-          currentUser.codigoVip = vipData.codigoVip;
-          currentUser.cantidadRifas = vipData.cantidadRifas;
-          // Sobrescribimos currentUser en localStorage para que esté completo
-          localStorage.setItem('currentUser', JSON.stringify(currentUser));
-        } catch {
-          console.warn('No se pudo parsear vipData de localStorage');
-        }
-      }
-
-      this.userId   = currentUser.id;
-      this.codigoVip = currentUser.codigoVip || null;
-      this.isVip    = currentUser.esVip === true;
-
-      console.log('ID del usuario logueado:',   this.userId);
-      console.log('Código VIP del usuario:',     this.codigoVip);
-      console.log('Es VIP?:',                    this.isVip);
-      console.log('Cantidad de rifas permitidas:', currentUser.cantidadRifas);
-
-      this.loadUserRaffles();
-    } else {
-      console.error('No se encontró el usuario logueado en localStorage');
-    }
-  }
-
-  loadUserId2(): void {
-  let currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
-  if (!currentUser || !currentUser.id) {
-    console.error("❌ No se encontró el usuario logueado en localStorage.");
-    return;
-  }
-
-  const vipDataRaw = localStorage.getItem(`vip_${currentUser.id}`);
-  if (vipDataRaw) {
-    try {
-      const vipData = JSON.parse(vipDataRaw);
-      currentUser.esVip = vipData.esVip;
-      currentUser.codigoVip = vipData.codigoVip;
-      currentUser.cantidadRifas = vipData.cantidadRifas;
-      localStorage.setItem('currentUser', JSON.stringify(currentUser));
-    } catch {
-      console.warn('⚠️ No se pudo parsear vipData de localStorage');
-    }
-  }
-
-  this.userId = currentUser.id;
-  this.codigoVip = currentUser.codigoVip || null;
-  this.isVip = currentUser.esVip === true;
-
-  console.log('🔹 ID del usuario logueado:', this.userId);
-  console.log('🔹 Código VIP del usuario:', this.codigoVip);
-  console.log('🔹 Es VIP?:', this.isVip);
-  console.log('🔹 Cantidad de rifas permitidas:', currentUser.cantidadRifas);
-
-  // 🔥 Validamos que `userId` está bien antes de cargar rifas
-  if (this.userId) {
-    this.loadUserRaffles();
-  } else {
-    console.error("❌ El userId no está definido.");
-  }
-}
-
-loadUserId(): void {
+loadUserId0(): void {
   let currentUserRaw = localStorage.getItem('currentUser');
   if (!currentUserRaw) {
     console.error("❌ No se encontró el usuario logueado en localStorage.");
@@ -861,6 +803,7 @@ loadUserId(): void {
 
   const currentUser = JSON.parse(currentUserRaw);
   this.userId = currentUser.id;
+  console.log('id del usuario', currentUser.id)
 
   if (!this.userId) {
     console.error("❌ No se pudo obtener el ID del usuario.");
@@ -884,47 +827,49 @@ loadUserId(): void {
 }
 
 
-
-
-
-  loadUserRaffles0(): void {
-    if (this.userId) {
-      this.raffleService.getRafflesByUser(this.userId).subscribe({
-        next: (raffles: Raffle[]) => {
-          this.userRaffles = raffles;
-          this.updateRafflesByStatus();
-          this.loadAllParticipantsForMyRaffles();
-
-          //this.autoDeleteExpiredEmptyRaffles();
-          // Asegúrate de que cada rifa tenga al menos una imagen válida
-          this.userRaffles.forEach(raffle => {
-            if (!raffle.producto.imagenes || raffle.producto.imagenes.length === 0) {
-              raffle.producto.imagenes = ['assets/images/default.jpg'];
-            }
-          });
-
-
-
-
-          // Por ejemplo, asigna la rifa más reciente como banner
-          if (this.userRaffles.length > 0) {
-            // Supón que la rifa creada más recientemente está al inicio
-            this.newlyCreatedRaffle = this.userRaffles[0];
-          }
-
-          console.log('Rifas asociadas al usuario:', this.userRaffles);
-        },
-        error: (error) => {
-          console.error('Error al cargar las rifas:', error);
-        }
-      });
-    } else {
-      console.error('El userId no está definido.');
-    }
+loadUserId(): void {
+  let currentUserRaw = localStorage.getItem('currentUser');
+  if (!currentUserRaw) {
+    console.error("❌ No se encontró el usuario logueado en localStorage.");
+    return;
   }
 
+  const currentUser = JSON.parse(currentUserRaw);
+  this.userId = currentUser.id;
+  console.log('id del usuario', currentUser.id);
 
-  loadUserRaffles(): void {
+  if (!this.userId) {
+    console.error("❌ No se pudo obtener el ID del usuario.");
+    return;
+  }
+
+  // 🔥 🚀 Intentar obtener datos actualizados desde el backend
+  this.raffleService.obtenerUsuarioPorId(this.userId).subscribe({
+    next: (usuarioActualizado) => {
+      // 🔥 Actualizamos localStorage y variables de sesión
+      localStorage.setItem('currentUser', JSON.stringify(usuarioActualizado));
+      this.actualizarDatosUsuario(usuarioActualizado);
+
+      // 🔥 Cargar rifas del usuario después de actualizarlo
+      this.loadUserRaffles();
+    },
+    error: (error) => {
+      console.error("❌ Error al obtener el usuario:", error);
+      // Fallback: Usar datos de localStorage y cargar rifas
+      this.actualizarDatosUsuario(currentUser); // Usar datos iniciales como fallback
+      this.loadUserRaffles(); // Cargar rifas con el userId existente
+    },
+    complete: () => {
+      console.log("🔍 Proceso de carga de usuario completado.");
+    }
+  });
+}
+
+
+
+
+
+  loadUserRaffles1(): void {
   if (!this.userId) {
     console.error("❌ El userId no está definido.");
     return;
@@ -958,6 +903,234 @@ loadUserId(): void {
       console.error('❌ Error al cargar las rifas:', error);
     }
   });
+}
+
+loadUserRaffles0(): void {
+  if (!this.userId) {
+    console.error("❌ El userId no está definido.");
+    return;
+  }
+
+  const localKey = `raffles_${this.userId}`;
+  const localRaffles = localStorage.getItem(localKey);
+
+  if (localRaffles) {
+    // 🔥 Cargar desde localStorage si existe
+    this.userRaffles = JSON.parse(localRaffles);
+    console.log("✅ Rifas cargadas desde localStorage:", this.userRaffles);
+    this.updateRafflesByStatus();
+    this.loadAllParticipantsForMyRaffles();
+
+    this.userRaffles.forEach(raffle => {
+      if (!raffle.producto.imagenes || raffle.producto.imagenes.length === 0) {
+        raffle.producto.imagenes = ['assets/images/default.jpg'];
+      }
+    });
+
+    if (this.userRaffles.length > 0) {
+      this.newlyCreatedRaffle = this.userRaffles[0];
+    }
+
+    console.log('🆕 Rifas cargadas desde localStorage:', this.userRaffles);
+  } else {
+    // 🔥 Cargar desde backend si no hay en localStorage
+    this.raffleService.getRafflesByUser(this.userId).subscribe({
+      next: (raffles: Raffle[]) => {
+        if (!raffles || raffles.length === 0) {
+          console.warn("⚠️ No se encontraron rifas asociadas al usuario.");
+        } else {
+          console.log("✅ Rifas obtenidas del backend:", raffles);
+        }
+
+        this.userRaffles = raffles;
+        // 🔥 Guardar en localStorage para futuras cargas
+        localStorage.setItem(localKey, JSON.stringify(this.userRaffles));
+        this.updateRafflesByStatus();
+        this.loadAllParticipantsForMyRaffles();
+
+        this.userRaffles.forEach(raffle => {
+          if (!raffle.producto.imagenes || raffle.producto.imagenes.length === 0) {
+            raffle.producto.imagenes = ['assets/images/default.jpg'];
+          }
+        });
+
+        if (this.userRaffles.length > 0) {
+          this.newlyCreatedRaffle = this.userRaffles[0];
+        }
+
+        console.log('🆕 Rifas cargadas del backend y guardadas en localStorage:', this.userRaffles);
+      },
+      error: (error) => {
+        console.error('❌ Error al cargar las rifas:', error);
+      }
+    });
+  }
+}
+
+loadUserRaffles2(): void {
+  if (!this.userId) {
+    console.error('❌ El userId no está definido.');
+    return;
+  }
+
+  const localKey = `raffles_${this.userId}`;
+  const localRaffles = localStorage.getItem(localKey);
+
+  const processRaffles = (raffles: Raffle[]) => {
+    this.userRaffles = raffles;
+    this.updateRafflesByStatus();
+    this.loadAllParticipantsForMyRaffles();
+    raffles.forEach(raffle => {
+      if (!raffle.producto.imagenes?.length) {
+        raffle.producto.imagenes = ['assets/images/default.jpg'];
+      } else if (raffle.producto.id) { // Validar que id no sea undefined
+        this.loadImagesFromIndexedDB(raffle.producto.id, raffle.producto.imagenes);
+      } else {
+        console.warn(`⚠️ ID de producto no definido para la rifa ${raffle.id}, usando URLs del backend`);
+      }
+    });
+    if (this.userRaffles.length > 0) this.newlyCreatedRaffle = this.userRaffles[0];
+    console.log('🆕 Rifas cargadas:', this.userRaffles);
+  };
+
+  if (localRaffles) {
+    processRaffles(JSON.parse(localRaffles));
+  } else {
+    this.raffleService.getRafflesByUser(this.userId).subscribe({
+      next: (raffles: Raffle[]) => {
+        if (!raffles?.length) console.warn('⚠️ No se encontraron rifas asociadas al usuario.');
+        else console.log('✅ Rifas obtenidas del backend:', raffles);
+        this.userRaffles = raffles;
+        localStorage.setItem(localKey, JSON.stringify(raffles));
+        processRaffles(raffles);
+      },
+      error: (error) => {
+        console.error('❌ Error al cargar las rifas:', error);
+        if (localRaffles) {
+          console.warn('⚠️ Usando datos de localStorage como fallback.');
+          processRaffles(JSON.parse(localRaffles));
+        }
+      }
+    });
+  }
+}
+
+loadUserRaffles(): void {
+  if (!this.userId) {
+    console.error('❌ El userId no está definido.');
+    return;
+  }
+
+  const localKey = `raffles_${this.userId}`;
+  const localRaffles = localStorage.getItem(localKey);
+
+  const processRaffles = (raffles: Raffle[]) => {
+    this.userRaffles = raffles;
+    this.updateRafflesByStatus();
+    this.loadAllParticipantsForMyRaffles();
+    raffles.forEach(raffle => {
+      if (!raffle.producto.imagenes?.length) {
+        raffle.producto.imagenes = ['assets/images/default.jpg'];
+      } else if (raffle.producto.id) {
+        const productKey = `product_${raffle.producto.id}_images`;
+        const localImages = JSON.parse(localStorage.getItem(productKey) || '{}');
+        if (Object.keys(localImages).length > 0) {
+          raffle.producto.imagenes = Object.values(localImages).map((base64: any) => base64); // Carga base64
+          console.log(`🖼️ Imágenes cargadas desde localStorage como base64 para productId ${raffle.producto.id}:`, raffle.producto.imagenes);
+        } else {
+          console.log(`ℹ️ No se encontraron imágenes en localStorage para productId ${raffle.producto.id}, usando URLs del backend`);
+        }
+      } else {
+        console.warn(`⚠️ ID de producto no definido para la rifa ${raffle.id}, usando URLs del backend`);
+      }
+    });
+    if (this.userRaffles.length > 0) this.newlyCreatedRaffle = this.userRaffles[0];
+    console.log('🆕 Rifas cargadas:', this.userRaffles);
+  };
+
+  if (localRaffles) {
+    processRaffles(JSON.parse(localRaffles));
+  } else {
+    this.raffleService.getRafflesByUser(this.userId).subscribe({
+      next: (raffles: Raffle[]) => {
+        if (!raffles?.length) console.warn('⚠️ No se encontraron rifas asociadas al usuario.');
+        else console.log('✅ Rifas obtenidas del backend:', raffles);
+        this.userRaffles = raffles;
+        localStorage.setItem(localKey, JSON.stringify(raffles));
+        processRaffles(raffles);
+      },
+      error: (error) => {
+        console.error('❌ Error al cargar las rifas:', error);
+        if (localRaffles) {
+          console.warn('⚠️ Usando datos de localStorage como fallback.');
+          processRaffles(JSON.parse(localRaffles));
+        }
+      }
+    });
+  }
+}
+
+private loadImagesFromIndexedDB1(productId: number, imageUrls: string[]): void {
+  if (!this.db) {
+    console.warn('⚠️ IndexedDB no inicializado, usando URLs del backend');
+    return;
+  }
+
+  if (isNaN(productId)) {
+    console.error('❌ productId no es un número válido:', productId);
+    return;
+  }
+
+  const transaction = this.db.transaction(['images'], 'readonly');
+  const store = transaction.objectStore('images');
+  const request = store.get(productId);
+
+  request.onsuccess = (event: any) => {
+    const data = event.target.result;
+    if (data) {
+      const blob = data.blob;
+      const url = URL.createObjectURL(blob);
+      imageUrls[data.slot] = url; // Reemplaza la URL del backend con la local
+      console.log(`🖼️ Imagen cargada desde IndexedDB para productId ${productId}, slot ${data.slot}`);
+    } else {
+      console.log(`ℹ️ No se encontró imagen en IndexedDB para productId ${productId}, usando URL del backend`);
+    }
+  };
+
+  request.onerror = () => console.error(`❌ Error al cargar imagen desde IndexedDB para productId ${productId}`);
+}
+
+private loadImagesFromIndexedDB(productId: number, imageUrls: string[]): void {
+  if (!this.db) {
+    console.warn('⚠️ IndexedDB no inicializado, usando URLs del backend');
+    return;
+  }
+
+  if (isNaN(productId)) {
+    console.error('❌ productId no es un número válido:', productId);
+    return;
+  }
+
+  const transaction = this.db.transaction(['images'], 'readonly');
+  const store = transaction.objectStore('images');
+  const request = store.get(productId);
+
+  request.onsuccess = (event: any) => {
+    const data = event.target.result;
+    if (data && data.images) {
+      data.images.forEach((img: { blob: Blob; slot: number }, slotIndex: number) => {
+        if (img.blob) {
+          const url = URL.createObjectURL(img.blob);
+          imageUrls[slotIndex] = url;
+          console.log(`🖼️ Imagen cargada desde IndexedDB para productId ${productId}, slot ${slotIndex}`);
+        }
+      });
+    } else {
+      console.log(`ℹ️ No se encontraron imágenes en IndexedDB para productId ${productId}, usando URLs del backend`);
+    }
+  };
+
+  request.onerror = () => console.error(`❌ Error al cargar imágenes desde IndexedDB para productId ${productId}`);
 }
 
 
@@ -1194,7 +1367,7 @@ private asignarCodigoVipAlUsuario(cantidadRifas: number): void {
 
 
 
-deleteRaffle(raffle: Raffle): void {
+deleteRaffle0(raffle: Raffle): void {
   Swal.fire({
     title: '¿Estás seguro?',
     text: 'Esta acción eliminará la rifa y todos los datos relacionados (participantes, números reservados, imágenes). Esta acción no se puede deshacer.',
@@ -1259,7 +1432,7 @@ deleteRaffle(raffle: Raffle): void {
   });
 }
 
-private removeRaffleDataFromLocalStorage(raffleId: number): void {
+private removeRaffleDataFromLocalStorage0(raffleId: number): void {
   // Eliminar datos de ganadores relacionados con la rifa
   const storedData = localStorage.getItem('winningData');
   if (storedData) {
@@ -1283,9 +1456,77 @@ private removeRaffleDataFromLocalStorage(raffleId: number): void {
   }
 }
 
+deleteRaffle(raffle: Raffle): void {
+  Swal.fire({
+    title: '¿Estás seguro?',
+    text: 'Esta acción eliminará la rifa y todos los datos relacionados. Esta acción no se puede deshacer.',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Sí, eliminar',
+    cancelButtonText: 'Cancelar',
+  }).then((result) => {
+    if (result.isConfirmed) {
+      const imageDeletions = raffle.producto.imagenes.map(imageUrl =>
+        this.raffleService.deleteImage(imageUrl.split('/').pop()!)
+      );
+
+      forkJoin(imageDeletions).pipe(
+        switchMap(() => this.raffleService.deleteRaffle(raffle.id!))
+      ).subscribe({
+        next: () => {
+          console.log('Rifa eliminada con éxito');
+          this.removeRaffleDataFromLocalStorage(raffle.id!); // Eliminar datos locales, incluyendo imágenes
+          this.activeRaffles = this.activeRaffles.filter(r => r.id !== raffle.id);
+          this.completedRaffles = this.completedRaffles.filter(r => r.id !== raffle.id);
+          this.updateLocalStorage();
+          this.loadUserRaffles(); // Recarga para sincronizar
+          Swal.fire({
+            title: '¡Eliminada!',
+            text: 'La rifa y datos relacionados han sido eliminados.',
+            icon: 'success',
+            confirmButtonText: 'Aceptar',
+          });
+        },
+        error: (error) => {
+          console.error('Error al eliminar:', error);
+          Swal.fire({
+            title: 'Error',
+            text: 'No se pudo eliminar la rifa.',
+            icon: 'error',
+            confirmButtonText: 'Aceptar',
+          });
+        }
+      });
+    }
+  });
+}
 
 
-private autoDeleteExpiredEmptyRaffles(): void {
+
+private removeRaffleDataFromLocalStorage(raffleId: number): void {
+  const storedData = localStorage.getItem('winningData');
+  if (storedData) {
+    try {
+      const winningData = JSON.parse(storedData).filter((entry: any) => entry.raffleId !== raffleId);
+      localStorage.setItem('winningData', JSON.stringify(winningData));
+      console.log(`Datos de ganadores para la rifa ${raffleId} eliminados.`);
+    } catch (error) {
+      console.error('Error al parsear winningData:', error);
+    }
+  }
+  localStorage.removeItem(`raffle_${raffleId}`);
+
+  // Eliminar las imágenes en Base64 asociadas al producto de la rifa
+  const productId = this.activeRaffles.find(r => r.id === raffleId)?.producto.id ||
+                   this.completedRaffles.find(r => r.id === raffleId)?.producto.id;
+  if (productId) {
+    const productKey = `product_${productId}_images`;
+    localStorage.removeItem(productKey);
+    console.log(`Imágenes en Base64 para productId ${productId} eliminadas de localStorage.`);
+  }
+}
+
+private autoDeleteExpiredEmptyRaffles0(): void {
   const now = Date.now();
   const oneWeekMs = 7 * 24 * 60 * 60 * 1000;
 
@@ -1311,8 +1552,36 @@ private autoDeleteExpiredEmptyRaffles(): void {
   });
 }
 
+private autoDeleteExpiredEmptyRaffles(): void {
+  const now = Date.now();
+  const oneWeekMs = 7 * 24 * 60 * 60 * 1000;
+  console.log(`🔄 Iniciando revisión automática: ${new Date(now).toLocaleString()}`);
 
-private deleteRaffleSilently(raffle: Raffle): void {
+  const allRaffles = [...this.activeRaffles, ...this.completedRaffles];
+  const deletions: Raffle[] = [];
+
+  allRaffles.forEach(raffle => {
+    const fechaSort = new Date(raffle.fechaSorteo).getTime();
+    const isExpired = now - fechaSort > oneWeekMs;
+
+    if (raffle.active && !this.participantes.some(p => p.raffleId === raffle.id) && isExpired) {
+      console.log(`🗑️ Rifa activa sin participantes vencida >7d: id=${raffle.id}, nombre="${raffle.nombre}"`);
+      deletions.push(raffle);
+    } else if (!raffle.active && isExpired) {
+      console.log(`🗑️ Rifa completada vencida >7d: id=${raffle.id}, nombre="${raffle.nombre}"`);
+      deletions.push(raffle);
+    }
+  });
+
+  if (deletions.length > 0) {
+    deletions.forEach(raffle => this.deleteRaffleSilently(raffle));
+  } else {
+    console.log('ℹ️ No se encontraron rifas para eliminar automáticamente.');
+  }
+}
+
+
+private deleteRaffleSilently0(raffle: Raffle): void {
   console.log(`   ➡️ Eliminando silenciosamente rifa ${raffle.id}`);
   const imageDeletions = raffle.producto.imagenes.map(url => {
     const name = url.split('/').pop()!;
@@ -1338,6 +1607,46 @@ private deleteRaffleSilently(raffle: Raffle): void {
   });
 }
 
+private deleteRaffleSilently(raffle: Raffle): void {
+  console.log(`   ➡️ Eliminando silenciosamente rifa ${raffle.id}`);
+  const imageDeletions = raffle.producto.imagenes.map(url =>
+    this.raffleService.deleteImage(url.split('/').pop()!)
+  );
+
+  forkJoin(imageDeletions).pipe(
+    switchMap(() => this.raffleService.deleteRaffle(raffle.id!)),
+    tap(() => {
+      console.log(`   ✔️ Rifa ${raffle.id} eliminada con éxito`);
+      this.removeRaffleDataFromLocalStorage(raffle.id!); // Eliminar datos locales, incluyendo imágenes
+      this.userRaffles = this.userRaffles.filter(r => r.id !== raffle.id);
+      this.activeRaffles = this.activeRaffles.filter(r => r.id !== raffle.id);
+      this.completedRaffles = this.completedRaffles.filter(r => r.id !== raffle.id);
+      this.updateLocalStorage();
+    })
+  ).subscribe({
+    next: () => {
+      Swal.fire({
+        title: 'Rifa eliminada',
+        text: `La rifa "${raffle.nombre}" ha sido eliminada automáticamente.`,
+        icon: 'info',
+        timer: 3000,
+        showConfirmButton: false
+      });
+    },
+    error: (err) => console.error(`   ❌ Error borrando rifa ${raffle.id}:`, err)
+  });
+}
+
+private updateLocalStorage(): void {
+  const localKey = `raffles_${this.userId}`;
+  localStorage.setItem(localKey, JSON.stringify([...this.activeRaffles, ...this.completedRaffles]));
+}
+
+/*private updateLocalStorage(): void {
+  const localKey = `raffles_${this.userId}`;
+  const combinedRaffles = [...this.activeRaffles, ...this.completedRaffles];
+  localStorage.setItem(localKey, JSON.stringify(combinedRaffles));
+}*/
 
 actualizarEstadoUsuario(): void {
   this.raffleService.getRafflesByUser(this.userId).subscribe({
@@ -1496,7 +1805,8 @@ executeRaffle(event: Event | null, raffle: Raffle): void {
           this.raffleService.executeRaffle(raffle.id!).subscribe({
             next: ganadorData => {
               console.log("🏆 Resultado del sorteo desde el backend:", ganadorData);
-              this.processWinner(ganadorData);
+              //this.processWinner(ganadorData);
+              this.processWinner(ganadorData, raffle.id!);
             },
             error: err => {
               console.error("❌ Error al ejecutar el sorteo:", err);
@@ -1518,7 +1828,7 @@ executeRaffle(event: Event | null, raffle: Raffle): void {
 }
 
 
-private processWinner(ganadorData: any): void {
+private processWinner0(ganadorData: any): void {
   this.showCountdown = false;
 
   const winningNumber = ganadorData.rifa.winningNumber; // 🔥 Extraer el número ganador del objeto `rifa`
@@ -1550,7 +1860,40 @@ this.loadWinningInfo();
 
 }
 
+private processWinner(ganadorData: any, raffleId: number): void { // Agregar raffleId como parámetro
+  this.showCountdown = false;
 
+  const winningNumber = ganadorData.rifa.winningNumber; // 🔥 Extraer el número ganador del objeto `rifa`
+
+  if (!ganadorData.ganador) {
+    Swal.fire({
+      title: 'Sorteo sin ganador',
+      text: `El número ganador es ${winningNumber}, pero no ha sido reservado.`,
+      icon: 'info',
+      confirmButtonText: 'Aceptar'
+    });
+    return;
+  }
+
+  Swal.fire({
+    title: '¡Sorteo Ejecutado!',
+    html: `
+      <p>Número: <b>${winningNumber}</b></p>
+      <p>Ganador: <b>${ganadorData.ganador.name} ${ganadorData.ganador.lastName}</b></p>
+      <p>Teléfono: <b>${ganadorData.ganador.phone}</b></p>
+    `,
+    icon: 'success',
+    confirmButtonText: 'Aceptar'
+  }).then(result => {
+    if (result.isConfirmed) {
+      // 🔥 Automatizar el envío: Llamar a shareWinnerOnWhatsApp después de confirmar el Swal
+      this.shareWinnerOnWhatsApp(raffleId);
+    }
+  });
+
+  this.updateRafflesByStatus();
+  this.loadWinningInfo();
+}
 
 checkRifasParaAutoEjecutar0(): void {
   const now = Date.now(); // 🔥 Obtener la fecha actual en milisegundos
@@ -1628,7 +1971,8 @@ private executeAutoRaffle(raffle: Raffle): void {
   this.raffleService.executeRaffle(raffle.id!).subscribe({
     next: ganadorData => {
       console.log("🏆 Resultado del sorteo automático:", ganadorData);
-      this.processWinner(ganadorData);
+      //this.processWinner(ganadorData);
+      this.processWinner(ganadorData, raffle.id!);
     },
     error: err => {
       console.error("❌ Error al ejecutar el sorteo automático:", err);
@@ -1652,7 +1996,8 @@ onCountdownFinished(): void {
 
   this.raffleService.executeRaffle(this.selectedRaffle.id!).subscribe({
     next: ganadorData => {
-      this.processWinner(ganadorData);
+      //this.processWinner(ganadorData);
+       this.processWinner(ganadorData, this.selectedRaffle.id!);
     },
     error: err => {
       console.error("❌ Error obteniendo ganador desde el backend:", err);
@@ -1662,7 +2007,7 @@ onCountdownFinished(): void {
 
 
 
-updateRafflesByStatus(): void {
+updateRafflesByStatus0(): void {
   console.log('🔄 Actualizando rifas desde el backend...');
 
   this.raffleService.obtenerRifasPorUsuarioId(this.currentUser.id).subscribe({  // 🔥 Obtener rifas solo del usuario
@@ -1680,9 +2025,54 @@ updateRafflesByStatus(): void {
   });
 }
 
+updateRafflesByStatus(): void {
+  console.log('🔄 Actualizando rifas desde el backend...');
+  this.raffleService.obtenerRifasPorUsuarioId(this.currentUser.id).subscribe({
+    next: (updatedRaffles) => {
+      this.userRaffles = updatedRaffles;
+      this.activeRaffles = updatedRaffles.filter(raffle => raffle.active);
+      this.completedRaffles = updatedRaffles.filter(raffle => !raffle.active);
+
+      // Actualizar localStorage con las rifas combinadas
+      const localKey = `raffles_${this.currentUser.id}`;
+      localStorage.setItem(localKey, JSON.stringify([...this.activeRaffles, ...this.completedRaffles]));
+
+      console.log('✅ Rifas activas:', this.activeRaffles);
+      console.log('✅ Rifas terminadas:', this.completedRaffles);
+    },
+    error: (err) => {
+      console.error('❌ Error al obtener rifas actualizadas:', err);
+      // Opcional: Usar datos de localStorage como fallback si falla el backend
+      const localKey = `raffles_${this.currentUser.id}`;
+      const localRaffles = localStorage.getItem(localKey);
+      if (localRaffles) {
+        this.userRaffles = JSON.parse(localRaffles);
+        this.updateRaffleLists();
+        console.warn('⚠️ Usando datos de localStorage como fallback.');
+      }
+    }
+  });
+}
+
+private updateRaffleLists(): void {
+  this.activeRaffles = this.userRaffles.filter(raffle => raffle.active);
+  this.completedRaffles = this.userRaffles.filter(raffle => !raffle.active);
+}
 
 
+private applyDefaultImages(): void {
+  this.userRaffles.forEach(raffle => {
+    if (!raffle.producto.imagenes || raffle.producto.imagenes.length === 0) {
+      raffle.producto.imagenes = ['assets/images/default.jpg'];
+    }
+  });
+}
 
+private setNewlyCreatedRaffle(): void {
+  if (this.userRaffles.length > 0) {
+    this.newlyCreatedRaffle = this.userRaffles[0];
+  }
+}
 
 listenForRaffleExecution(): void {
   this.webSocketService.listen(`/topic/raffle-executed`).subscribe((data: any) => {
@@ -1877,7 +2267,7 @@ compartirRifa(raffle: any) {
 
 
 
-shareWinnerOnWhatsApp(raffleId: number): void {
+shareWinnerOnWhatsApp0(raffleId: number): void {
   console.log("📡 Buscando ganador para la rifa ID:", raffleId);
 
   const entry = this.getWinningEntry(raffleId);
@@ -1928,94 +2318,61 @@ shareWinnerOnWhatsApp(raffleId: number): void {
   window.location.href = whatsappUrl;
 }
 
+shareWinnerOnWhatsApp(raffleId: number): void {
+  console.log("📡 Buscando ganador para la rifa ID:", raffleId);
 
+  const entry = this.getWinningEntry(raffleId);
 
+  console.log("📊 Datos obtenidos de getWinningEntry:", entry);
 
-/*
-onSubmit0(): void {
-  if (!this.validarFormularioRifa()) {
-    console.error('El formulario no es válido.');
-    return;
-  }
-  if (!this.productData || !this.productData.nombre) {
-    this.messageService.add({ severity: 'error', summary: 'Error en el producto', detail: 'Debe agregar un producto correctamente antes de guardar la rifa.', life: 2000 });
-    return;
-  }
-  if (this.isVip && !this.codigoVip) {
-    console.error('Código VIP no válido');
-    return;
-  }
-
-
-
-
-  const requestBody = {
-    nombre: this.newRaffle.nombre,
-    cantidadParticipantes: this.newRaffle.cantidadParticipantes,
-    fechaSorteo: this.newRaffle.fechaSorteo,
-    usuario: { id: this.userId },
-    producto: {
-      nombre: this.productData.nombre,
-      descripcion: this.productData.descripcion,
-      imagenes: this.productData.imagenes
-    },
-    active: true,
-    code: this.newRaffle.code,
-    precio: this.newRaffle.precio
-  };
-
-  console.log('Cuerpo de la solicitud:', requestBody);
-
-  const createRaffle$ = this.isVip && this.codigoVip
-    ? this.raffleService.crearRifaConCodigoVip(requestBody, this.codigoVip)
-    : this.raffleService.crearRifa(requestBody);
-
-  createRaffle$
-    .pipe(
-      tap((response) => {
-        console.log('Rifa creada con éxito:', response);
-        this.activeRaffles.unshift(response);
-        this.newlyCreatedRaffle = response; // Guardamos la rifa creada para el banner
-        console.log('Datos de la rifa en newlyCreatedRaffle:', this.newlyCreatedRaffle);
-        this.loadUserId();
-      })
-    )
-    .subscribe({
-      next: () => {
-        Swal.fire({
-          title: '¡Éxito!',
-          text: 'Rifa creada y añadida a las rifas activas.',
-          icon: 'success',
-          confirmButtonText: 'Aceptar',
-          customClass: { popup: 'my-swal-popup' }
-        });
-        this.hideDialog();
-        this.resetFormulario();
-        this.productData = { nombre: '', descripcion: '', imagenes: [] };
-
-        if (this.mainEditor) {
-          this.mainEditor.nativeElement.innerHTML = '';
-        }
-      },
-      error: (error) => {
-        console.error('Error al crear la rifa:', error);
-        let errorMessage = 'No se pudo crear la rifa. Por favor, inténtelo nuevamente.';
-        if (typeof error === 'string') {
-          errorMessage = error;
-        } else if (error?.message) {
-          errorMessage = error.message;
-        }
-        if (errorMessage.includes('Has alcanzado el límite de rifas permitidas.')) {
-          Swal.fire({ title: 'Límite alcanzado', text: 'Ya has alcanzado el número máximo de rifas permitidas según tu código VIP.', icon: 'warning', confirmButtonText: 'Aceptar' });
-        } else {
-          Swal.fire({ title: 'Error', text: errorMessage, icon: 'error', confirmButtonText: 'Aceptar' });
-        }
-      },
+  if (!entry || !entry.ganador?.phone) {
+    Swal.fire({
+      title: 'Sin ganador',
+      text: 'Aún no hay ganador con teléfono disponible.',
+      icon: 'info',
+      confirmButtonText: 'Aceptar'
     });
-}*/
+    console.log("❌ No se encontró un ganador válido con teléfono.");
+    return;
+  }
+
+  const phone = entry.ganador.phone.replace(/\D+/g, '');
+
+  if (!phone || phone.length < 10) {
+    Swal.fire({
+      title: 'Número no válido',
+      text: 'El número de teléfono del ganador es incorrecto.',
+      icon: 'error',
+      confirmButtonText: 'Aceptar'
+    });
+    console.log("❌ Número de teléfono inválido:", phone);
+    return;
+  }
+
+  const raffleName = entry.rifa.nombre;
+  //const productName = entry.rifa.winningNumber ? `Premio ${entry.rifa.winningNumber}` : 'este sorteo';
+  const productName = entry.rifa.producto?.nombre ?? 'este sorteo';
+  const message =
+    `🎉 ¡Felicidades ${entry.ganador.name} ${entry.ganador.lastName}! 🎉\n\n` +
+    `Has ganado la rifa *"${raffleName}"* 🎁\n` +
+    `Premio: *${productName}*\n` +
+    `Número ganador: *${entry.rifa.winningNumber}*\n\n` +
+    `📲 Para más detalles, comunícate con el organizador.`;
+
+  console.log("🏆 Datos del ganador:");
+  console.log("Nombre:", entry.ganador.name, entry.ganador.lastName);
+  console.log("Teléfono:", phone);
+  console.log("Mensaje a enviar:", message);
+
+  // 🔥 Abrir directamente WhatsApp en el móvil
+  const whatsappUrl = `whatsapp://send?phone=${phone}&text=${encodeURIComponent(message)}`;
+  window.location.href = whatsappUrl;
+}
 
 
-onSubmit(): void {
+
+
+onSubmit0(): void {
   if (!this.validarFormularioRifa()) {
     console.error('El formulario no es válido.');
     return;
@@ -2106,8 +2463,295 @@ onSubmit(): void {
     });
 }
 
+onSubmit1(): void {
+  if (!this.validarFormularioRifa()) {
+    console.error('El formulario no es válido.');
+    return;
+  }
+  if (!this.productData || !this.productData.nombre) {
+    this.messageService.add({ severity: 'error', summary: 'Error en el producto', detail: 'Debe agregar un producto correctamente antes de guardar la rifa.', life: 2000 });
+    return;
+  }
+  if (this.isVip && !this.codigoVip) {
+    console.error('Código VIP no válido');
+    return;
+  }
 
+  // 🔥 Validación para evitar que usuarios sin código VIP creen más de una rifa
+  if (!this.isVip && this.activeRaffles.length >= 1) {
+    Swal.fire({
+      title: 'Límite alcanzado',
+      text: 'Solo usuarios con código VIP pueden crear más de una rifa.',
+      icon: 'warning',
+      confirmButtonText: 'Aceptar'
+    });
+    return;
+  }
 
+  const fechaSorteoFormatted = typeof this.newRaffle.fechaSorteo === 'string'
+    ? this.newRaffle.fechaSorteo
+    : this.newRaffle.fechaSorteo.toISOString().split('T')[0];
+
+  const requestBody: Raffle = {
+    nombre: this.newRaffle.nombre,
+    cantidadParticipantes: Number(this.newRaffle.cantidadParticipantes),
+    fechaSorteo: fechaSorteoFormatted,
+    usuario: {
+      id: this.userId,
+      esVip: Boolean(this.isVip),
+      codigoVip: this.codigoVip || undefined
+    },
+    producto: {
+      nombre: this.productData.nombre,
+      descripcion: this.productData.descripcion,
+      imagenes: this.productData.imagenes
+
+    },
+    active: true,
+    executed: false,
+    code: this.newRaffle.code,
+    precio: Number(this.newRaffle.precio)
+  };
+
+  console.log('Cuerpo de la solicitud:', requestBody);
+
+  const createRaffle$ = this.isVip && this.codigoVip
+    ? this.raffleService.crearRifaConCodigoVip(requestBody, this.codigoVip)
+    : this.raffleService.crearRifa(requestBody);
+
+  createRaffle$
+    .pipe(
+      tap((response) => {
+        console.log('✅ Rifa creada con éxito:', response);
+
+        // 🔥 Agregar la nueva rifa directamente en la lista activa
+        this.activeRaffles.unshift(response);
+        this.newlyCreatedRaffle = response;
+
+        // 🔥 Guardar en localStorage
+        localStorage.setItem(`raffles_${this.userId}`, JSON.stringify(this.activeRaffles));
+        this.productData.id = response.producto.id;
+        // 🔥 Volver a cargar todas las rifas en caso de cambios en el backend (solo si es necesario)
+        this.loadUserId();
+      })
+    )
+    .subscribe({
+      next: () => {
+        Swal.fire({
+          title: '¡Éxito!',
+          text: 'Rifa creada y añadida a las rifas activas.',
+          icon: 'success',
+          confirmButtonText: 'Aceptar',
+          customClass: { popup: 'my-swal-popup' }
+        });
+        this.hideDialog();
+        this.resetFormulario();
+        this.productData = { nombre: '', descripcion: '', imagenes: [] };
+        if (this.mainEditor) {
+          this.mainEditor.nativeElement.innerHTML = '';
+        }
+      },
+      error: (error) => {
+        console.error('❌ Error al crear la rifa:', error);
+        this.mostrarErrorCreacion(error);
+      },
+    });
+}
+
+/*
+onSubmit(): void {
+  if (!this.validarFormularioRifa()) {
+    console.error('El formulario no es válido.');
+    return;
+  }
+  if (!this.productData || !this.productData.nombre) {
+    this.messageService.add({ severity: 'error', summary: 'Error en el producto', detail: 'Debe agregar un producto correctamente antes de guardar la rifa.', life: 2000 });
+    return;
+  }
+  if (this.isVip && !this.codigoVip) {
+    console.error('Código VIP no válido');
+    return;
+  }
+
+  if (!this.isVip && this.activeRaffles.length >= 1) {
+    Swal.fire({
+      title: 'Límite alcanzado',
+      text: 'Solo usuarios con código VIP pueden crear más de una rifa.',
+      icon: 'warning',
+      confirmButtonText: 'Aceptar'
+    });
+    return;
+  }
+
+  const fechaSorteoFormatted = typeof this.newRaffle.fechaSorteo === 'string'
+    ? this.newRaffle.fechaSorteo
+    : this.newRaffle.fechaSorteo.toISOString().split('T')[0];
+
+  const requestBody: Raffle = {
+    nombre: this.newRaffle.nombre,
+    cantidadParticipantes: Number(this.newRaffle.cantidadParticipantes),
+    fechaSorteo: fechaSorteoFormatted,
+    usuario: { id: this.userId, esVip: Boolean(this.isVip), codigoVip: this.codigoVip || undefined },
+    producto: { nombre: this.productData.nombre, descripcion: this.productData.descripcion, imagenes: this.productData.imagenes },
+    active: true,
+    executed: false,
+    code: this.newRaffle.code,
+    precio: Number(this.newRaffle.precio)
+  };
+
+  console.log('Cuerpo de la solicitud:', requestBody);
+
+  const createRaffle$ = this.isVip && this.codigoVip
+    ? this.raffleService.crearRifaConCodigoVip(requestBody, this.codigoVip)
+    : this.raffleService.crearRifa(requestBody);
+
+  createRaffle$
+    .pipe(
+      tap((response) => {
+        console.log('✅ Rifa creada con éxito:', response);
+
+        this.activeRaffles.unshift(response);
+        this.newlyCreatedRaffle = response;
+
+        // Asignar el id del producto antes de procesar las imágenes
+        this.productData.id = response.producto.id;
+
+        // Guardar imágenes pendientes en IndexedDB con el id real
+        if (this.db && this.pendingImages) {
+          Object.entries(this.pendingImages).forEach(([slot, { blob, url }]) => {
+            if (this.productData.id !== undefined) { // Verificación explícita
+              this.saveImageToIndexedDB(this.productData.id, blob, Number(slot));
+              console.log(`🖼️ Imagen guardada en IndexedDB para productId ${this.productData.id}, slot ${slot}: ${url}`);
+            } else {
+              console.error('❌ productData.id es undefined, no se puede guardar la imagen');
+            }
+          });
+          this.pendingImages = {}; // Limpiar después de guardar
+        }
+
+        localStorage.setItem(`raffles_${this.userId}`, JSON.stringify(this.activeRaffles));
+        this.loadUserId();
+        this.loadUserRaffles(); // Actualizar vista
+      })
+    )
+    .subscribe({
+      next: () => {
+        Swal.fire({
+          title: '¡Éxito!',
+          text: 'Rifa creada y añadida a las rifas activas.',
+          icon: 'success',
+          confirmButtonText: 'Aceptar',
+          customClass: { popup: 'my-swal-popup' }
+        });
+        this.hideDialog();
+        this.resetFormulario();
+        this.productData = { nombre: '', descripcion: '', imagenes: [] };
+        if (this.mainEditor) {
+          this.mainEditor.nativeElement.innerHTML = '';
+        }
+      },
+      error: (error) => {
+        console.error('❌ Error al crear la rifa:', error);
+        this.mostrarErrorCreacion(error);
+      },
+    });
+}*/
+
+onSubmit(): void {
+  if (!this.validarFormularioRifa()) {
+    console.error('El formulario no es válido.');
+    return;
+  }
+  if (!this.productData || !this.productData.nombre) {
+    this.messageService.add({ severity: 'error', summary: 'Error en el producto', detail: 'Debe agregar un producto correctamente antes de guardar la rifa.', life: 2000 });
+    return;
+  }
+  if (this.isVip && !this.codigoVip) {
+    console.error('Código VIP no válido');
+    return;
+  }
+
+  if (!this.isVip && this.activeRaffles.length >= 1) {
+    Swal.fire({
+      title: 'Límite alcanzado',
+      text: 'Solo usuarios con código VIP pueden crear más de una rifa.',
+      icon: 'warning',
+      confirmButtonText: 'Aceptar'
+    });
+    return;
+  }
+
+  const fechaSorteoFormatted = typeof this.newRaffle.fechaSorteo === 'string'
+    ? this.newRaffle.fechaSorteo
+    : this.newRaffle.fechaSorteo.toISOString().split('T')[0];
+
+  const requestBody: Raffle = {
+    nombre: this.newRaffle.nombre,
+    cantidadParticipantes: Number(this.newRaffle.cantidadParticipantes),
+    fechaSorteo: fechaSorteoFormatted,
+    usuario: { id: this.userId, esVip: Boolean(this.isVip), codigoVip: this.codigoVip || undefined },
+    producto: { nombre: this.productData.nombre, descripcion: this.productData.descripcion, imagenes: this.productData.imagenes },
+    active: true,
+    executed: false,
+    code: this.newRaffle.code,
+    precio: Number(this.newRaffle.precio)
+  };
+
+  console.log('Cuerpo de la solicitud:', requestBody);
+
+  const createRaffle$ = this.isVip && this.codigoVip
+    ? this.raffleService.crearRifaConCodigoVip(requestBody, this.codigoVip)
+    : this.raffleService.crearRifa(requestBody);
+
+  createRaffle$
+    .pipe(
+      tap((response) => {
+        console.log('✅ Rifa creada con éxito:', response);
+
+        this.activeRaffles.unshift(response);
+        this.newlyCreatedRaffle = response;
+        this.productData.id = response.producto.id;
+
+        // Migrar imágenes temporales a la clave definitiva
+        if (this.pendingImages) {
+          const tempKey = `product_temp_images`;
+          const tempImages = JSON.parse(localStorage.getItem(tempKey) || '{}');
+          if (tempImages && Object.keys(tempImages).length > 0) {
+            const productKey = `product_${this.productData.id}_images`;
+            localStorage.setItem(productKey, JSON.stringify(tempImages));
+            localStorage.removeItem(tempKey); // Limpiar temporal
+            console.log(`🖼️ Imágenes migradas a localStorage para productId ${this.productData.id}:`, tempImages);
+          }
+          this.pendingImages = {}; // Limpiar pendientes
+        }
+
+        localStorage.setItem(`raffles_${this.userId}`, JSON.stringify(this.activeRaffles));
+        this.loadUserId();
+        this.loadUserRaffles(); // Actualizar vista
+      })
+    )
+    .subscribe({
+      next: () => {
+        Swal.fire({
+          title: '¡Éxito!',
+          text: 'Rifa creada y añadida a las rifas activas.',
+          icon: 'success',
+          confirmButtonText: 'Aceptar',
+          customClass: { popup: 'my-swal-popup' }
+        });
+        this.hideDialog();
+        this.resetFormulario();
+        this.productData = { nombre: '', descripcion: '', imagenes: [] };
+        if (this.mainEditor) {
+          this.mainEditor.nativeElement.innerHTML = '';
+        }
+      },
+      error: (error) => {
+        console.error('❌ Error al crear la rifa:', error);
+        this.mostrarErrorCreacion(error);
+      },
+    });
+}
 // Método reutilizable para mostrar mensajes
 private mostrarMensaje(icono: 'success' | 'error' | 'warning', titulo: string, mensaje: string): void {
   Swal.fire({
@@ -2293,58 +2937,10 @@ private mostrarErrorCreacion(error: any): void {
       }
 
 
-      uploadProductImages1(): void {
-        if (this.selectedFiles.length === 0) {
-          console.warn('No hay imágenes para subir.');
-          return;
-        }
-
-        this.uploading = true;
-
-        this.raffleService.uploadImages(this.selectedFiles1).subscribe({
-          next: (uploadedUrls) => {
-            this.productData.imagenes.push(...uploadedUrls);
-            this.selectedFiles = []; // Limpiar la selección después de subir
-            this.uploading = false;
-            console.log('Imágenes subidas correctamente:', this.productData.imagenes);
-          },
-          error: (error) => {
-            console.error('Error al subir imágenes:', error);
-            this.uploading = false;
-          }
-        });
-      }
 
 
+/*
       uploadProductImage0(index: number): void {
-        if (!this.selectedFiles[index]) {
-          console.warn(`No hay imagen para subir en el slot ${index}.`);
-          return;
-        }
-
-        this.uploading = true;
-
-        // Llama al servicio enviando solo el archivo correspondiente en un array
-        this.raffleService.uploadImages([this.selectedFiles[index]]).subscribe({
-          next: (uploadedUrls: string[]) => {
-            // Se asume que el servicio devuelve un array con la URL de la imagen subida
-            this.productData.imagenes.push(...uploadedUrls);
-
-            // Limpia el slot una vez subida la imagen
-            this.selectedFiles[index] = null;
-            this.previews[index] = null;
-            this.uploading = false;
-            console.log(`Imagen subida correctamente en el slot ${index}:`, uploadedUrls);
-          },
-          error: (error) => {
-            console.error(`Error al subir la imagen del slot ${index}:`, error);
-            this.uploading = false;
-          }
-        });
-      }
-
-
-      uploadProductImage(index: number): void {
         const file = this.selectedFiles[index];
 
         if (!file) {
@@ -2388,11 +2984,233 @@ private mostrarErrorCreacion(error: any): void {
         });
       }
 
+uploadProductImage1(index: number): void {
+  const file = this.selectedFiles[index];
 
+  if (!file) {
+    this.messageService.add({
+      severity: 'warn',
+      summary: 'Advertencia',
+      detail: `No hay imagen para subir en el slot ${index}.`,
+      life: 1000
+    });
+    return;
+  }
 
+  this.uploading = true;
+  console.log(`📤 Subiendo imagen desde slot ${index}:`, file.name);
 
+  this.raffleService.uploadImages([file]).subscribe({
+    next: (uploadedUrls: string[]) => {
+      const imageUrl = uploadedUrls[0];
+      this.productData.imagenes.push(imageUrl);
 
+      // Convertir archivo a Blob y guardar en IndexedDB
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        const blob = new Blob([e.target.result], { type: file.type });
+        if (this.db && this.productData.id) { // Asegúrate de que db e id estén disponibles
+          this.saveImageToIndexedDB(this.productData.id, blob, index);
+        } else {
+          console.warn('⚠️ IndexedDB o productId no inicializado, imagen solo guardada en backend');
+        }
+      };
+      reader.readAsArrayBuffer(file);
 
+      this.selectedFiles[index] = null;
+      this.previews[index] = null;
+      this.uploading = false;
+
+      console.log(`✅ Imagen subida y guardada en IndexedDB: ${imageUrl}`);
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Éxito',
+        detail: `Imagen subida correctamente en el slot ${index}.`,
+        life: 1000
+      });
+    },
+    error: (error) => {
+      this.uploading = false;
+      console.error(`❌ Error al subir imagen en slot ${index}:`, error);
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: `Error al subir la imagen en el slot ${index}.`,
+        life: 1000
+      });
+    }
+  });
+}
+
+uploadProductImage2(index: number): void {
+  const file = this.selectedFiles[index];
+
+  if (!file) {
+    this.messageService.add({
+      severity: 'warn',
+      summary: 'Advertencia',
+      detail: `No hay imagen para subir en el slot ${index}.`,
+      life: 1000
+    });
+    return;
+  }
+
+  this.uploading = true;
+  console.log(`📤 Subiendo imagen desde slot ${index}:`, file.name);
+
+  this.raffleService.uploadImages([file]).subscribe({
+    next: (uploadedUrls: string[]) => {
+      const imageUrl = uploadedUrls[0];
+      this.productData.imagenes.push(imageUrl);
+
+      // Almacenar temporalmente el blob para guardarlo después con el id real
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        const blob = new Blob([e.target.result], { type: file.type });
+        this.pendingImages = this.pendingImages || {};
+        this.pendingImages[index] = { blob, url: imageUrl };
+        console.log(`✅ Imagen subida al backend y almacenada temporalmente para slot ${index}: ${imageUrl}`);
+      };
+      reader.readAsArrayBuffer(file);
+
+      this.selectedFiles[index] = null;
+      this.previews[index] = null;
+      this.uploading = false;
+
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Éxito',
+        detail: `Imagen subida correctamente en el slot ${index}.`,
+        life: 1000
+      });
+    },
+    error: (error) => {
+      this.uploading = false;
+      console.error(`❌ Error al subir imagen en slot ${index}:`, error);
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: `Error al subir la imagen en el slot ${index}.`,
+        life: 1000
+      });
+    }
+  });
+}
+*/
+
+uploadProductImage(index: number): void {
+  const file = this.selectedFiles[index];
+
+  if (!file) {
+    this.messageService.add({
+      severity: 'warn',
+      summary: 'Advertencia',
+      detail: `No hay imagen para subir en el slot ${index}.`,
+      life: 1000
+    });
+    return;
+  }
+
+  this.uploading = true;
+  console.log(`📤 Subiendo imagen desde slot ${index}:`, file.name);
+
+  this.raffleService.uploadImages([file]).subscribe({
+    next: (uploadedUrls: string[]) => {
+      const imageUrl = uploadedUrls[0];
+      this.productData.imagenes.push(imageUrl);
+
+      // Convertir archivo a Base64 y guardar en localStorage temporalmente
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        const base64 = e.target.result as string; // data:image/png;base64,...
+        const tempKey = `product_temp_images`;
+        const tempImages = JSON.parse(localStorage.getItem(tempKey) || '{}');
+        tempImages[index] = base64;
+        localStorage.setItem(tempKey, JSON.stringify(tempImages));
+        console.log(`🖼️ Imagen guardada en localStorage como base64 para slot ${index}:`, base64.substring(0, 50) + '...');
+      };
+      reader.readAsDataURL(file); // Genera base64
+
+      this.selectedFiles[index] = null;
+      this.previews[index] = null;
+      this.uploading = false;
+
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Éxito',
+        detail: `Imagen subida correctamente en el slot ${index}.`,
+        life: 1000
+      });
+    },
+    error: (error) => {
+      this.uploading = false;
+      console.error(`❌ Error al subir imagen en slot ${index}:`, error);
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: `Error al subir la imagen en el slot ${index}.`,
+        life: 1000
+      });
+    }
+  });
+}
+// Nueva propiedad para imágenes pendientes
+//pendingImages: { [key: number]: { blob: Blob; url: string } } = {};
+pendingImages: { [key: number]: string } = {};
+
+private saveImageToIndexedDB0(productId: number | string, blob: Blob, index: number): void {
+  if (!this.db) {
+    console.error('❌ IndexedDB no disponible');
+    return;
+  }
+
+  const transaction = this.db.transaction(['images'], 'readwrite');
+  const store = transaction.objectStore('images');
+  const request = store.put({ productId, blob, slot: index });
+
+  request.onsuccess = () => {
+    console.log(`🖼️ Imagen guardada exitosamente en IndexedDB para productId ${productId}, slot ${index}`);
+    console.log(`📏 Tamaño del blob: ${blob.size} bytes`); // Añade el tamaño para confirmar
+  };
+  request.onerror = () => console.error(`❌ Error al guardar imagen en IndexedDB para productId ${productId}`);
+}
+
+/*
+private saveImageToIndexedDB(productId: number | string, blob: Blob, index: number): void {
+  if (!this.db) {
+    console.error('❌ IndexedDB no disponible');
+    return;
+  }
+
+  const transaction = this.db.transaction(['images'], 'readwrite');
+  const store = transaction.objectStore('images');
+  const request = store.put({ productId, blob, slot: index });
+
+  request.onsuccess = () => console.log(`🖼️ Imagen guardada en IndexedDB para productId ${productId}, slot ${index}`);
+  request.onerror = () => console.error(`❌ Error al guardar imagen en IndexedDB para productId ${productId}`);
+}*/
+
+private saveImageToIndexedDB(productId: number | string, blob: Blob, index: number): void {
+  if (!this.db) {
+    console.error('❌ IndexedDB no disponible');
+    return;
+  }
+
+  const transaction = this.db.transaction(['images'], 'readwrite');
+  const store = transaction.objectStore('images');
+  const getRequest = store.get(productId);
+
+  getRequest.onsuccess = (event: any) => {
+    const existingData = event.target.result || { productId, images: [] };
+    existingData.images[index] = { blob, slot: index };
+    const putRequest = store.put(existingData);
+
+    putRequest.onsuccess = () => console.log(`🖼️ Imagen guardada/actualizada en IndexedDB para productId ${productId}, slot ${index}`);
+    putRequest.onerror = () => console.error(`❌ Error al guardar imagen en IndexedDB para productId ${productId}`);
+  };
+
+  getRequest.onerror = () => console.error(`❌ Error al recuperar imagen en IndexedDB para productId ${productId}`);
+}
 
 
 loadAllParticipantsForMyRaffles(): void {
@@ -2606,6 +3424,14 @@ seleccionarImagen(img: string): void {
   this.imagenSeleccionada = img;
   console.log('Imagen seleccionada:', this.imagenSeleccionada); // Para depuración
 }
+
+showJuegoResponsableModal(): void {
+  this.juegoResponsableVisible = true;
+}
+
+redirectToJuegoResponsable(): void {
+    window.open('https://www.saberjugar.gob.ar/', '_blank');
+  }
 
 
       ngOnDestroy(): void {
