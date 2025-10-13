@@ -1,32 +1,10 @@
-
-
 {
   "hosting": {
-    "public": "dist/aprendiendo/browser",
+    "public": "dist/aprendiendo/browser/",
     "ignore": [
       "firebase.json",
       "**/.*",
       "**/node_modules/**"
-    ],
-    "headers": [
-      {
-        "source": "**",
-        "headers": [
-          {
-            "key": "Cache-Control",
-            "value": "public, max-age=0"
-          }
-        ]
-      },
-      {
-        "source": "ngsw-worker.js",
-        "headers": [
-          {
-            "key": "Cache-Control",
-            "value": "no-cache"
-          }
-        ]
-      }
     ],
     "rewrites": [
       {

@@ -75,8 +75,10 @@ isReady = false;
 
 
     this.products = [
-      { name: 'Imagen 1', image: 'assets/home1.jpg' },
-      { name: 'Imagen 2', image: 'assets/home2.jpg' },
+      { name: 'Imagen 1', image: 'assets/rapido.png' },
+      { name: 'Imagen 2', image: 'assets/facil.png' },
+      { name: 'Imagen 2', image: 'assets/claro.png' },
+      { name: 'Imagen 2', image: 'assets/ventas.png' },
       //{ name: 'Imagen 1', image: 'assets/home3.png' },
 
 

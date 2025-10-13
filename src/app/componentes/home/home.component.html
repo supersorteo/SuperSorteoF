@@ -59,29 +59,24 @@
 
 
 
-  <div >
-    <p-carousel
-        [value]="products"
-        [numVisible]="1"
-        [numScroll]="1"
-        [circular]="true"
-        autoplayInterval="3000"
-        [responsiveOptions]="responsiveOptions">
+  <div>
+    <p-carousel [value]="products" [numVisible]="1" [numScroll]="1" [circular]="true" autoplayInterval="3000"
+      [responsiveOptions]="responsiveOptions">
 
-        <ng-template let-product pTemplate="item">
-            <div class="image-container">
-                <img [src]="product.image" [alt]="product.name" class="carousel-image"/>
-            </div>
-        </ng-template>
+      <ng-template let-product pTemplate="item">
+        <div class="image-container">
+          <img [src]="product.image" [alt]="product.name" class="carousel-image" />
+        </div>
+      </ng-template>
 
     </p-carousel>
 
-</div>
+  </div>
 
   <h1>Sorteá tus productos de la manera más rápida</h1>
-  <p>Llegá facilmente a miles de compradores en todo el país</p>
-  <p>Usando SUPERSORTEO hacé despegar tus ganancias!!</p>
-  <p>Ahorrá tiempo, obtené ingresos extras!</p>
+  <p>Llegá facilmente a miles de compradores en todo el país. Usando SUPERSORTEO hacé despegar tus ganancias!!.
+    Ahorrá tiempo, obtené ingresos extras!</p>
+
   <!--button pButton label="Quiero Registrarme" class="p-button-warning mt-3" (click)="scrollToSection('participar')" ></!--button-->
 
   <p-button label="Quiero Registrarme" [raised]="true" severity="warning" (click)="scrollToSection('participar')" />
@@ -91,7 +86,8 @@
     Ampliá el alcance de tus rifas inmediatamente
   </h2>
   <p class="lead mb-4">
-   Al crear tu sorteo tenés un link personal para compartir con todos tus contactos o audiencia por redes sociales y whatapps. Esto les permite visualizar comodamente y en tiempo real los detalles de tu sorteo
+    Al crear tu sorteo tenés un link personal para compartir con todos tus contactos o audiencia por redes sociales y
+    whatapps. Esto les permite visualizar comodamente y en tiempo real los detalles de tu sorteo
 
   </p>
 
@@ -101,16 +97,16 @@
 <section id="sobremi" class="full-page">
   <div *ngIf="videos.length > 0; else noVideos" class="video-container">
     <!--h2>Lista de Videos</!--h2-->
-    <div >
+    <div>
       <ul>
         @for (video of videos; track $index) {
-          <li>
-            <h3>{{ video }}</h3>
-            <video width="100%" height="400" controls>
-              <source [src]="getVideoUrl(video)" [attr.type]="getVideoType(video)">
-              Tu navegador no soporta la etiqueta de video.
-            </video>
-          </li>
+        <li>
+          <h3>{{ video }}</h3>
+          <video width="100%" height="400" controls>
+            <source [src]="getVideoUrl(video)" [attr.type]="getVideoType(video)">
+            Tu navegador no soporta la etiqueta de video.
+          </video>
+        </li>
         }
 
       </ul>
@@ -124,7 +120,7 @@
 </section>
 
 <section id="participar" class="full-page center-content">
-  <h1  class="sour-gummy" >Quedan pocos números disponibles</h1>
+  <h1 class="sour-gummy">Quedan pocos números disponibles</h1>
   <p class="large-text">Reserva el tuyo antes de que se agoten</p>
   <p-button label="Reserva ahora" severity="warning" class="m-3"></p-button>
 </section>
@@ -136,144 +132,137 @@
   <h2 class="beneficios-title">Llevá tus sorteos al siguiente nivel</h2>
   <div class="beneficios-grid">
     <div class="card">
-      <img
-        src="https://cdn-icons-png.flaticon.com/512/864/864685.png"
-        alt="Premios Increíbles"
-        class="card-avatar"
-      />
+      <img src="assets/sorteos_atractivos.jpg" alt="Premios Increíbles" class="card-avatar" />
       <h3 class="card-title">Sorteos más atractivos</h3>
-      <p class="card-text">Cargá las imagenes de tus productos y agregales una descripción. Vos elegís la cantidad de participantes.</p>
+      <p class="card-text">Cargá las imagenes de tus productos y agregales una descripción. Vos elegís la cantidad de
+        participantes.</p>
     </div>
     <div class="card">
-      <img
-        src="https://cdn-icons-png.flaticon.com/512/3416/3416073.png"
-        alt="Participación Fácil"
-        class="card-avatar"
-      />
+      <img src="assets/sorteos_faciles.jpg " alt="Participación Fácil"
+        class="card-avatar" />
       <h3 class="card-title">Es más fácil participar</h3>
-      <p class="card-text">Compartiendo tu propio link de sorteo llegá a todo el pais. Tus participantes reservan facilemnte su número y ven los registros en vivo</p>
+      <p class="card-text">Compartiendo tu propio link de sorteo llegá a todo el pais. Tus participantes reservan
+        facilemnte su número y ven los registros en vivo</p>
     </div>
     <div class="card">
-      <img
-        src="https://cdn-icons-png.flaticon.com/512/5953/5953378.png"
-        alt="100% Transparente"
-        class="card-avatar"
-      />
+      <img src="assets/sorteos_confianza.jpg" alt="100% Transparente" class="card-avatar" />
       <h3 class="card-title">Mayor Transparencia</h3>
-      <p class="card-text">Seguimiento en vivo del sorteo. Tabla con participantes verificados</p>
+      <p class="card-text">Tabla con participantes verificados. Todo en tiempo real.</p>
     </div>
   </div>
 </section>
 
 <section id="formulario" class="full-page">
-  <h1>¡Registrate gratis y tené un sorteo al mes sin ningun tipo de gasto asociado. Todas las ganancias son para vos.!</h1>
+  <h1>¡Registrate gratis y tené un sorteo al mes sin ningun tipo de gasto asociado. Todas las ganancias son para vos.!
+  </h1>
   <p>Animate a cambiar la forma en la que hacés tus sorteos y elevá tus ganancias .</p>
   <p-button label="Registrarme gratis" severity="contrast" class="m-3"></p-button>
 </section>
 
 
-<p-dialog
-
-  [(visible)]="visibleTerminos"
-  (onShow)="onDialogShow()"
-  (onHide)="onDialogHide()"
-  [modal]="true"
-  [style]="{ width: '60vw' }"
-  [breakpoints]="{ '1199px': '75vw', '575px': '95vw' }"
-  [maximizable]="true"
-  [draggable]="false"
-  [resizable]="false"
-  [dismissableMask]="true">
+<p-dialog [(visible)]="visibleTerminos" (onShow)="onDialogShow()" (onHide)="onDialogHide()" [modal]="true"
+  [style]="{ width: '60vw' }" [breakpoints]="{ '1199px': '75vw', '575px': '95vw' }" [maximizable]="true"
+  [draggable]="false" [resizable]="false" [dismissableMask]="true">
 
 
 
- <div #contenidoTexto id="terminos-legales" class="terminos-container">
-    <img
-    src="assets/logoSorteo.jpg"
-    alt="Logo Supersorteo"
-    class="logo-dialog-img"
-  />
-  <h2>Términos y Condiciones de Servicio</h2>
+  <div #contenidoTexto id="terminos-legales" class="terminos-container">
+    <img src="assets/logoSorteo.jpg" alt="Logo Supersorteo" class="logo-dialog-img" />
+    <h2>Términos y Condiciones de Servicio</h2>
 
-  <h3>1. Aceptación de los Términos</h3>
-  <p>
-    Al acceder o utilizar este sitio web y/o nuestros servicios, usted acepta quedar legalmente vinculado por estos Términos y Condiciones. Si no está de acuerdo con alguno de estos términos, por favor no utilice nuestros servicios.
-  </p>
+    <h3>1. Aceptación de los Términos</h3>
+    <p>
+      Al acceder o utilizar este sitio web y/o nuestros servicios, usted acepta quedar legalmente vinculado por estos
+      Términos y Condiciones. Si no está de acuerdo con alguno de estos términos, por favor no utilice nuestros
+      servicios.
+    </p>
 
-  <h3>2. Descripción del Servicio</h3>
-  <p>
-    [Nombre de la empresa o proyecto] ofrece [breve descripción del servicio: por ejemplo, "una plataforma digital para realizar presupuestos de construcción"]. El uso de este servicio puede requerir el registro y aceptación de condiciones adicionales.
-  </p>
+    <h3>2. Descripción del Servicio</h3>
+    <p>
+      [Nombre de la empresa o proyecto] ofrece [breve descripción del servicio: por ejemplo, "una plataforma digital
+      para realizar presupuestos de construcción"]. El uso de este servicio puede requerir el registro y aceptación de
+      condiciones adicionales.
+    </p>
 
-  <h3>3. Uso del Servicio</h3>
-  <p>
-    El usuario se compromete a utilizar este servicio únicamente con fines lícitos y conforme a la normativa vigente. Está prohibido el uso del sitio para actividades fraudulentas, ilícitas o que puedan dañar el funcionamiento del sistema o afectar a otros usuarios.
-  </p>
+    <h3>3. Uso del Servicio</h3>
+    <p>
+      El usuario se compromete a utilizar este servicio únicamente con fines lícitos y conforme a la normativa vigente.
+      Está prohibido el uso del sitio para actividades fraudulentas, ilícitas o que puedan dañar el funcionamiento del
+      sistema o afectar a otros usuarios.
+    </p>
 
-  <h3>4. Propiedad Intelectual</h3>
-  <p>
-    Todos los contenidos del sitio, incluyendo textos, imágenes, logos, marcas, bases de datos, y software, son propiedad de [Nombre de la empresa o proyecto] o de sus respectivos titulares y están protegidos por las leyes de propiedad intelectual. Queda prohibida su reproducción, distribución o modificación sin autorización previa.
-  </p>
+    <h3>4. Propiedad Intelectual</h3>
+    <p>
+      Todos los contenidos del sitio, incluyendo textos, imágenes, logos, marcas, bases de datos, y software, son
+      propiedad de [Nombre de la empresa o proyecto] o de sus respectivos titulares y están protegidos por las leyes de
+      propiedad intelectual. Queda prohibida su reproducción, distribución o modificación sin autorización previa.
+    </p>
 
-  <h3>5. Privacidad de los Datos</h3>
-  <p>
-    Los datos personales que el usuario proporcione serán tratados conforme a nuestra Política de Privacidad, la cual forma parte integral de estos Términos y Condiciones. Al usar el servicio, usted autoriza la recopilación y tratamiento de sus datos conforme a dicha política.
-  </p>
+    <h3>5. Privacidad de los Datos</h3>
+    <p>
+      Los datos personales que el usuario proporcione serán tratados conforme a nuestra Política de Privacidad, la cual
+      forma parte integral de estos Términos y Condiciones. Al usar el servicio, usted autoriza la recopilación y
+      tratamiento de sus datos conforme a dicha política.
+    </p>
 
-  <h3>6. Responsabilidad</h3>
-  <p>
-    El servicio se presta “tal cual” y “según disponibilidad”. No garantizamos que el servicio esté libre de errores, interrupciones o fallos técnicos. [Nombre de la empresa] no será responsable por daños directos o indirectos derivados del uso del sitio o de los contenidos publicados.
-  </p>
+    <h3>6. Responsabilidad</h3>
+    <p>
+      El servicio se presta “tal cual” y “según disponibilidad”. No garantizamos que el servicio esté libre de errores,
+      interrupciones o fallos técnicos. [Nombre de la empresa] no será responsable por daños directos o indirectos
+      derivados del uso del sitio o de los contenidos publicados.
+    </p>
 
-  <h3>7. Modificaciones</h3>
-  <p>
-    Nos reservamos el derecho de modificar estos Términos y Condiciones en cualquier momento. Los cambios entrarán en vigor desde el momento en que se publiquen en este sitio. El uso continuado del servicio implica la aceptación de las modificaciones.
-  </p>
+    <h3>7. Modificaciones</h3>
+    <p>
+      Nos reservamos el derecho de modificar estos Términos y Condiciones en cualquier momento. Los cambios entrarán en
+      vigor desde el momento en que se publiquen en este sitio. El uso continuado del servicio implica la aceptación de
+      las modificaciones.
+    </p>
 
-  <h3>8. Terminación</h3>
-  <p>
-    Nos reservamos el derecho de suspender o cancelar el acceso al servicio a cualquier usuario que incumpla estos términos o realice un uso indebido del sitio.
-  </p>
+    <h3>8. Terminación</h3>
+    <p>
+      Nos reservamos el derecho de suspender o cancelar el acceso al servicio a cualquier usuario que incumpla estos
+      términos o realice un uso indebido del sitio.
+    </p>
 
-  <h3>9. Legislación Aplicable y Jurisdicción</h3>
-  <p>
-    Estos Términos y Condiciones se regirán por las leyes de la República Argentina. Cualquier controversia será sometida a la jurisdicción de los tribunales ordinarios con asiento en la Ciudad Autónoma de Buenos Aires, renunciando el usuario a cualquier otro fuero que pudiera corresponderle.
-  </p>
-</div>
+    <h3>9. Legislación Aplicable y Jurisdicción</h3>
+    <p>
+      Estos Términos y Condiciones se regirán por las leyes de la República Argentina. Cualquier controversia será
+      sometida a la jurisdicción de los tribunales ordinarios con asiento en la Ciudad Autónoma de Buenos Aires,
+      renunciando el usuario a cualquier otro fuero que pudiera corresponderle.
+    </p>
+  </div>
 
 
 
 
-<ng-template pTemplate="footer">
-  <ng-container *ngIf="isReady; else esperando">
-    <div class="flex justify-content-center gap-2">
-      <p-button icon="pi pi-times" label="Cerrar" class="p-button-text" (click)="visibleTerminos = false"></p-button>
-      <p-button icon="pi pi-download" label="Descargar PDF" severity="primary" (click)="descargarPDF()"></p-button>
+  <ng-template pTemplate="footer">
+    <ng-container *ngIf="isReady; else esperando">
+      <div class="flex justify-content-center gap-2">
+        <p-button icon="pi pi-times" label="Cerrar" class="p-button-text" (click)="visibleTerminos = false"></p-button>
+        <p-button icon="pi pi-download" label="Descargar PDF" severity="primary" (click)="descargarPDF()"></p-button>
         <!--p-button icon="pi pi-download" label="Descargar Word" severity="help" (click)="descargarWord()"></p-button-->
-    </div>
-  </ng-container>
+      </div>
+    </ng-container>
 
-  <ng-template #esperando>
-    <div class="flex justify-content-center align-items-center gap-2" style="min-height: 2rem;">
-      <p>Preparando contenido...</p>
-      <p-progressSpinner styleClass="custom-spinner" strokeWidth="4" ></p-progressSpinner>
-    </div>
+    <ng-template #esperando>
+      <div class="flex justify-content-center align-items-center gap-2" style="min-height: 2rem;">
+        <p>Preparando contenido...</p>
+        <p-progressSpinner styleClass="custom-spinner" strokeWidth="4"></p-progressSpinner>
+      </div>
+    </ng-template>
   </ng-template>
-</ng-template>
 
 
 
 </p-dialog>
 
 
-<p-button label="Preguntas"   [raised]="true" severity="contrast" class="floating-button" (onClick)="showDialog()" ></p-button>
+<p-button label="Preguntas" [raised]="true" severity="contrast" class="floating-button"
+  (onClick)="showDialog()"></p-button>
 
 
-<p-dialog
-  header="Preguntas frecuentes"
-  [(visible)]="visible"
-  [modal]="true"
-  [style]="{ width: '90%' }"
+<p-dialog header="Preguntas frecuentes" [(visible)]="visible" [modal]="true" [style]="{ width: '90%' }"
   styleClass="custom-dialog">
   <p-accordion>
     <p-accordionTab [header]="tab.title" *ngFor="let tab of tabs">
