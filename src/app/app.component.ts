@@ -32,7 +32,8 @@ export class AppComponent {
           currentUrl.startsWith('/datos-rifa') ||
           currentUrl.startsWith('/home') ||
           currentUrl.startsWith('/cambiar-password-admin') ||
-          currentUrl.startsWith('/fpagos')
+          currentUrl.startsWith('/fpagos') ||
+          currentUrl.startsWith('/administrar')
 
 
         );

@@ -1,7 +1,7 @@
 import { CodigoVip } from "./codigo-vip";
 
 export interface User {
-  id?: number; // Identificador único (opcional, ya que no se envía al registrar)
+  id: number; // Identificador único (opcional, ya que no se envía al registrar)
   name: string; // Nombre del usuario (obligatorio)
   email: string; // Correo electrónico (obligatorio)
   password: string; // Contraseña (obligatorio)

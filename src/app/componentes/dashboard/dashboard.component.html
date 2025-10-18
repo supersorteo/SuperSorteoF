@@ -20,14 +20,7 @@
       </div>
       <div *ngFor="let raffle of activeRaffles" class="p-card mb-5" style="position: relative">
 
-        <!--div class="price-tag" style="position: absolute; top: 10px; left: 10px; background: #445367; color: #fff; padding: 0.5rem 0.75rem; border-radius: 5px; font-weight: bold; z-index: 100;">
-          {{ raffle.precio | currency:'USD':'symbol':'1.0-0' }}
-        </!--div>
 
-        <p-button icon="pi pi-pencil" [rounded]="true" [text]="true" severity="contrast" class="edit" [routerLink]="['/edit-raffle', raffle.id]" /-->
-
-
-<!-- Nuevo contenedor superior con transparencia -->
 
 
 
@@ -388,7 +381,7 @@ header="Crear Nueva Rifa"
 
 
 
-<p-dialog header="Ingresar Código VIP" [(visible)]="displayDialog1" [modal]="true" [style]="{ width: '90%' }">
+<p-dialog header="Ingresar Código VIP" [(visible)]="displayDialog1" [modal]="true" [style]="{ width: '85%' }">
   <div class="p-fluid grid gap-2 justify-content-center">
 
 

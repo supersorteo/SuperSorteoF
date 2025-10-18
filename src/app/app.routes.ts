@@ -15,6 +15,7 @@ import { EditRaffleComponent } from './componentes/edit-raffle/edit-raffle.compo
 import { AdminGuard } from './admin.guard';
 import { ChangeAdminPasswordComponent } from './componentes/change-admin-password/change-admin-password.component';
 import { FpagosComponent } from './componentes/fpagos/fpagos.component';
+import { AdminComponent } from './componentes/admin/admin.component';
 
 export const routes: Routes = [
   {path:'home', component: HomeComponent},
@@ -31,5 +32,6 @@ export const routes: Routes = [
   { path: 'edit-raffle/:id', component: EditRaffleComponent },
   { path: 'cambiar-password-admin', component: ChangeAdminPasswordComponent, canActivate: [AdminGuard] },
   { path:'fpagos', component: FpagosComponent},
+  { path: 'administrar', component: AdminComponent, canActivate: [AdminGuard]},
   { path: '**', redirectTo: 'home' }
 ];

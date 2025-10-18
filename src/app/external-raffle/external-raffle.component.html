@@ -1,5 +1,5 @@
-<div *ngIf="raffle" (touchstart)="handleScreenTouch($event)" class="raffle-background">
-
+<!--div *ngIf="raffle" (touchstart)="handleScreenTouch($event)" class="raffle-background"-->
+<div *ngIf="raffle"  class="raffle-background">
   <div class="scroll-container">
    <div class="card">
   <h2 class="product-name" style="text-align: center; margin-bottom: 1rem; color: #fff;">
@@ -40,6 +40,7 @@
         [tooltipOptions]="{ showDelay: 500, hideDelay: 100, disabled: isMobile() }"
         (click)="abrirMetodos()"
       />
+
       <div class="date-text">
        Se sortea: {{ raffle.fechaSorteo | date:'dd/MM/yyyy' }}
       </div>

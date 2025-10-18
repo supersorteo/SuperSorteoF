@@ -1015,7 +1015,7 @@ loadUserRaffles2(): void {
   }
 }
 
-loadUserRaffles(): void {
+loadUserRaffles3(): void {
   if (!this.userId) {
     console.error('❌ El userId no está definido.');
     return;
@@ -1068,6 +1068,64 @@ loadUserRaffles(): void {
       }
     });
   }
+}
+
+loadUserRaffles(): void {
+  if (!this.userId) {
+    console.error('❌ El userId no está definido.');
+    return;
+  }
+
+  const localKey = `raffles_${this.userId}`;
+  const localRaffles = localStorage.getItem(localKey);
+
+  // Siempre verifica contra el backend para limpiar eliminadas
+  this.raffleService.getRafflesByUser(this.userId).subscribe({
+    next: (backendRaffles: Raffle[]) => {
+      if (!backendRaffles?.length) {
+        console.warn('⚠️ No se encontraron rifas asociadas al usuario.');
+        this.userRaffles = [];
+        localStorage.setItem(localKey, JSON.stringify([])); // Limpia localStorage si vacío
+      } else {
+        console.log('✅ Rifas obtenidas del backend:', backendRaffles);
+
+        // Si hay localStorage, filtra solo rifas válidas (elimina fantasmas)
+        let validRaffles = backendRaffles;
+        if (localRaffles) {
+          const localRafflesParsed = JSON.parse(localRaffles);
+          const backendIds = new Set(backendRaffles.map(r => r.id));
+          validRaffles = localRafflesParsed.filter((r: Raffle) => backendIds.has(r.id));
+          if (validRaffles.length < localRafflesParsed.length) {
+            console.log(`🗑️ Limpiando ${localRafflesParsed.length - validRaffles.length} rifas eliminadas de localStorage`);
+          }
+        }
+
+        this.userRaffles = validRaffles;
+        localStorage.setItem(localKey, JSON.stringify(validRaffles)); // Sobrescribe con datos limpios
+        this.updateRafflesByStatus();
+        this.loadAllParticipantsForMyRaffles();
+
+        this.userRaffles.forEach(raffle => {
+          if (!raffle.producto.imagenes?.length) {
+            raffle.producto.imagenes = ['assets/images/default.jpg'];
+          }
+        });
+
+        if (this.userRaffles.length > 0) this.newlyCreatedRaffle = this.userRaffles[0];
+        console.log('🆕 Rifas cargadas y sincronizadas:', this.userRaffles);
+      }
+    },
+    error: (error) => {
+      console.error('❌ Error al sincronizar rifas del backend:', error);
+      // Fallback: Usa localStorage si backend falla
+      if (localRaffles) {
+        this.userRaffles = JSON.parse(localRaffles);
+        this.updateRafflesByStatus();
+        this.loadAllParticipantsForMyRaffles();
+        console.warn('⚠️ Usando datos de localStorage como fallback.');
+      }
+    }
+  });
 }
 
 private loadImagesFromIndexedDB1(productId: number, imageUrls: string[]): void {
@@ -2248,7 +2306,7 @@ compartirRifa(raffle: any) {
 
 
   shareOnWhatsApp(): void {
-  const message = encodeURIComponent('Hola! 🎉 Estoy usando Súper Sorteo 📈, una app que te permite crear rifas 🎁 y venderlas rápidamente ⏱. Si necesitas ingresos extra 💸, te invito a visitarla 🌐 https://supersorteo-5f1f3.firebaseapp.com/ 😊 ¡Espero que te sea útil!');
+  const message = encodeURIComponent('Hola! 🎉 Estoy usando Súper Sorteo 📈, una app que te permite crear rifas 🎁 y venderlas rápidamente ⏱. Si necesitas ingresos extra 💸, te invito a visitarla 🌐 https://supersorteo.fun/ 😊 ¡Espero que te sea útil!');
   const whatsappUrl = `whatsapp://send?text=${message}`;
   window.location.href = whatsappUrl;
   setTimeout(() => {
