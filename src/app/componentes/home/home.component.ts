@@ -75,10 +75,10 @@ isReady = false;
 
 
     this.products = [
-      { name: 'Imagen 1', image: 'assets/rapido.png' },
-      { name: 'Imagen 2', image: 'assets/facil.png' },
-      { name: 'Imagen 2', image: 'assets/claro.png' },
-      { name: 'Imagen 2', image: 'assets/ventas.png' },
+      { name: 'Imagen 1', image: 'assets/mas_rapido3d.jpg' },
+      { name: 'Imagen 2', image: 'assets/mas_facil3d.jpg' },
+      { name: 'Imagen 2', image: 'assets/mas_claro3d.jpg' },
+      { name: 'Imagen 2', image: 'assets/mas_ventas3d.jpg' },
       //{ name: 'Imagen 1', image: 'assets/home3.png' },
 
 

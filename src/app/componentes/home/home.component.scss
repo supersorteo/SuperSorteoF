@@ -283,7 +283,7 @@ section {
   min-height: 350px; /* Altura adaptable */
   text-align: center;
   //background-color: #6f6969;
-  background: linear-gradient(356deg, rgba(181, 0, 255, 0.72) 0%, rgba(255, 255, 255, 1) 100%);
+  background: linear-gradient(356deg, rgb(255, 19, 117) 0%, rgba(255, 255, 255, 0.1) 100%);
   color: #212121;
   border-radius: 15px;
   box-shadow: 0 6px 15px rgba(0, 0, 0, 0.5);
@@ -674,8 +674,8 @@ margin: 0;
   font-family: 'Segoe UI', sans-serif;
   font-size: 0.95rem;
   line-height: 1.7;
-  color: #333;
-  padding-right: 1rem;
+border-radius: 20px;
+  padding-right: 0.5rem;
   //overflow-y: auto;
   overflow: visible;
 
@@ -704,7 +704,7 @@ margin: 0;
 .terminos-container p {
   text-align: justify;
   margin-bottom: 1rem;
-  color: #ba3cc6;
+  color: #6d2074;
 }
 
 .logo-dialog-img {
@@ -715,11 +715,8 @@ margin: 0;
   height: auto;
   object-fit: contain;
   border-radius: 5px;
-
-
-
   margin: 0 auto 1rem auto;
-  max-width: 120px;
+  max-width: 250px;
   width: 35%;
 
 
