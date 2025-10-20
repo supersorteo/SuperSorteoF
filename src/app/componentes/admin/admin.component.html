@@ -234,7 +234,23 @@
     </p-table>
   </!--p-dialog-->
 
+<button pButton
+        type="button"
+        icon="pi pi-sign-out"
+        class="p-button-rounded p-button-danger logout-button"
+        (click)="logoutAdmin()"
+        pTooltip="Cerrar sesión de admin"
+        tooltipPosition="left">
+</button>
 
+<button pButton
+        type="button"
+        icon="pi pi-pencil"
+        class="p-button-rounded p-button-contrast cambiar"
+        (click)="cambiarPassword()"
+        pTooltip="Cambiar contraseña de admin"
+        tooltipPosition="right">
+</button>
 
 <p-confirmDialog [style]="{ width: '450px' }" />
 

@@ -1,6 +1,6 @@
 {
   "configVersion": 1,
-  "timestamp": 1760369294853,
+  "timestamp": 1760904487052,
   "index": "/index.html",
   "assetGroups": [
     {
@@ -15,10 +15,10 @@
         "/favicon.ico",
         "/index.html",
         "/light.css",
-        "/main-H3GDAGZD.js",
+        "/main-TQ7V6FPP.js",
         "/manifest.webmanifest",
-        "/polyfills-2UAMCWVQ.js",
-        "/scripts-R5TVOAKW.js",
+        "/polyfills-6EAL64PA.js",
+        "/scripts-BKLZJQW3.js",
         "/styles-2MCYTGU4.css"
       ],
       "patterns": []
@@ -61,9 +61,9 @@
     "/assets/icons/fondo5.png": "ded5f53f9c2ec6d127f35b8b187f07ac4bade11b",
     "/dark.css": "70cf028d297c6cb37dab09e048c58a0a2c722c48",
     "/favicon.ico": "9c39f434fe1261f68c5e3eefdf734630d99c5670",
-    "/index.html": "0263a7227cba5838dea8b593611e9f36b909a149",
+    "/index.html": "0b1c99ef36bceffbcdc13f634cf6682cf3b76ff7",
     "/light.css": "db65c64cc44ae4dfb8d7d3f47bc7ec29be266273",
-    "/main-H3GDAGZD.js": "8f73753796341e4e0ea6022df46cf6c7c4b9c4af",
+    "/main-TQ7V6FPP.js": "e9db027d8da864d59149e913aac7602bbca10a41",
     "/manifest.webmanifest": "c4bf3cf7a3d447b4dfb10afcd0e4b55e05f526a9",
     "/media/color-3LUHUBGQ.png": "ff4c4bcb2207891b292f544edb4da9d2df5d45cf",
     "/media/hue-RMMBQOAC.png": "f81ae627637a684614aa726e206c73ce099a01fd",
@@ -77,8 +77,8 @@
     "/media/roboto-v20-latin-ext_latin-700-YWMTYTLY.woff": "47950a5a898a662ff110c52d2b53d9d3f5e224cf",
     "/media/roboto-v20-latin-ext_latin-regular-LRM3ER4G.woff2": "a39cd33a2457d12a3eb61e0841c91b73e4af90ac",
     "/media/roboto-v20-latin-ext_latin-regular-ZEDEYGV7.woff": "c574d647bbf9412b82b0cdcb0e702a3a93ffd022",
-    "/polyfills-2UAMCWVQ.js": "3ce10a768fb382716f4925f8c148b58a0ec449bf",
-    "/scripts-R5TVOAKW.js": "8ff953ba610c286b9ac63daf5089382a480363ca",
+    "/polyfills-6EAL64PA.js": "d874147a12a6570d9b44e99935e9de8b7f3cabbc",
+    "/scripts-BKLZJQW3.js": "126ef4ec80799275693c3ff0022a095b680d40ae",
     "/styles-2MCYTGU4.css": "53eea6274ff22b9c0b3c66b86b1f05a3ff50f589"
   },
   "navigationUrls": [
