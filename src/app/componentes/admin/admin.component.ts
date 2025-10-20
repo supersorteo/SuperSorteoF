@@ -20,6 +20,7 @@ import { ToastModule } from 'primeng/toast';
 import { CarouselModule } from 'primeng/carousel';
 import { CardModule } from 'primeng/card';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-admin',
@@ -51,7 +52,8 @@ export class AdminComponent implements OnInit {
     private raffleService: RaffleService, // Llamadas directas
     private fb: FormBuilder,
     private messageService: MessageService,
-    private confirmationService: ConfirmationService
+    private confirmationService: ConfirmationService,
+    private router: Router
   ) {
     this.editForm = this.fb.group({
       name: ['', Validators.required],
@@ -315,5 +317,31 @@ deleteRaffle(id: number): void {
     }
   });
 }
+
+
+
+ logoutAdmin(): void {
+  Swal.fire({
+    title: '¿Estás seguro?',
+    text: '¿Quieres cerrar sesión?',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Sí, cerrar sesión',
+    cancelButtonText: 'No, permanecer'
+  }).then((result) => {
+    if (result.isConfirmed) {
+      localStorage.removeItem('adminUser');
+      this.router.navigate(['/']);
+      Swal.fire('¡Cerrado!', 'Tu sesión ha sido cerrada', 'success');
+    }
+  });
+}
+
+
+
+    cambiarPassword(){
+      this.router.navigate(['/cambiar-password-admin'])
+    }
+
 
 }
