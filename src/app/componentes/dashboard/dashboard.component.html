@@ -20,7 +20,7 @@
       </div>
       <div *ngFor="let raffle of activeRaffles" class="p-card mb-5" style="position: relative">
 
-
+    
 
 
 
@@ -136,10 +136,7 @@
 
 
 
-          <!--div-- *ngIf="getWinningEntry(raffle.id) as winnerEntry" class="winning-info">
-            <p><strong>Número ganador:</strong> {{ winnerEntry.winningNumber || 'N/A' }}</p>
-            <p><strong>Ganador:</strong> {{ winnerEntry.winningParticipant || 'No reservado' }}</p>
-          </!--div-->
+          
 
 
 
@@ -191,17 +188,7 @@
 
         </div>
 
-          <!--div-- class="flex gap-2 mt-2">
-            <button pButton type="button" label="Compartir" icon="pi pi-share"
-                    class="p-button-info p-button-sm" (click)="shareOnWhatsApp()"></button>
-
-
-
-            <button pButton type="button" label="Eliminar"
-                    class="p-button-danger p-button-sm" (click)="deleteRaffle(raffle)"></button>
-
-
-          </!--div-->
+        
 
           <div style="height: 50px; position: relative; margin-top: 10px;" class="speeddial-linear-demo">
             <p-speedDial
@@ -244,46 +231,6 @@
 
 
 
-<!--p-dialog
-header="Crear Nueva Rifa"
-[(visible)]="displayDialog"
-[modal]="true"
-[style]="{ width: '85%' }">
-  <form (ngSubmit)="onSubmit()" #raffleForm="ngForm">
-    <div class="p-fluid grid flex-col gap-2">
-      <div class="col-12">
-        <label for="name" class="block font-bold mb-3">Nombre de tu sorteo</label>
-        <input id="name" type="text" pInputText [(ngModel)]="newRaffle.nombre" name="name" required class="w-full"  />
-        <small class="text-red-500" *ngIf="nombreSorteoInvalido">El nombre del sorteo es obligatorio.</small>
-      </div>
-      <div class="col-12">
-        <label for="participants" class="block font-bold mb-3">Cantidad de Participantes</label>
-        <input id="participants" type="number" pInputText [(ngModel)]="newRaffle.cantidadParticipantes" placeholder="Este sorteo aún no tiene participantes" name="participants" required class="w-full"
-        (input)="validarCantidadParticipantes()"
-        />
-        <small class="text-red-500" *ngIf="cantidadInvalida">No pueden haber más de 100 participantes.</small>
-      </div>
-      <div class="col-12">
-        <label for="date" class="block font-bold mb-3">Fecha del Sorteo</label>
-        <input type="date" pInputText id="date" [(ngModel)]="newRaffle.fechaSorteo" name="date" class="w-full" required />
-      </div>
-
-      <div class="col-12">
-        <label for="price" class="block font-bold mb-3">Precio de la rifa</label>
-        <input id="price" type="number" pInputText [(ngModel)]="newRaffle.precio" name="price" placeholder="0" required class="w-full" step="0.01" />
-
-      </div>
-
-      <div class="col-12">
-        <button pButton type="button" label="Agregar Producto" icon="pi pi-plus" class="p-button-primary" (click)="showProductDialog()"></button>
-      </div>
-    </div>
-    <div class="flex justify-content-end gap-2">
-      <button pButton type="button" label="Cancelar" icon="pi pi-times" class="p-button-danger" (click)="hideDialog()"></button>
-      <button pButton type="submit" label="Guardar" icon="pi pi-check" class="p-button-primary" [disabled]="!raffleForm.form.valid || !newRaffle.producto"></button>
-    </div>
-  </form>
-</p-dialog-->
 
 
 
@@ -301,7 +248,7 @@ header="Crear Nueva Rifa"
       </div>
       <div class="col-12">
         <label for="participants" class="block font-bold mb-3">Cantidad de Participantes</label>
-        <input id="participants" type="number" pInputText [(ngModel)]="newRaffle.cantidadParticipantes" placeholder="Este sorteo aún no tiene participantes" name="participants" required class="w-full"
+        <input id="participants" type="number" pInputText [(ngModel)]="newRaffle.cantidadParticipantes" placeholder="Este sorteo aún no tiene participantes" name="participants" required class="w-full"
         (input)="validarCantidadParticipantes()"
         />
 
@@ -381,7 +328,7 @@ header="Crear Nueva Rifa"
 
 
 
-<p-dialog header="Ingresar Código VIP" [(visible)]="displayDialog1" [modal]="true" [style]="{ width: '85%' }">
+<p-dialog header="Ingresar Código VIP" [(visible)]="displayDialog1" [modal]="true" [style]="{ width: '90%' }">
   <div class="p-fluid grid gap-2 justify-content-center">
 
 
@@ -404,19 +351,20 @@ header="Crear Nueva Rifa"
 
               <p class="text-center text-sm text-gray-600">{{ getDescripcion(img.id) }}</p>
             <p-button label="Comprar" [rounded]="true" [outlined]="true" severity="help" styleClass="w-full" (click)="comprarRifas(img)" />
-          </div>
+          
         </ng-template>
       </p-carousel>
+</div>
+
+         
 
 
     </div>
 
 
 
-    <!--div class="m-2 w-full">
-      <p-button label="Comprar" [rounded]="true" [outlined]="true" severity="help" styleClass="w-full" (click)="comprarRifas()" />
-    </div-->
-  </div>
+  
+  
 
       <!--div class="col-12">
       <label for="codigoVip" class="block font-bold mb-3">Ingrese el código VIP</label>
@@ -731,5 +679,3 @@ header="Participantes del sorteo terminado"
 
 
 </div>
-
-
