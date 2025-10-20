@@ -240,7 +240,8 @@ html, body {
   width: 100%;
   height: 100%;
   overflow-x: hidden;
-  background: radial-gradient(circle, rgba(27, 116, 250, 1) 0%, rgba(137, 94, 180, 1) 61%, rgba(255, 36, 61, 1) 100%);
+  /* Imagen de fondo: coloca el archivo en src/assets/auth-bg.jpg */
+ 
 }
 
 /* Asegurar que el componente raíz no interfiera */
@@ -262,13 +263,22 @@ html, body {
   padding: 2rem;
   top: 0;
   left: 0;
-  background: radial-gradient(circle, rgba(27, 116, 250, 1) 0%, rgba(137, 94, 180, 1) 61%, rgba(255, 36, 61, 1) 100%);
+  background-image: url('/assets/playa3.jpg');
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  z-index: -0;
 }
 
+
+
+
 .auth-card {
-  background: #d2c6c6;
-  padding: 2rem;
-  border-radius: 15px;
+background-image: linear-gradient(to left top, #db27ec94, #c369ff8f, #b08effa6, #a8abff81, #b1c2ffac, #b5cafca8, #bbd1f8a5, #c4d7f4a2, #bcd2f29f, #b3cef1af, #aac9efac, #a0c5edb3);  padding: 2rem;
+  border-radius: 19px;
   box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
   width: 100%;
   max-width: 400px;
@@ -279,19 +289,47 @@ html, body {
 .logo-container {
   text-align: center;
   margin-bottom: 1rem;
-
+  /* Entrada: fade in desde abajo */
+  animation: fadeInUp 1000ms cubic-bezier(.22,.9,.32,1) both;
 }
 
+
+
 .logo {
-  max-width: 160px;    /* Tamaño máximo para pantallas grandes */
+  max-width: 220px;    /* Tamaño máximo para pantallas grandes */
   width: 100%;         /* Se adapta al ancho del contenedor */
   height: auto;
   transition: all 0.3s ease;
   border-radius: 8px;
+  transform-origin: center;
+  /* Variante para el logo: un poco más de movimiento y suavizado */
+  animation: fadeInUpLogo 700ms cubic-bezier(.22,.9,.32,1) both;
+}
+
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInUpLogo {
+  0% {
+    opacity: 0;
+    transform: translateY(28px) scale(0.98);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 .auth-card h1 {
-  color: #672433;
+  color: #ac043f;
   margin-bottom: 0.5rem;
 }
 

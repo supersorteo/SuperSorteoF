@@ -1280,7 +1280,7 @@ private asignarCodigoVip(cantidadRifas: number): void {
     this.cantidadRifas = cantidadRifas;
 
 
-    this.mostrarMensaje('success', 'Código VIP asignado', `¡Felicidades! Ahora eres un usuario VIP con ${cantidadRifas} rifas.`);
+    this.mostrarMensaje('success', 'Código VIP asignado', `¡Felicidades! Ahora puede crear hasta ${cantidadRifas}! rifas ;).`);
     this.hideProductDialog();
     this.codigoVip = '';
 
@@ -1320,7 +1320,7 @@ private asignarCodigoVipAlUsuario1(cantidadRifas: number): void {
   this.isVip = true;
   this.cantidadRifasPermitidas = cantidadRifas;
 
-  this.mostrarMensaje('success', '¡VIP activado!', `Tienes permiso para crear ${cantidadRifas} rifas.`);
+  this.mostrarMensaje('success', '¡VIP activado!', `Ahora puede crear hasta ${cantidadRifas}! rifas ;)`);
 
   this.cdRef.detectChanges();
 }
@@ -1350,7 +1350,7 @@ private asignarCodigoVipAlUsuario(cantidadRifas: number): void {
     this.isVip = true;
     this.cantidadRifasPermitidas = cantidadRifas;
 
-    this.mostrarMensaje('success', '¡VIP activado!', `Tienes permiso para crear ${cantidadRifas} rifas.`);
+    this.mostrarMensaje('success', '¡VIP activado!', `Ahora puede crear hasta ${cantidadRifas}! rifas ;)`);
 
     // Actualizar fechaRegistro y reiniciar contador
     currentUser.fechaRegistro = new Date().toISOString();
@@ -2389,8 +2389,8 @@ onSubmit0(): void {
   // 🔥 Validación para evitar que usuarios sin código VIP creen más de una rifa
   if (!this.isVip && this.activeRaffles.length >= 1) {
     Swal.fire({
-      title: 'Límite alcanzado',
-      text: 'Solo usuarios con código VIP pueden crear más de una rifa.',
+      title: 'Lo sentimos',
+      text: 'Solo usuarios con código VIP pueden crear más de una rifa. Podrás crear otra el siguiente mes.',
       icon: 'warning',
       confirmButtonText: 'Aceptar'
     });
@@ -2673,8 +2673,8 @@ onSubmit(): void {
 
   if (!this.isVip && this.activeRaffles.length >= 1) {
     Swal.fire({
-      title: 'Límite alcanzado',
-      text: 'Solo usuarios con código VIP pueden crear más de una rifa.',
+      title: 'Lo sentimos',
+      text: 'Solo usuarios con código VIP pueden crear más de una rifa. Podrás crear otra el siguiente mes.',
       icon: 'warning',
       confirmButtonText: 'Aceptar'
     });
@@ -2778,7 +2778,7 @@ private mostrarErrorCreacion(error: any): void {
   // 🔥 Validación especial para el límite de rifas
   if (errorMessage.includes('Has alcanzado el límite de rifas permitidas.')) {
     Swal.fire({
-      title: 'Límite alcanzado',
+      title: 'Lo sentimos',
       text: 'Ya has alcanzado el número máximo de rifas permitidas según tu código VIP.',
       icon: 'warning',
       confirmButtonText: 'Aceptar'
@@ -3363,9 +3363,9 @@ getCategoria(id: string): string {
 
 getDescripcion(id: string): string {
   const descripciones: { [key: string]: string } = {
-    '10': 'Paquete pequeño ideal para necesidades básicas.',
-    '15': 'Paquete mediano con equilibrio entre precio y capacidad.',
-    '30': 'Paquete grande para los que buscan máxima cobertura.'
+    '10': 'Explora las posibilidades de SuperSorteo con este plan inicial.',
+    '15': 'Para los entusiastas que buscan alcanzar el exito ;)',
+    '30': 'Esto es cosa de grandes..para corazones ambiciosos. ¡Vamos por todo!'
   };
   return descripciones[id] || 'Sin descripción'; // Usa ID directo
 }

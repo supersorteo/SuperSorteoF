@@ -401,7 +401,7 @@ header="Crear Nueva Rifa"
       (onPageChange)="onPageChange($event)">
         <ng-template let-img pTemplate="item">
           <div class="border-1 surface-border border-round m-2 p-3">
-            <div class="relative mx-auto">
+            <!-- <div class="relative mx-auto"> -->
               <img [src]="'assets/' +  img.src" alt="Imagen" class="w-full border-round" />
             </div>
             <h1 class="text-center font-bold text-lg">{{ getCategoria(img.id) }}</h1>
@@ -468,11 +468,12 @@ header="Crear Nueva Rifa"
         <div class="separator">m</div>
         <div class="time-box">{{ remainingTime.seconds | number:'2.0-0' }}</div>
         <div class="separator">s</div>
-
+        
+<p class="dias-restantes-text">Días restantes hasta el vencimiento</p>
 
       </div>
 
-        <p class="dias-restantes-text">Días restantes hasta el vencimiento</p>
+        
 
 
       <ng-template #expiredTemplate>

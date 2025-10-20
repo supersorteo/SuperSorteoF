@@ -55,7 +55,7 @@
   <div class="auth-card">
 
     <div class="logo-container">
-      <img src="assets/logoSorteo.jpg" alt="Logo Sorteo" class="logo" routerLink="/home" />
+      <img src="assets/logoSorteo.png" alt="Logo Sorteo" class="logo" routerLink="/home" />
     </div>
 
     <form [formGroup]="loginForm" (ngSubmit)="onLogin()" *ngIf="isLogin">
@@ -77,8 +77,8 @@
       />
       <a (click)="showDialog()">¿Olvidaste tu contraseña?</a>
 
-      <button pButton type="submit" label="Ingresar" class="p-button-success w-full mt-2"></button>
-      <p class="toggle-text">¿No tienes una cuenta? <a (click)="toggle()">Regístrate</a></p>
+      <button pButton type="submit" label="Ingresar" class="p-button-outline w-full mt-2"></button>
+      <p class="toggle-text">¿Primera vez? <a (click)="toggle()">Regístrate</a></p>
     </form>
 
     <form [formGroup]="registerForm" (ngSubmit)="onSignup()" *ngIf="!isLogin">
