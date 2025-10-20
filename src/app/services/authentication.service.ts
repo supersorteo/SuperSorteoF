@@ -99,11 +99,18 @@ export class AuthenticationService {
   }
 
   // Método para eliminar un usuario (DELETE)
-  deleteUser(id: number): Observable<void> {
+  deleteUser0(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`).pipe(
       catchError(this.handleError1) // Manejo de errores
     );
   }
+
+
+deleteUser(id: number): Observable<string> { // Cambia tipo a string
+  return this.http.delete(`${this.apiUrl}/${id}`, { responseType: 'text' }).pipe(
+    catchError(this.handleError1)
+  );
+}
 
 
   recoverPassword1(email: string): Observable<void> {
@@ -116,9 +123,33 @@ export class AuthenticationService {
       );
     }
 
-    recoverPassword(email: string): Observable<void> {
+    recoverPassword2(email: string): Observable<void> {
       return this.http.post<void>(`${this.apiUrl}/recover-password`, { email }).pipe(catchError(this.handleError));
     }
 
+    recoverPassword(email: string): Observable<string> {
+  const formData = new FormData();
+  formData.append('email', email);
+
+  return this.http.post(`${this.apiUrl}/recuperar-password`, formData, {
+    responseType: 'text'
+  }).pipe(
+    catchError(this.handleError)
+  );
+}
+
+changePassword(email: string, codigo: string, nuevaPassword: string): Observable<boolean> {
+  const formData = new FormData();
+  formData.append('email', email);
+  formData.append('codigo', codigo);
+  formData.append('nuevaPassword', nuevaPassword);
+
+  return this.http.post(`${this.apiUrl}/cambiar-password`, formData, {
+    responseType: 'text'
+  }).pipe(
+    map(response => response === 'true'),
+    catchError(this.handleError)
+  );
+}
 
 }

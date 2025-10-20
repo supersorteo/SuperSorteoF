@@ -1,0 +1,348 @@
+
+<p-toast />
+<div class="admin-container">
+
+  <h2>Panel de Administración</h2>
+
+  <!--p-table--
+    [value]="users"
+    [loading]="loading"
+    [tableStyle]="{'min-width': '50rem'}"
+    [paginator]="true"
+    [rows]="10"
+    [rowsPerPageOptions]="[5, 10, 20]">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>ID</th>
+        <th>Nombre</th>
+        <th>Email</th>
+        <th>Teléfono</th>
+        <th>VIP</th>
+        <th>Rifas</th>
+        <th>Acciones</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-user let-i="rowIndex">
+      <tr>
+        <td>{{ user.id }}</td>
+        <td>{{ user.name }}</td>
+        <td>{{ user.email }}</td>
+        <td>{{ user.telefono }}</td>
+        <td>{{ user.esVip ? 'Sí' : 'No' }}</td>
+        <td>
+          <p-button
+            label="Ver Rifas"
+            icon="pi pi-eye"
+            severity="info"
+            size="small"
+            (click)="loadRafflesForUser(user.id)"
+            [pTooltip]="'Ver rifas de ' + user.name">
+          </p-button>
+        </td>
+        <td>
+          <div class="flex gap-2">
+  <p-button
+            label="Editar"
+            icon="pi pi-pencil"
+            severity="warning"
+            size="small"
+            (click)="editUser(user)"
+            [pTooltip]="'Editar ' + user.name">
+          </p-button>
+          <p-button
+            label="Eliminar"
+            icon="pi pi-trash"
+            severity="danger"
+            size="small"
+            (click)="deleteUser(user)"
+            [pTooltip]="'Eliminar ' + user.name">
+          </p-button>
+          </div>
+
+        </td>
+      </tr>
+    </ng-template>
+  </!--p-table-->
+
+
+
+<p-toolbar styleClass="mb-4 gap-2">
+   <ng-template pTemplate="left">
+
+            <p-button
+                severity="danger"
+                label="Delete"
+                icon="pi pi-trash"
+                (onClick)="deleteSelectedUsers()"
+                [disabled]="!selectedUsers || !selectedUsers.length" />
+        </ng-template>
+
+
+    </p-toolbar>
+
+<p-table
+  #dt
+  [value]="users"
+  [rows]="5"
+  [paginator]="true"
+  [globalFilterFields]="['name', 'email', 'telefono']"
+  [tableStyle]="{ 'min-width': '75rem' }"
+  [(selection)]="selectedUsers"
+  [rowHover]="true"
+  dataKey="id"
+  currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} usuarios"
+  [showCurrentPageReport]="true">
+  <ng-template pTemplate="caption">
+    <div class="flex align-items-center justify-content-between">
+      <h5 class="m-0">Gestión de Usuarios</h5>
+      <span class="p-input-icon-left">
+        <i class="pi pi-search"></i>
+        <input
+          #globalFilter
+          pInputText
+          type="text"
+          (input)="dt.filterGlobal(globalFilter.value, 'contains')"
+          placeholder="Buscar por nombre, email o teléfono..." />
+      </span>
+    </div>
+  </ng-template>
+  <ng-template pTemplate="header">
+    <tr>
+      <th style="width: 4rem">
+        <p-tableHeaderCheckbox />
+      </th>
+      <th pSortableColumn="name" style="min-width:15rem">
+        Nombre <p-sortIcon field="name" />
+      </th>
+      <th pSortableColumn="email" style="min-width:15rem">
+        Email <p-sortIcon field="email" />
+      </th>
+      <th pSortableColumn="telefono" style="min-width:12rem">
+        Teléfono <p-sortIcon field="telefono" />
+      </th>
+      <th style="min-width:8rem">
+        VIP
+      </th>
+      <th style="min-width:8rem">
+        Rifas
+      </th>
+      <th style="min-width:8rem">
+        Acciones
+      </th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-user let-i="rowIndex">
+    <tr>
+      <td>
+        <p-tableCheckbox [value]="user" />
+      </td>
+      <td>
+        {{ user.name }}
+      </td>
+      <td>
+        {{ user.email }}
+      </td>
+      <td>
+        {{ user.telefono }}
+      </td>
+      <td>
+        <p-tag [value]="user.esVip ? 'Sí' : 'No'" [severity]="user.esVip ? 'success' : 'info'" />
+      </td>
+      <td>
+        <p-button
+          label="Ver Rifas"
+          icon="pi pi-eye"
+          severity="info"
+          size="small"
+          [rounded]="true"
+          [outlined]="true"
+          (click)="loadRafflesForUser(user.id!)"
+          [pTooltip]="'Ver rifas de ' + user.name">
+        </p-button>
+      </td>
+      <td>
+        <div class="flex gap-2">
+          <!--p-button--
+            label="Editar"
+            icon="pi pi-pencil"
+            severity="warning"
+            size="small"
+            [rounded]="true"
+            [outlined]="true"
+            (click)="editUser(user)"
+            [pTooltip]="'Editar ' + user.name">
+          </!--p-button-->
+
+          <p-button
+      icon="pi pi-pencil"
+      severity="warning"
+      size="small"
+      [rounded]="true"
+      [outlined]="true"
+      (click)="editUser(user)"
+      [pTooltip]="'Editar ' + user.name">
+    </p-button>
+       <p-button
+      icon="pi pi-trash"
+      severity="danger"
+      size="small"
+      [rounded]="true"
+      [outlined]="true"
+      (click)="deleteUser(user)"
+      [pTooltip]="'Eliminar ' + user.name">
+    </p-button>
+        </div>
+      </td>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="summary">
+    <div class="flex align-items-center justify-content-between">
+      En total hay {{ users.length || 0 }} usuarios.
+    </div>
+  </ng-template>
+</p-table>
+
+
+
+
+  <!--p-dialog--
+    header="{{ selectedUser?.name }} - Rifas"
+    [(visible)]="showRafflesDialog"
+    [modal]="true"
+    [style]="{ width: '70vw' }"
+    [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
+    [maximizable]="true">
+    <p-table [value]="selectedRaffles" [paginator]="true" [rows]="5">
+      <ng-template pTemplate="header">
+        <tr>
+          <th>ID</th>
+          <th>Nombre</th>
+          <th>Cantidad Participantes</th>
+          <th>Fecha Sorteo</th>
+          <th>Estado</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-raffle let-i="rowIndex">
+        <tr>
+          <td>{{ raffle.id }}</td>
+          <td>{{ raffle.nombre }}</td>
+          <td>{{ raffle.cantidadParticipantes }}</td>
+          <td>{{ raffle.fechaSorteo | date:'dd/MM/yyyy' }}</td>
+          <td>{{ raffle.active ? 'Activa' : 'Ejecutada' }}</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </!--p-dialog-->
+
+
+
+<p-confirmDialog [style]="{ width: '450px' }" />
+
+</div>
+
+<p-dialog
+  header="{{ selectedUser?.name }} - Rifas"
+  [(visible)]="showRafflesDialog"
+  [modal]="true"
+  [style]="{ width: '70vw' }"
+  [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
+  [maximizable]="true">
+  <div class="grid grid-nogutter" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem;">
+    <div *ngFor="let raffle of selectedRaffles" class="card border-round shadow-4 p-3" style="border-radius: 1rem; background: var(--surface-card);">
+      <div class="mb-3">
+        <div class="relative mx-auto">
+         <p-carousel
+        [value]="raffle.producto.imagenes || []"
+        [numVisible]="1"
+        [numScroll]="1"
+        [circular]="true"
+        [showNavigators]="true"
+        [showIndicators]="false"
+        styleClass="w-full"
+        [style]="{ width: '100%' }">
+        <ng-template let-image pTemplate="item">
+          <img
+            [src]="image"
+            [alt]="raffle.nombre"
+            class="w-full border-round"
+            style="height: 200px; object-fit: cover; width: 100%; border-radius: 0.5rem;" />
+        </ng-template>
+      </p-carousel>
+      <p-tag
+        [value]="raffle.active ? 'Activa' : 'Ejecutada'"
+        [severity]="raffle.active ? 'success' : 'warning'"
+        class="absolute"
+        [ngStyle]="{ 'left.px': 5, 'top.px': 5 }" />
+        </div>
+      </div>
+      <div class="mb-3 font-medium text-xl">
+        {{ raffle.nombre }}
+      </div>
+      <div class="flex flex-column mb-3">
+        <div class="flex justify-content-between align-items-center mb-2">
+          <span class="text-sm text-500">Cantidad Participantes:</span>
+          <span class="font-medium">{{ raffle.cantidadParticipantes }}</span>
+        </div>
+        <div class="flex justify-content-between align-items-center mb-2">
+          <span class="text-sm text-500">Fecha Sorteo:</span>
+          <span class="font-medium">{{ raffle.fechaSorteo | date:'dd/MM/yyyy' }}</span>
+        </div>
+        <div class="flex justify-content-between align-items-center mb-2">
+          <span class="text-sm text-500">Precio:</span>
+          <span class="font-medium">${{ raffle.precio }}</span>
+        </div>
+        <div class="flex justify-content-between align-items-center mb-2">
+          <span class="text-sm text-500">Winning Number:</span>
+          <span class="font-medium">{{ raffle.winningNumber || 'Pendiente' }}</span>
+        </div>
+      </div>
+      <div class="flex justify-content-end">
+        <p-button
+          icon="pi pi-trash"
+          severity="danger"
+          size="small"
+          label="Eliminar Rifa"
+          [rounded]="true"
+          [outlined]="true"
+          (click)="deleteRaffle(raffle.id!)">
+        </p-button>
+      </div>
+    </div>
+  </div>
+</p-dialog>
+
+
+
+
+
+
+  <p-dialog
+    header="Editar Usuario"
+    [(visible)]="showEditDialog"
+    [modal]="true"
+    [style]="{ width: '40vw' }"
+    [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }">
+    <form [formGroup]="editForm" (ngSubmit)="saveEditedUser()">
+      <div class="field">
+        <label for="name">Nombre</label>
+        <input pInputText id="name" formControlName="name" />
+      </div>
+      <div class="field">
+        <label for="email">Email</label>
+        <input pInputText id="email" formControlName="email" />
+      </div>
+      <div class="field">
+        <label for="telefono">Teléfono</label>
+        <input pInputText id="telefono" formControlName="telefono" />
+      </div>
+
+      <div class="field">
+        <label for="cantidadRifas">Cantidad Rifas</label>
+        <input pInputText id="cantidadRifas" type="number" formControlName="cantidadRifas" />
+      </div>
+      <div class="flex justify-content-end gap-2 mt-3">
+        <p-button label="Cancelar" severity="secondary" (click)="showEditDialog = false"></p-button>
+        <p-button label="Guardar" severity="success" type="submit" [disabled]="editForm.invalid"></p-button>
+      </div>
+    </form>
+  </p-dialog>

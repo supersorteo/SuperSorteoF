@@ -1019,7 +1019,7 @@ this.metodosPgo = true
 
 handleScreenTouch(event: TouchEvent): void {
   const target = event.target as HTMLElement;
-  // Verifica si el toque fue en un elemento con eventos o clase específica (por ejemplo, botones)
+
   if (!target.closest('button') && !target.closest('.interactive-element')) {
     if (this.isMobile()) {
       const tooltipMessage = document.createElement('div');
@@ -1028,7 +1028,7 @@ handleScreenTouch(event: TouchEvent): void {
       document.body.appendChild(tooltipMessage);
       setTimeout(() => {
         document.body.removeChild(tooltipMessage);
-      }, 1500); // Muestra por 1.5 segundos
+      }, 1500);
     }
   }
 }

@@ -26,6 +26,13 @@ export class LoginComponent implements OnInit {
   rightPanelActive: boolean = false;
   registerForm!: FormGroup;
   loginForm!: FormGroup;
+  recoveryForm!: FormGroup;
+  changePasswordForm!: FormGroup;
+  displayRecoveryDialog: boolean = false;
+  displayChangePasswordDialog: boolean = false;
+
+  codigoRecuperacion: string = '';
+
   recoveryEmail: string = ''
   displayDialog: boolean = false;
   isLogin: boolean = true;
@@ -47,18 +54,51 @@ export class LoginComponent implements OnInit {
       telefono: ['', [
         Validators.required,
         Validators.pattern(/^\+54 9 \d{2} \d{4}-\d{4}$/)
-      ]]
+      ]],
+
+
+
     });
 
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]]
     });
+
+      this.recoveryForm = this.fb.group({
+      email: ['', [Validators.required, Validators.email]]
+    });
+
+      this.changePasswordForm = this.fb.group({
+      email: ['', [Validators.required, Validators.email]],
+      codigo: ['', [Validators.required]],
+      nuevaPassword: ['', [Validators.required, Validators.minLength(6)]],
+      confirmarNuevaPassword: ['', [Validators.required]]
+    });
   }
 
 
   ngOnInit(): void {}
 
+
+
+showRecoveryDialog(): void {
+  this.displayRecoveryDialog = true;
+  this.recoveryForm.reset();
+}
+
+hideRecoveryDialog(): void {
+  this.displayRecoveryDialog = false;
+}
+
+showChangePasswordDialog(email: string): void {
+  this.displayChangePasswordDialog = true;
+  this.changePasswordForm.patchValue({ email });
+}
+
+hideChangePasswordDialog(): void {
+  this.displayChangePasswordDialog = false;
+}
 
   hideDialog(): void {
     this.displayDialog = false;
@@ -237,35 +277,114 @@ export class LoginComponent implements OnInit {
           });
         }
 
-        onRecuperar1(): void {
-          if (this.recoveryEmail) {
-            this.authService.recoverPassword(this.recoveryEmail).subscribe({
-              next: () => {
-                Swal.fire({ icon: 'success',
-                  title: 'Correo Enviado',
-                  text: 'Se ha enviado un correo de recuperación a tu dirección de correo electrónico.'
-                });
-                this.hideDialog();
-              },
-              error: () => {
-                Swal.fire({
-                  icon: 'error',
-                  title: 'Error',
-                  text: 'Hubo un problema al enviar el correo de recuperación. Por favor, inténtalo de nuevo.'
-                });
-              }
-            });
-          }
+
+
+
+onRecuperar(): void {
+  if (this.recoveryForm.valid) {
+    const email = this.recoveryForm.get('email')?.value;
+    this.hideRecoveryDialog()
+    Swal.fire({
+      title: 'Enviando código...',
+      text: 'Por favor espera',
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      }
+    });
+
+    this.authService.recoverPassword(email).subscribe({
+      next: (codigo) => {
+        Swal.close();
+
+        Swal.fire({
+          icon: 'success',
+          title: 'Código Enviado',
+          html: `
+            <p>Se ha enviado un código de recuperación a:</p>
+            <strong>${email}</strong>
+            <p class="mt-3">Revisa tu correo electrónico (incluyendo SPAM)</p>
+          `,
+          confirmButtonText: 'Continuar'
+        }).then(() => {
+          this.hideRecoveryDialog();
+          this.showChangePasswordDialog(email);
+        });
+      },
+      error: () => {
+        Swal.close();
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'El correo no está registrado o hubo un problema...'
+        });
+      }
+    });
+  }
+}
+
+
+onChangePassword(): void {
+  if (this.changePasswordForm.valid) {
+    const email = this.changePasswordForm.get('email')?.value;
+    const codigo = this.changePasswordForm.get('codigo')?.value.trim();
+    const nuevaPassword = this.changePasswordForm.get('nuevaPassword')?.value;
+    const confirmarNuevaPassword = this.changePasswordForm.get('confirmarNuevaPassword')?.value;
+
+    // Validar que las contraseñas coincidan
+    if (nuevaPassword !== confirmarNuevaPassword) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Las contraseñas no coinciden'
+      });
+      return;
     }
+    this.hideChangePasswordDialog();
+    Swal.fire({
+      title: 'Cambiando contraseña...',
+      text: 'Por favor espera',
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      }
+    });
 
-    onRecuperar(): void {
-      if (this.recoveryEmail) {
-        this.authService.recoverPassword(this.recoveryEmail).subscribe(
-          { next:
-            () => {
-              Swal.fire({ icon: 'success', title: 'Correo Enviado', text: 'Se ha enviado un correo de recuperación a tu dirección de correo electrónico.' }); this.hideDialog(); }, error: () => { Swal.fire({ icon: 'error', title: 'Error', text: 'Hubo un problema al enviar el correo de recuperación. Por favor, inténtalo de nuevo.' }); } });}}
+    this.authService.changePassword(email, codigo, nuevaPassword).subscribe({
+      next: (success) => {
+        Swal.close();
 
+        if (success) {
+          Swal.fire({
+            icon: 'success',
+            title: '¡Contraseña Cambiada!',
+            text: 'Tu contraseña ha sido actualizada exitosamente.',
+            confirmButtonText: 'Ir a Login'
+          }).then(() => {
+            this.hideChangePasswordDialog();
+            this.changePasswordForm.reset();
+            this.isLogin = true;
+          });
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'El código es incorrecto o ha expirado.'
+          });
 
+        }
+      },
+      error: () => {
+        Swal.close();
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Hubo un problema al cambiar la contraseña.'
+        });
+      }
+    });
+  }
+}
 
 
 

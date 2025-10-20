@@ -1,0 +1,42 @@
+.admin-container {
+  padding: 1rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.field {
+  margin-bottom: 1rem;
+}
+
+.field label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+}
+
+.field input {
+  width: 100%;
+}
+
+p-table {
+  margin-top: 1rem;
+}
+
+p-button {
+  margin-right: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+
+.card{
+  margin: 10px;
+}
+
+
+.swal-modal-high-z {
+  z-index: 99999 !important; // Z-index superior al de PrimeNG dialog (~9999)
+}
+
+.swal-modal-high-z .swal2-container {
+  z-index: 99999 !important; // Asegura overlay completo
+}

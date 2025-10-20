@@ -20,7 +20,9 @@ export class RaffleService {
 
   private VIPUrl ='https://sweet-laughter-production.up.railway.app/codigos-vip';
 
-  private api = 'https://sweet-laughter-production.up.railway.app/usuarios'
+  private api = 'https://sweet-laughter-production.up.railway.app/usuarios';
+
+  //private api = 'http://localhost:8080/usuarios';
 
   constructor(private http: HttpClient) { }
 
@@ -115,7 +117,8 @@ obtenerUsuarioPorId(userId: number): Observable<any> {
 
   deleteImage(fileName: string): Observable<void> {
 
-      const url = `https://sweet-laughter-production.up.railway.app/api/images/${fileName}`;
+     // const url = `https://sweet-laughter-production.up.railway.app/api/images/${fileName}`;
+      const url = `${this.baseUrl}/${fileName}`
     return this.http.delete<void>(url);
   }
 
