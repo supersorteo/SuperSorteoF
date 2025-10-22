@@ -89,7 +89,7 @@
 
 .p-card-body {
   //background: linear-gradient(180deg, #ff69b4 0%, #c71585 50%, #9370db 75%, #87ceeb 100%);
-  background-image: linear-gradient(to top, #f154c8, #ce69db, #a778e4, #7f82e5, #5a89dd);
+  background-image: linear-gradient(to top, #f154c8, #ce69db, #a778e4, #6a6ef3, #0151e0);
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.897);
   box-shadow: 0px 4px 10px rgb(163 159 20 / 80%);
   border-radius: 10px;
@@ -161,7 +161,7 @@
   //transition: background-color 0.3s;
   display: flex;
   align-items: center;
-  color: #51575e !important;
+  color: #ffffff !important;
 }
 
 
@@ -278,9 +278,12 @@
 }
 
 .botoncrear{
-  background-color: #55084fed;
-  border-radius: 10px;
-  border: 4px solid #fff;
+  background-image: linear-gradient(
+      50deg,
+      #ad1286 35%,
+      #fd66b2);
+  border-radius: 15px;
+  border: 2px solid #fff;
   color: #FFF;
 }
 
@@ -326,16 +329,21 @@
   .p-speeddial-action {
     width: 3rem;
     height: 3rem;
-    background: #626f74;
+    background: #b314cc;
     color: #fff;
   }
 
-.p-speeddial-button.p-button.p-button-icon-only {
+.p-speeddial-button.p-button.p-button-contrast-icon-only {
     width: 3rem;
     height: 3rem;
+    
 }
 }
 
+
+.open-circle-speeddial{
+  background-color: aliceblue;
+}
 
 
 @media only screen and (max-width: 768px) {
@@ -580,7 +588,7 @@ p{
 
 .raffle-code1 {
   //background-color: #51575e;
-  background-color: #e30bf1ed;
+  background-color: #e20bf11a;
   color: #ece7e7;
   border: 1px solid #ccc;
   border-radius: 5px;
@@ -607,32 +615,32 @@ p{
   z-index: 2000 !important;
 }
 
-.countdown-container {
+.countdown-container {  
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #222;
-  color: #0dcaf0;
-  padding: 10px 20px;
+background-image: linear-gradient(to right top, #b119b1, #b339b1, #b54eb1, #b661b1, #b671b1);  color: #ffffff;
+  padding: 5px;
   border-radius: 8px;
   font-family: 'Courier New', Courier, monospace;
-  font-size: 1.5rem;
-  margin-bottom: 5px;
+  font-size: 1rem;
+  margin-bottom: 2px;
 }
 
 .dias-restantes-text {
-  margin-top: 10px;
+
+ font-size: 9px;
   font-weight: bold;
-  color: #272020;
-  text-align: center;
+  color: #ffffff;
+  text-align: left;
 }
 
 .time-box {
-  background-color: #333;
-  padding: 8px 12px;
+  background-color: #ffffff00;
+ 
   border-radius: 4px;
   margin: 0 5px;
-  min-width: 40px;
+  
   width: 100%;
   text-align: center;
 }
@@ -903,22 +911,22 @@ p{
 .active-raffles-container {
   //background-color: #fff;          /* Fondo blanco o el que prefieras */
   border-radius: 10px;             /* Bordes redondeados */
-  padding: 1rem;                   /* Espaciado interno */
+  padding: 0.5rem;                   /* Espaciado interno */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);  /* Sombra sutil */
   margin-bottom: 1rem;             /* Separación inferior */
-  text-align: center;
+  text-align: left;
   //background: linear-gradient(180deg, rgba(235, 21, 163, 1) 35%, rgba(143, 226, 242, 1) 100%);            /* Centrar el contenido */
-  background: linear-gradient(180deg, #ad1286 35%, #fd66b2);
+  background: linear-gradient(50deg, #ad1286 35%, #fd66b2);
   box-shadow: 0 4px 10px #391875;
  // z-index: 1;
   //box-shadow: 0px 4px 10px rgb(163 159 20 / 80%);
 }
 
-.active-raffles-container h3 {
+.active-raffles-container h5 {
   margin: 0;                       /* Quita márgenes extra si es necesario */
   //color: #5b5757;
   color: #f5e9e9;                    /* Color del texto */
-  font-size: 1.5rem;               /* Ajusta según tus preferencias */
+  font-size: 1rem;               /* Ajusta según tus preferencias */
 }
 
 
@@ -1049,8 +1057,7 @@ margin: 0;
 
 :host ::ng-deep .p-button.p-button-success, .p-button-group.p-button-success > .p-button, .p-splitbutton.p-button-success > .p-button {
     color: #ffffff;
-    background: rgba(85, 8, 79, 0.9294117647);
-    border: 0 none;
+background-image: linear-gradient(to right top, #ff9000, #ff6835, #ff3d58, #f6117b, #d30f9b);    border: 0 none;
 }
 
 

@@ -16,7 +16,7 @@
 
     <div  class="col-6 p-md-6">
       <div class="active-raffles-container">
-        <h3>Rifas Activas</h3>
+        <h5>Rifas Activas</h5>
       </div>
       <div *ngFor="let raffle of activeRaffles" class="p-card mb-5" style="position: relative">
 
@@ -102,11 +102,12 @@
 
           <div style="height: 50px; position: relative; margin-top: 10px;" class="speeddial-linear-demo">
             <p-speedDial
+            
             [model]="getActions(raffle)"
             [radius]="80"
             type="semi-circle"
             direction="down"
-            buttonClassName="p-button-contrast"
+            class="open-circle-speeddial"
             />
           </div>
 
@@ -119,7 +120,7 @@
 
 
       <div class="active-raffles-container">
-        <h3>Rifas Finalizadas</h3>
+        <h5>Rifas Finalizadas</h5>
       </div>
 
       <div *ngFor="let raffle of completedRaffles" class="p-card mb-3">
@@ -190,7 +191,7 @@
 
         
 
-          <div style="height: 50px; position: relative; margin-top: 10px;" class="speeddial-linear-demo">
+          <div style="height: 40px; margin-top: 10px;" class="speeddial-linear-demo">
             <p-speedDial
             [model]="getActions1(raffle)"
             [radius]="80"
@@ -387,22 +388,6 @@ header="Crear Nueva Rifa"
 
    <div class="overflow-y-auto">
     <div class="list-none py-3 m-0">
-
-      <div *ngIf="remainingTime.days + remainingTime.hours + remainingTime.minutes + remainingTime.seconds > 0; else expiredTemplate" class="countdown-container">
-
-        <div class="time-box">{{ remainingTime.days | number:'2.0-0' }}</div>
-        <div class="separator">d</div>
-        <div class="time-box">{{ remainingTime.hours | number:'2.0-0' }}</div>
-        <div class="separator">h</div>
-        <div class="time-box">{{ remainingTime.minutes | number:'2.0-0' }}</div>
-        <div class="separator">m</div>
-        <div class="time-box">{{ remainingTime.seconds | number:'2.0-0' }}</div>
-        <div class="separator">s</div>
-        
-<p class="dias-restantes-text">Días restantes hasta el vencimiento</p>
-
-      </div>
-
         
 
 
@@ -415,17 +400,19 @@ header="Crear Nueva Rifa"
           <div class="sidebar-buttons">
             <button pButton type="button" label="Ser VIP" class="p-button-success" (click)="abrirModal()"></button>
           </div>
-        </li>
-        <li>
-          <div class="sidebar-buttons">
-            <button pButton type="button" label="Compartir"  class="p-button-secondary" (click)="shareOnWhatsApp()"></button>
-          </div>
-        </li>
+        </li> 
         <li>
           <div class="sidebar-buttons">
             <button pButton type="button" label="Métodos de Pago" class="p-button-help p-button-sm" routerLink="/fpagos" ></button>
           </div>
         </li>
+
+        <li>
+          <div class="sidebar-buttons">
+            <button pButton type="button" label="Compartir"  class="p-button-secondary" (click)="shareOnWhatsApp()"></button>
+          </div>
+        </li>
+       
 
           <li>
           <div class="sidebar-buttons">
@@ -439,8 +426,30 @@ header="Crear Nueva Rifa"
           </div>
         </li>
       </ul>
+
+
+      
     </div>
+    
    </div>
+
+   
+<p class="dias-restantes-text">Días restantes hasta el vencimiento</p>
+
+      <div *ngIf="remainingTime.days + remainingTime.hours + remainingTime.minutes + remainingTime.seconds > 0; else expiredTemplate" class="countdown-container">
+
+        <div class="time-box">{{ remainingTime.days | number:'2.0-0' }}</div>
+        <div class="separator">d</div>
+        <div class="time-box">{{ remainingTime.hours | number:'2.0-0' }}</div>
+        <div class="separator">h</div>
+        <div class="time-box">{{ remainingTime.minutes | number:'2.0-0' }}</div>
+        <div class="separator">m</div>
+        <div class="time-box">{{ remainingTime.seconds | number:'2.0-0' }}</div>
+        <div class="separator">s</div>
+        <hr>
+        
+
+      </div>
 
 
   </p-sidebar>
