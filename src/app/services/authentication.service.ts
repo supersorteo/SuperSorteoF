@@ -16,10 +16,8 @@ export class AuthenticationService {
 
 
   //private apiUrl = 'http://localhost:8080/usuarios';
-
-
   private apiUrl = 'https://sweet-laughter-production.up.railway.app/usuarios'
-  //private apiUrl =  `${environment.API_BASE_URL}/usuarios`
+
 
   private readonly CURRENT_USER_KEY = 'currentUser';
   constructor(private http: HttpClient) { }
@@ -71,7 +69,11 @@ export class AuthenticationService {
 }
 
 
-
+getUserById(id: number): Observable<User> {
+  return this.http.get<User>(`${this.apiUrl}/${id}`).pipe(
+    catchError(this.handleError1)
+  );
+}
 
   isUserLoggedIn(): boolean {
     const currentUser = localStorage.getItem(this.CURRENT_USER_KEY);

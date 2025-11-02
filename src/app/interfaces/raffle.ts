@@ -12,7 +12,9 @@ export interface Raffle {
   active: boolean;
   executed: boolean;
   code: string;
+
   precio: any;
   winningNumber?: number;
+  codigoVipUsado?: string;
 }
 

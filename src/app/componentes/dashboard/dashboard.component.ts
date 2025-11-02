@@ -16,7 +16,7 @@ import { Raffle } from '../../interfaces/raffle';
 import { FileUploadModule } from 'primeng/fileupload';
 import { User } from '../../interfaces/user';
 import { Producto } from '../../interfaces/producto';
-import { forkJoin, Subscription, switchMap, tap } from 'rxjs';
+import { catchError, forkJoin, of, Subscription, switchMap, tap } from 'rxjs';
 import { CarouselModule } from 'primeng/carousel';
 import { TagModule } from 'primeng/tag';
 import { SidebarModule} from 'primeng/sidebar';
@@ -272,9 +272,9 @@ imagenes = [
  // imagenSeleccionada: string = '';
   imagenSeleccionada: any = this.imagenes[0];
   activeIndex: number = 0;
-private countdownInterval: any;
+  private countdownInterval: any;
   juegoResponsableVisible:boolean = false;
-
+  initialCantidadRifas = 1;
   constructor(
     private authService: AuthenticationService,
     private cdRef: ChangeDetectorRef,
@@ -1070,7 +1070,7 @@ loadUserRaffles3(): void {
   }
 }
 
-loadUserRaffles(): void {
+loadUserRaffles00(): void {
   if (!this.userId) {
     console.error('❌ El userId no está definido.');
     return;
@@ -1127,6 +1127,155 @@ loadUserRaffles(): void {
     }
   });
 }
+
+loadUserRaffles001(): void {
+  if (!this.userId) {
+    console.error('❌ El userId no está definido.');
+    return;
+  }
+
+  const localKey = `raffles_${this.userId}`;
+  const localRaffles = localStorage.getItem(localKey);
+
+  // Siempre verifica contra el backend para limpiar eliminadas
+  this.raffleService.getRafflesByUser(this.userId).subscribe({
+    next: (backendRaffles: Raffle[]) => {
+      if (!backendRaffles?.length) {
+        console.warn('⚠️ No se encontraron rifas asociadas al usuario.');
+        this.userRaffles = [];
+        localStorage.setItem(localKey, JSON.stringify([]));
+      } else {
+        console.log('✅ Rifas obtenidas del backend:', backendRaffles);
+
+        // 🔥 Filtra solo rifas del código VIP actual (independiente de anteriores)
+        const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+        const currentCodigoVip = currentUser.codigoVip || '';
+        let validRaffles = backendRaffles.filter(r => r.codigoVipUsado === currentCodigoVip); // Solo rifas del código actual
+
+        // Si hay localStorage, filtra fantasmas
+        if (localRaffles) {
+          const localRafflesParsed = JSON.parse(localRaffles);
+          const backendIds = new Set(validRaffles.map(r => r.id));
+          validRaffles = localRafflesParsed.filter((r: Raffle) => backendIds.has(r.id) && r.codigoVipUsado === currentCodigoVip);
+          if (validRaffles.length < localRafflesParsed.length) {
+            console.log(`🗑️ Limpiando rifas eliminadas de localStorage`);
+          }
+        }
+
+        this.userRaffles = validRaffles;
+        localStorage.setItem(localKey, JSON.stringify(validRaffles)); // Sobrescribe con filtradas
+        console.log('Rifas filtradas por código actual:', this.userRaffles.length);
+
+        this.updateRafflesByStatus();
+        this.loadAllParticipantsForMyRaffles();
+
+        this.userRaffles.forEach(raffle => {
+          if (!raffle.producto.imagenes?.length) {
+            raffle.producto.imagenes = ['assets/images/default.jpg'];
+          }
+        });
+
+        if (this.userRaffles.length > 0) this.newlyCreatedRaffle = this.userRaffles[0];
+        console.log('🆕 Rifas cargadas y sincronizadas (filtradas):', this.userRaffles);
+      }
+    },
+    error: (error) => {
+      console.error('❌ Error al sincronizar rifas del backend:', error);
+      // Fallback: Usa localStorage filtrado por código actual
+      if (localRaffles) {
+        const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+        const currentCodigoVip = currentUser.codigoVip || '';
+        const localRafflesParsed = JSON.parse(localRaffles);
+        this.userRaffles = localRafflesParsed.filter((r: Raffle) => r.codigoVipUsado === currentCodigoVip);
+        this.updateRafflesByStatus();
+        this.loadAllParticipantsForMyRaffles();
+        console.warn('⚠️ Usando datos de localStorage como fallback (filtrado por código).');
+      }
+    }
+  });
+}
+
+loadUserRaffles(): void {
+  if (!this.userId) {
+    console.error('❌ El userId no está definido.');
+    return;
+  }
+
+  const localKey = `raffles_${this.userId}`;
+  const localRaffles = localStorage.getItem(localKey);
+
+  // Siempre verifica contra el backend para limpiar eliminadas
+  this.raffleService.getRafflesByUser(this.userId).subscribe({
+    next: (backendRaffles: Raffle[]) => {
+      if (!backendRaffles?.length) {
+        console.warn('⚠️ No se encontraron rifas asociadas al usuario.');
+        this.userRaffles = [];
+        localStorage.setItem(localKey, JSON.stringify([]));
+      } else {
+        console.log('✅ Rifas obtenidas del backend:', backendRaffles);
+
+        // 🔥 Filtra solo rifas del código VIP actual (maneja null para rifas antiguas/no VIP)
+        const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+        const currentCodigoVip = currentUser.codigoVip || '';
+        let validRaffles = backendRaffles.filter(r => {
+          // Si rifa tiene código usado y coincide con actual, incluir
+          if (r.codigoVipUsado && r.codigoVipUsado === currentCodigoVip) {
+            return true;
+          }
+          // Si rifa antigua/no VIP (null), incluir siempre para display histórico
+          return !r.codigoVipUsado; // Incluye null (históricas)
+        });
+
+        // Si hay localStorage, filtra fantasmas
+        if (localRaffles) {
+          const localRafflesParsed = JSON.parse(localRaffles);
+          const backendIds = new Set(validRaffles.map(r => r.id));
+          validRaffles = localRafflesParsed.filter((r: Raffle) => backendIds.has(r.id) &&
+            (r.codigoVipUsado === currentCodigoVip || !r.codigoVipUsado) // Maneja null
+          );
+          if (validRaffles.length < localRafflesParsed.length) {
+            console.log(`🗑️ Limpiando rifas eliminadas de localStorage`);
+          }
+        }
+
+        this.userRaffles = validRaffles;
+        localStorage.setItem(localKey, JSON.stringify(validRaffles)); // Sobrescribe con filtradas
+        console.log('Rifas filtradas por código actual (manejo null):', this.userRaffles.length);
+
+        this.updateRafflesByStatus();
+        this.loadAllParticipantsForMyRaffles();
+
+        this.userRaffles.forEach(raffle => {
+          if (!raffle.producto.imagenes?.length) {
+            raffle.producto.imagenes = ['assets/images/default.jpg'];
+          }
+        });
+
+        if (this.userRaffles.length > 0) this.newlyCreatedRaffle = this.userRaffles[0];
+        console.log('🆕 Rifas cargadas y sincronizadas (filtradas):', this.userRaffles);
+      }
+    },
+    error: (error) => {
+      console.error('❌ Error al sincronizar rifas del backend:', error);
+      // Fallback: Usa localStorage filtrado por código actual (manejo null)
+      if (localRaffles) {
+        const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+        const currentCodigoVip = currentUser.codigoVip || '';
+        const localRafflesParsed = JSON.parse(localRaffles);
+        this.userRaffles = localRafflesParsed.filter((r: Raffle) => {
+          if (r.codigoVipUsado && r.codigoVipUsado === currentCodigoVip) {
+            return true;
+          }
+          return !r.codigoVipUsado; // Incluye null (históricas)
+        });
+        this.updateRafflesByStatus();
+        this.loadAllParticipantsForMyRaffles();
+        console.warn('⚠️ Usando datos de localStorage como fallback (filtrado por código, manejo null).');
+      }
+    }
+  });
+}
+
 
 private loadImagesFromIndexedDB1(productId: number, imageUrls: string[]): void {
   if (!this.db) {
@@ -1193,33 +1342,78 @@ private loadImagesFromIndexedDB(productId: number, imageUrls: string[]): void {
 
 
  // Validar y asignar código VIP
+
 validarYAsignarCodigoVip0(): void {
   if (!this.codigoVip.trim()) {
     this.mostrarMensaje('error', 'Código VIP requerido', 'Por favor, ingrese un código VIP.');
     return;
   }
 
-  this.raffleService.obtenerCodigosVip().subscribe({
-    next: (codigosVip) => {
-      console.log('Codigos VIP obtenidos:', codigosVip); // 🟢 Verificar la estructura de la API
+  const userId = this.userId;
+  if (!userId) {
+    this.mostrarMensaje('error', 'Usuario no identificado', 'No se ha encontrado información del usuario.');
+    return;
+  }
 
-      const codigoEncontrado = codigosVip.find(codigo => codigo.codigo === this.codigoVip && !codigo.usuarioAsignado);
-
-      if (codigoEncontrado) {
-        console.log('Código VIP encontrado:', codigoEncontrado); // 🟢 Verificar que se encuentra correctamente
-
-        this.cantidadRifas = codigoEncontrado.cantidadRifas ?? 0;
-        console.log('Cantidad de rifas obtenida:', this.cantidadRifas); // 🟢 Verificar que se obtiene la cantidad correcta
-
-        //this.asignarCodigoVip(this.cantidadRifas);
-        this.asignarCodigoVipAlUsuario(this.cantidadRifas);
-       // this.loadUserId()
-      } else {
-        this.mostrarMensaje('warning', 'Código inválido o asignado', 'El código VIP no es válido o ya está asignado a otro usuario.');
-      }
+  this.raffleService.activarVip(userId, this.codigoVip.trim()).subscribe({
+    next: (usuarioActualizado) => {
+      console.log('✅ Usuario actualizado:', usuarioActualizado);
+      console.log('Cantidad rifas del backend:', usuarioActualizado.cantidadRifas);
+      // Actualizar variables del usuario en el frontend
+      this.actualizarDatosUsuario(usuarioActualizado);
+      this.sidebarVisible = false
+      this.mostrarMensaje('success', '¡VIP activado!', `Ahora puedes crear ${usuarioActualizado.cantidadRifas} rifas.`);
     },
     error: (error) => {
-      this.mostrarMensaje('error', 'Error de validación', error);
+      console.error('❌ Error al activar VIP:', error);
+      this.mostrarMensaje('error', 'Error en la activación', error.message || 'No se pudo activar el VIP.');
+    }
+  });
+
+  this.hideProductDialog();
+
+
+}
+
+
+validarYAsignarCodigoVip1(): void {
+  if (!this.codigoVip.trim()) {
+    this.mostrarMensaje('error', 'Código VIP requerido', 'Por favor, ingrese un código VIP.');
+    return;
+  }
+
+  const userId = this.userId;
+  if (!userId) {
+    this.mostrarMensaje('error', 'Usuario no identificado', 'No se ha encontrado información del usuario.');
+    return;
+  }
+
+  this.raffleService.activarVip(userId, this.codigoVip.trim()).subscribe({
+    next: (usuarioActualizado) => {
+      console.log('✅ Usuario actualizado del backend:', usuarioActualizado);
+      console.log('Cantidad rifas del backend:', usuarioActualizado.cantidadRifas); // Log para depurar
+
+      // Actualizar variables del usuario en el frontend
+      this.actualizarDatosUsuario(usuarioActualizado);
+
+      // 🔥 Fuerza actualización de localStorage con el valor backend
+      const currentUserRaw = localStorage.getItem('currentUser');
+      if (currentUserRaw) {
+        const currentUser = JSON.parse(currentUserRaw);
+        currentUser.initialCantidadRifas = usuarioActualizado.cantidadRifas;
+        currentUser.cantidadRifas = usuarioActualizado.cantidadRifas; // Fuerza el valor backend
+        localStorage.setItem('currentUser', JSON.stringify(currentUser));
+        console.log('localStorage actualizado con initialCantidadRifas =', currentUser.initialCantidadRifas);
+        console.log('localStorage actualizado con cantidadRifas =', currentUser.cantidadRifas);
+      }
+
+      //this.loadUserRaffles();
+      this.sidebarVisible = false;
+      this.mostrarMensaje('success', '¡VIP activado!', `Ahora puedes crear ${usuarioActualizado.cantidadRifas} rifas.`);
+    },
+    error: (error) => {
+      console.error('❌ Error al activar VIP:', error);
+      this.mostrarMensaje('error', 'Error en la activación', error.message || 'No se pudo activar el VIP.');
     }
   });
 
@@ -1240,11 +1434,33 @@ validarYAsignarCodigoVip(): void {
 
   this.raffleService.activarVip(userId, this.codigoVip.trim()).subscribe({
     next: (usuarioActualizado) => {
-      console.log('✅ Usuario actualizado:', usuarioActualizado);
+      console.log('✅ Usuario actualizado del backend:', usuarioActualizado);
+      console.log('Cantidad rifas inicial del backend:', usuarioActualizado.cantidadRifas); // 10
 
       // Actualizar variables del usuario en el frontend
       this.actualizarDatosUsuario(usuarioActualizado);
-      this.sidebarVisible = false
+
+      // 🔥 Guarda límite inicial fijo separado en localStorage
+      this.initialCantidadRifas = usuarioActualizado.cantidadRifas;
+      const vipInitialKey = `vipInitialLimit_${userId}`;
+      localStorage.setItem(vipInitialKey, usuarioActualizado.cantidadRifas.toString()); // Fijo 10, no cambia
+      localStorage.setItem(vipInitialKey, this.initialCantidadRifas.toString());
+      console.log('localStorage vipInitialLimit guardado: 10 (fijo)');
+      console.log('Propiedad initialCantidadRifas set a 10 (fijo), backup en localStorage', this.initialCantidadRifas);
+
+      // Actualiza restantes en currentUser
+      const currentUserRaw = localStorage.getItem('currentUser');
+      if (currentUserRaw) {
+        const currentUser = JSON.parse(currentUserRaw);
+        currentUser.cantidadRifas = usuarioActualizado.cantidadRifas; // Inicial 10
+        localStorage.setItem('currentUser', JSON.stringify(currentUser));
+        console.log('localStorage cantidadRifas = 10 (inicial)');
+      }
+
+      // Recarga rifas
+      this.loadUserRaffles();
+
+      this.sidebarVisible = false;
       this.mostrarMensaje('success', '¡VIP activado!', `Ahora puedes crear ${usuarioActualizado.cantidadRifas} rifas.`);
     },
     error: (error) => {
@@ -1254,8 +1470,6 @@ validarYAsignarCodigoVip(): void {
   });
 
   this.hideProductDialog();
-
-
 }
 
 
@@ -1514,7 +1728,7 @@ private removeRaffleDataFromLocalStorage0(raffleId: number): void {
   }
 }
 
-deleteRaffle(raffle: Raffle): void {
+deleteRaffle1(raffle: Raffle): void {
   Swal.fire({
     title: '¿Estás seguro?',
     text: 'Esta acción eliminará la rifa y todos los datos relacionados. Esta acción no se puede deshacer.',
@@ -1550,6 +1764,69 @@ deleteRaffle(raffle: Raffle): void {
           Swal.fire({
             title: 'Error',
             text: 'No se pudo eliminar la rifa.',
+            icon: 'error',
+            confirmButtonText: 'Aceptar',
+          });
+        }
+      });
+    }
+  });
+}
+
+deleteRaffle(raffle: Raffle): void {
+  Swal.fire({
+    title: '¿Estás seguro?',
+    text: 'Esta acción eliminará la rifa y todos los datos relacionados. Esta acción no se puede deshacer.',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Sí, eliminar',
+    cancelButtonText: 'Cancelar',
+  }).then((result) => {
+    if (result.isConfirmed) {
+      // Elimina imágenes en paralelo, pero maneja errores individuales
+      const imageDeletions = raffle.producto.imagenes.map(imageUrl => {
+        const fileName = imageUrl.split('/').pop()!;
+        return this.raffleService.deleteImage(fileName).pipe(
+          catchError((error) => {
+            console.warn('Imagen no encontrada, ignorando:', fileName, error);
+            return of(null); // Continúa
+          })
+        );
+      });
+
+      forkJoin(imageDeletions).pipe(
+        switchMap(() => this.raffleService.deleteRaffle(raffle.id!))
+      ).subscribe({
+        next: () => {
+          console.log('✅ Rifa eliminada con éxito');
+          this.removeRaffleDataFromLocalStorage(raffle.id!); // Limpia local
+          this.activeRaffles = this.activeRaffles.filter(r => r.id !== raffle.id);
+          this.completedRaffles = this.completedRaffles.filter(r => r.id !== raffle.id);
+          this.updateLocalStorage();
+
+          // 🔥 Recarga usuario para actualizar límites (incrementa si no ejecutada)
+          this.raffleService.obtenerUsuarioPorId(this.userId).subscribe({
+            next: (usuarioActualizado) => {
+              this.actualizarDatosUsuario(usuarioActualizado); // Actualiza cantidadRifas si incrementado
+              console.log('Límites actualizados post-eliminación:', usuarioActualizado.cantidadRifas);
+            },
+            error: (error) => console.error('Error al recargar usuario post-eliminación:', error)
+          });
+
+          // Recarga rifas para sincronizar
+          this.loadUserRaffles();
+          Swal.fire({
+            title: '¡Eliminada!',
+            text: 'La rifa y datos relacionados han sido eliminados.',
+            icon: 'success',
+            confirmButtonText: 'Aceptar',
+          });
+        },
+        error: (error) => {
+          console.error('❌ Error al eliminar rifa:', error);
+          Swal.fire({
+            title: 'Error',
+            text: 'No se pudo eliminar la rifa, pero las imágenes sí se eliminaron.',
             icon: 'error',
             confirmButtonText: 'Aceptar',
           });
@@ -2151,7 +2428,7 @@ compartirRifa(raffle: any) {
 
 
 
-  showDialog(): void {
+  showDialog0(): void {
     const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
     // Si no existe la propiedad 'cantidadRifas' se asume que el usuario solo puede tener 1 rifa
     const cantidadRifasPermitidas = currentUser.cantidadRifas || 1;
@@ -2186,6 +2463,221 @@ compartirRifa(raffle: any) {
     // Si pasa la validación, se abre el modal normalmente
     this.displayDialog = true;
   }
+
+
+  showDialog1(): void {
+  console.log('🔍 Verificando límite para crear rifa...');
+  const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+  const cantidadRifasPermitidas = currentUser.cantidadRifas || 1;
+  console.log('Límite permitidas:', cantidadRifasPermitidas, 'VIP:', this.isVip);
+
+  const totalRifas = this.userRaffles ? this.userRaffles.length : 0;
+  console.log('Rifas cargadas:', totalRifas, 'userRaffles:', this.userRaffles);
+
+  if (!this.isVip && totalRifas >= 1) {
+    console.log('Bloqueo no VIP: totalRifas >= 1');
+    Swal.fire({
+      title: 'Límite alcanzado',
+      text: 'Los usuarios que no son VIP solo pueden tener una rifa.',
+      icon: 'warning',
+      confirmButtonText: 'Aceptar',
+    });
+    return;
+  }
+
+  if (this.isVip && totalRifas >= cantidadRifasPermitidas) {
+    console.log('Bloqueo VIP: totalRifas >= permitidas');
+    Swal.fire({
+      title: 'Límite alcanzado',
+      text: `Ya has creado ${totalRifas} rifas (límite: ${cantidadRifasPermitidas}).`,
+      icon: 'warning',
+      confirmButtonText: 'Aceptar',
+    });
+    return;
+  }
+
+  console.log('✅ Límite OK, abriendo modal...');
+  this.displayDialog = true;
+}
+
+
+showDialog2(): void {
+  console.log('🔍 Verificando límite para crear rifa...');
+  const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+  const cantidadRifasPermitidas = currentUser.cantidadRifas || 1; // Restantes (decrementa, ej. 5)
+  const initialCantidadRifas = currentUser.initialCantidadRifas || cantidadRifasPermitidas; // Inicial fijo (10)
+  console.log('Límite inicial (fijo):', initialCantidadRifas, 'Restantes:', cantidadRifasPermitidas, 'VIP:', this.isVip);
+
+  const totalRifas = this.userRaffles ? this.userRaffles.length : 0;
+  console.log('Rifas creadas:', totalRifas);
+
+  if (!this.isVip && totalRifas >= 1) {
+    console.log('Bloqueo no VIP: totalRifas >= 1');
+    Swal.fire({
+      title: 'Límite alcanzado',
+      text: 'Los usuarios que no son VIP solo pueden tener una rifa.',
+      icon: 'warning',
+      confirmButtonText: 'Aceptar',
+    });
+    return;
+  }
+
+  if (this.isVip && totalRifas >= initialCantidadRifas) { // 🔥 Compara con inicial fijo (10)
+    console.log('Bloqueo VIP: totalRifas >= initialLimit');
+    Swal.fire({
+      title: 'Límite alcanzado',
+      text: `Ya has creado ${totalRifas} rifas (límite inicial: ${initialCantidadRifas}). Restantes: ${cantidadRifasPermitidas}.`,
+      icon: 'warning',
+      confirmButtonText: 'Aceptar',
+    });
+    return;
+  }
+
+  console.log('✅ Límite OK, abriendo modal...');
+  this.displayDialog = true;
+}
+
+showDialog3(): void {
+  console.log('🔍 Verificando límite para crear rifa...');
+  const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+  const cantidadRifasPermitidas = currentUser.cantidadRifas || 1; // Restantes (decrementa, ej. 9)
+
+  // 🔥 Lee límite inicial fijo desde clave separada
+  const vipInitialKey = `vipInitialLimit_${this.userId}`;
+  const initialCantidadRifas = parseInt(localStorage.getItem(vipInitialKey) || '1', 10); // Fijo 10
+  console.log('Límite inicial fijo:', initialCantidadRifas, 'Restantes:', cantidadRifasPermitidas, 'VIP:', this.isVip);
+
+  const totalRifas = this.userRaffles ? this.userRaffles.length : 0;
+  console.log('Rifas creadas:', totalRifas);
+
+  if (!this.isVip && totalRifas >= 1) {
+    console.log('Bloqueo no VIP: totalRifas >= 1');
+    Swal.fire({
+      title: 'Límite alcanzado',
+      text: 'Los usuarios que no son VIP solo pueden tener una rifa.',
+      icon: 'warning',
+      confirmButtonText: 'Aceptar',
+    });
+    return;
+  }
+
+  if (this.isVip && totalRifas >= initialCantidadRifas) { // Compara con fijo (10)
+    console.log('Bloqueo VIP: totalRifas >= initialLimit');
+    Swal.fire({
+      title: 'Límite alcanzado',
+      text: `Ya has creado ${totalRifas} rifas (límite inicial: ${initialCantidadRifas}). Restantes: ${cantidadRifasPermitidas}.`,
+      //text: `Ya has creado ${totalRifas} permitidas por su codigo Vip`,
+      icon: 'warning',
+      confirmButtonText: 'Aceptar',
+    });
+    return;
+  }
+
+  console.log('✅ Límite OK, abriendo modal...');
+  this.displayDialog = true;
+}
+
+showDialog4(): void {
+  console.log('🔍 Verificando límite para crear rifa...');
+
+  // 1. Usa propiedad de componente como principal (fija)
+  let initialCantidadRifas = this.initialCantidadRifas; // Fijo 10
+
+  // 2. Fallback a localStorage si propiedad no set (ej. recarga)
+  if (initialCantidadRifas === 1 || !this.initialCantidadRifas) {
+    const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+    const vipInitialKey = `vipInitialLimit_${this.userId}`;
+    initialCantidadRifas = parseInt(localStorage.getItem(vipInitialKey) || '1', 10);
+    this.initialCantidadRifas = initialCantidadRifas; // Set propiedad para futuras llamadas
+  }
+
+  const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+  const cantidadRifasPermitidas = currentUser.cantidadRifas || 1; // Restantes (decrementa)
+  console.log('Límite inicial fijo:', initialCantidadRifas, 'Restantes:', cantidadRifasPermitidas, 'VIP:', this.isVip);
+
+  const totalRifas = this.userRaffles ? this.userRaffles.length : 0;
+  console.log('Rifas creadas:', totalRifas);
+
+  if (!this.isVip && totalRifas >= 1) {
+    console.log('Bloqueo no VIP: totalRifas >= 1');
+    Swal.fire({
+      title: 'Límite alcanzado',
+      text: 'Los usuarios que no son VIP solo pueden tener una rifa.',
+      icon: 'warning',
+      confirmButtonText: 'Aceptar',
+    });
+    return;
+  }
+
+  if (this.isVip && totalRifas >= initialCantidadRifas) { // Compara con fijo (10)
+    console.log('Bloqueo VIP: totalRifas >= initialLimit');
+    Swal.fire({
+      title: 'Límite alcanzado',
+      text: `Ya has creado ${totalRifas} rifas (límite inicial: ${initialCantidadRifas}). Restantes: ${cantidadRifasPermitidas}.`,
+      icon: 'warning',
+      confirmButtonText: 'Aceptar',
+    });
+    return;
+  }
+
+  console.log('✅ Límite OK, abriendo modal...');
+  this.displayDialog = true;
+}
+
+showDialog(): void {
+  console.log('🔍 Verificando límite para crear rifa...');
+
+  // 1. Usa propiedad de componente como principal (fija)
+  let initialCantidadRifas = this.initialCantidadRifas; // Fijo 10
+
+  // 2. Fallback a localStorage si propiedad no set (ej. recarga)
+  if (initialCantidadRifas === 1 || !this.initialCantidadRifas) {
+    const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+    const vipInitialKey = `vipInitialLimit_${this.userId}`;
+    initialCantidadRifas = parseInt(localStorage.getItem(vipInitialKey) || '1', 10);
+    this.initialCantidadRifas = initialCantidadRifas; // Set propiedad para futuras llamadas
+  }
+
+  const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+  const cantidadRifasPermitidas = currentUser.cantidadRifas || 1; // Restantes (decrementa)
+  const currentCodigoVip = currentUser.codigoVip || ''; // Código actual para filtro
+  console.log('Límite inicial fijo:', initialCantidadRifas, 'Restantes:', cantidadRifasPermitidas, 'Código actual:', currentCodigoVip, 'VIP:', this.isVip);
+
+  // 🔥 Conteo filtrado solo del código actual (para límites, no display)
+  const totalRifasFiltradas = this.userRaffles ? this.userRaffles.filter(r => r.codigoVipUsado === currentCodigoVip).length : 0;
+  console.log('Rifas creadas (filtradas por código):', totalRifasFiltradas);
+
+  // Para display, usa todas (userRaffles completo)
+  const totalRifasDisplay = this.userRaffles ? this.userRaffles.length : 0;
+  console.log('Rifas totales para display:', totalRifasDisplay);
+
+  if (!this.isVip && totalRifasDisplay >= 1) {
+    console.log('Bloqueo no VIP: totalRifasDisplay >= 1');
+    Swal.fire({
+      title: 'Límite alcanzado',
+      text: 'Los usuarios que no son VIP solo pueden tener una rifa.',
+      icon: 'warning',
+      confirmButtonText: 'Aceptar',
+    });
+    return;
+  }
+
+  if (this.isVip && totalRifasFiltradas >= initialCantidadRifas) { // 🔥 Compara filtradas con fijo (10)
+    console.log('Bloqueo VIP: totalRifasFiltradas >= initialLimit');
+    Swal.fire({
+      title: 'Límite alcanzado',
+      //text: `Ya has creado ${totalRifasFiltradas} rifas con este código VIP (límite inicial: ${initialCantidadRifas}). Restantes: ${cantidadRifasPermitidas}.`,
+      text: `Ya has creado ${totalRifasFiltradas} rifas con este código VIP si desea crear más rifas obtenga un nuevo codigo VIP`,
+      icon: 'warning',
+      confirmButtonText: 'Aceptar',
+    });
+    return;
+  }
+
+  console.log('✅ Límite OK, abriendo modal...');
+  this.displayDialog = true;
+}
+
 
 
   showProductDialog() {
@@ -2715,7 +3207,7 @@ onSubmit(): void {
     });
 }*/
 
-onSubmit(): void {
+onSubmit2(): void {
   if (!this.validarFormularioRifa()) {
     console.error('El formulario no es válido.');
     return;
@@ -2810,6 +3302,136 @@ onSubmit(): void {
       },
     });
 }
+
+onSubmit(): void {
+  if (!this.validarFormularioRifa()) {
+    console.error('El formulario no es válido.');
+    return;
+  }
+  if (!this.productData || !this.productData.nombre) {
+    this.messageService.add({ severity: 'error', summary: 'Error en el producto', detail: 'Debe agregar un producto correctamente antes de guardar la rifa.', life: 2000 });
+    return;
+  }
+  if (this.isVip && !this.codigoVip) {
+    console.error('Código VIP no válido');
+    return;
+  }
+
+  if (!this.isVip && this.activeRaffles.length >= 1) {
+    Swal.fire({
+      title: 'Lo sentimos',
+      text: 'Solo usuarios con código VIP pueden crear más de una rifa. Podrás crear otra el siguiente mes.',
+      icon: 'warning',
+      confirmButtonText: 'Aceptar'
+    });
+    return;
+  }
+
+  const fechaSorteoFormatted = typeof this.newRaffle.fechaSorteo === 'string'
+    ? this.newRaffle.fechaSorteo
+    : this.newRaffle.fechaSorteo.toISOString().split('T')[0];
+
+  const requestBody: Raffle = {
+    nombre: this.newRaffle.nombre,
+    cantidadParticipantes: Number(this.newRaffle.cantidadParticipantes),
+    fechaSorteo: fechaSorteoFormatted,
+    usuario: { id: this.userId, esVip: Boolean(this.isVip), codigoVip: this.codigoVip || undefined },
+    producto: { nombre: this.productData.nombre, descripcion: this.productData.descripcion, imagenes: this.productData.imagenes },
+    active: true,
+    executed: false,
+    code: this.newRaffle.code,
+    precio: Number(this.newRaffle.precio)
+  };
+
+  console.log('Cuerpo de la solicitud:', requestBody);
+
+  const createRaffle$ = this.isVip && this.codigoVip
+    ? this.raffleService.crearRifaConCodigoVip(requestBody, this.codigoVip)
+    : this.raffleService.crearRifa(requestBody);
+
+  createRaffle$
+    .pipe(
+      tap((response) => {
+        console.log('✅ Rifa creada con éxito:', response);
+
+        this.activeRaffles.unshift(response);
+        this.newlyCreatedRaffle = response;
+        this.productData.id = response.producto.id;
+
+        // Migrar imágenes temporales a la clave definitiva
+        if (this.pendingImages) {
+          const tempKey = `product_temp_images`;
+          const tempImages = JSON.parse(localStorage.getItem(tempKey) || '{}');
+          if (tempImages && Object.keys(tempImages).length > 0) {
+            const productKey = `product_${this.productData.id}_images`;
+            localStorage.setItem(productKey, JSON.stringify(tempImages));
+            localStorage.removeItem(tempKey); // Limpiar temporal
+            console.log(`🖼️ Imágenes migradas a localStorage para productId ${this.productData.id}:`, tempImages);
+          }
+          this.pendingImages = {}; // Limpiar pendientes
+        }
+
+        localStorage.setItem(`raffles_${this.userId}`, JSON.stringify(this.activeRaffles));
+        this.loadUserId();
+        this.loadUserRaffles(); // Actualizar vista
+      })
+    )
+    .subscribe({
+      next: () => {
+        // 🔥 Recarga usuario del backend (con cantidadRifas decremented)
+        this.raffleService.obtenerUsuarioPorId(this.userId).subscribe({
+          next: (usuarioActualizado) => {
+            console.log('Usuario después de crear rifa:', usuarioActualizado);
+            console.log('Cantidad rifas decremented:', usuarioActualizado.cantidadRifas); // 9
+
+            // Actualiza solo restantes, preserva inicial separado
+            const vipInitialKey = `vipInitialLimit_${this.userId}`;
+            const initialLimit = parseInt(localStorage.getItem(vipInitialKey) || '1', 10); // Lee fijo 10
+            console.log('Límite inicial fijo desde localStorage:', initialLimit); // 10
+
+            const currentUserRaw = localStorage.getItem('currentUser');
+            if (currentUserRaw) {
+              const currentUser = JSON.parse(currentUserRaw);
+              currentUser.cantidadRifas = usuarioActualizado.cantidadRifas; // Decrementa a 9
+              // NO toca vipInitialLimit (fijo en clave separada)
+              localStorage.setItem('currentUser', JSON.stringify(currentUser));
+              console.log('localStorage después de crear: restantes=9 (initial fijo en vipInitialLimit)');
+            }
+
+            // Recarga rifas para totalRifas fresco
+            this.loadUserRaffles();
+
+            Swal.fire({
+              title: '¡Éxito!',
+              text: 'Rifa creada y añadida a las rifas activas.',
+              icon: 'success',
+              confirmButtonText: 'Aceptar',
+              customClass: { popup: 'my-swal-popup' }
+            });
+            this.hideDialog();
+            this.resetFormulario();
+            this.productData = { nombre: '', descripcion: '', imagenes: [] };
+            if (this.mainEditor) {
+              this.mainEditor.nativeElement.innerHTML = '';
+            }
+          },
+          error: (error) => {
+            console.error('Error al recargar usuario después de crear rifa:', error);
+            // Fallback: Usa valor anterior
+            Swal.fire('Éxito', 'Rifa creada, pero error al actualizar datos del usuario.', 'warning');
+            this.hideDialog();
+            this.resetFormulario();
+          }
+        });
+      },
+      error: (error) => {
+        console.error('❌ Error al crear la rifa:', error);
+        this.mostrarErrorCreacion(error);
+      },
+    });
+}
+
+
 // Método reutilizable para mostrar mensajes
 private mostrarMensaje(icono: 'success' | 'error' | 'warning', titulo: string, mensaje: string): void {
   Swal.fire({

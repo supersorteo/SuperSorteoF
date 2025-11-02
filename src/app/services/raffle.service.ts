@@ -17,12 +17,11 @@ export class RaffleService {
   private apiUrl = 'https://sweet-laughter-production.up.railway.app/api/rifas';
 
   //private VIPUrl ='http://localhost:8080/codigos-vip'
-
   private VIPUrl ='https://sweet-laughter-production.up.railway.app/codigos-vip';
 
+  //private api = 'http://localhost:8080/usuarios';
   private api = 'https://sweet-laughter-production.up.railway.app/usuarios';
 
-  //private api = 'http://localhost:8080/usuarios';
 
   constructor(private http: HttpClient) { }
 

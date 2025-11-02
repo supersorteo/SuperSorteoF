@@ -6,6 +6,8 @@ import { Observable } from 'rxjs';
 export class AuthService {
 
    private readonly baseUrl = 'https://sweet-laughter-production.up.railway.app/api/admin';
+   //private readonly baseUrl = 'http://localhost:8080/api/admin';
+
   constructor(private http: HttpClient) {}
 
   // 🔐 Login de administrador

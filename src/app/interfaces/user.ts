@@ -13,4 +13,5 @@ export interface User {
   fechaRegistro?: Date; // Fecha de registro (opcional)
   telefono?: string;
   primeraVez?: boolean;
+  cantidadRifas?: number;
 }

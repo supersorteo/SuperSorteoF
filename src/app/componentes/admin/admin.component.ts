@@ -21,6 +21,7 @@ import { CarouselModule } from 'primeng/carousel';
 import { CardModule } from 'primeng/card';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { Router } from '@angular/router';
+import { catchError, forkJoin, of, switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-admin',
@@ -177,7 +178,7 @@ deleteSelectedUsers(): void {
 }
 
   // Abrir modal de edición
-  editUser(user: User): void {
+  editUser0(user: User): void {
     if (!user.id) {
       console.error('❌ ID del usuario no definido:', user);
       return;
@@ -189,13 +190,53 @@ deleteSelectedUsers(): void {
       email: user.email,
       telefono: user.telefono,
       esVip: user.esVip,
-      //cantidadRifas: user.cantidadRifas || 1
+      cantidadRifas: user.cantidadRifas || 1
     });
     this.showEditDialog = true;
   }
 
+  editUser(user: User): void {
+  if (!user.id) {
+    console.error('❌ ID del usuario no definido:', user);
+    return;
+  }
+
+  console.log(`✏️ Editando usuario ID ${user.id}:`, user);
+
+  // 🔥 Fetch usuario fresco del backend para datos actualizados
+  this.authService.getUserById(user.id).subscribe({
+    next: (userFresco) => {
+      console.log('Usuario fresco del backend:', userFresco);
+      this.editingUser = { ...userFresco };
+      this.editForm.patchValue({
+        name: userFresco.name,
+        email: userFresco.email,
+        telefono: userFresco.telefono,
+        esVip: userFresco.esVip,
+        cantidadRifas: userFresco.cantidadRifas || 1  // Patch real (ej. 8)
+      });
+      this.showEditDialog = true;
+    },
+    error: (error) => {
+      console.error('Error al recargar usuario para edición:', error);
+      // Fallback: Usa user local
+      this.editingUser = { ...user };
+      this.editForm.patchValue({
+        name: user.name,
+        email: user.email,
+        telefono: user.telefono,
+        esVip: user.esVip,
+        cantidadRifas: user.cantidadRifas || 1
+      });
+      this.showEditDialog = true;
+      Swal.fire('Advertencia', 'Datos del usuario no se pudieron recargar, usando datos locales.', 'warning');
+    }
+  });
+}
+
+
   // Guardar cambios del usuario (llamada directa a AuthenticationService)
-  saveEditedUser(): void {
+  saveEditedUser0(): void {
     if (this.editForm.invalid || !this.editingUser) {
       console.error('Formulario de edición inválido');
       return;
@@ -218,6 +259,31 @@ deleteSelectedUsers(): void {
       }
     });
   }
+
+  saveEditedUser(): void {
+  if (this.editForm.invalid || !this.editingUser) {
+    console.error('Formulario de edición inválido');
+    return;
+  }
+
+  const updatedUser: User = { ...this.editingUser, ...this.editForm.value };
+  console.log('💾 Guardando usuario actualizado:', updatedUser);
+
+  this.authService.updateUser(updatedUser).subscribe({
+    next: (user) => {
+      console.log('✅ Usuario actualizado del backend:', user);
+      // 🔥 Recarga lista completa para datos frescos
+      this.loadAllUsers(); // Recarga todos los usuarios (incluyendo cambios)
+      this.showEditDialog = false;
+      this.editForm.reset();
+      Swal.fire('Éxito', 'Usuario actualizado correctamente', 'success');
+    },
+    error: (error) => {
+      console.error('❌ Error al actualizar usuario:', error);
+      Swal.fire('Error', 'No se pudo actualizar el usuario', 'error');
+    }
+  });
+}
 
   // Eliminar usuario (llamada directa a AuthenticationService)
   deleteUser(user: User): void {
@@ -285,7 +351,7 @@ deleteRaffle0(id: number): void {
   });
 }
 
-deleteRaffle(id: number): void {
+deleteRaffle1(id: number): void {
   if (!id) {
     console.error('❌ ID de rifa no definido');
     this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No se puede eliminar la rifa sin ID válido.', life: 3000 });
@@ -318,7 +384,69 @@ deleteRaffle(id: number): void {
   });
 }
 
+deleteRaffle(id: number): void {
+  if (!id) {
+    console.error('❌ ID de rifa no definido');
+    this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No se puede eliminar la rifa sin ID válido.', life: 3000 });
+    return;
+  }
 
+  console.log(`🗑️ Eliminando rifa ID ${id}...`);
+  this.confirmationService.confirm({
+    message: '¿Estás seguro de que quieres eliminar esta rifa y todos sus datos asociados?',
+    header: 'Confirmar Eliminación',
+    icon: 'pi pi-exclamation-triangle',
+    acceptLabel: 'Sí, eliminar',
+    rejectLabel: 'Cancelar',
+    accept: () => {
+      // Elimina imágenes (opcional, maneja errores)
+      const raffle = this.selectedRaffles.find(r => r.id === id);
+      if (raffle && raffle.producto.imagenes) {
+        const imageDeletions = raffle.producto.imagenes.map(imageUrl => {
+          const fileName = imageUrl.split('/').pop()!;
+          return this.raffleService.deleteImage(fileName).pipe(
+            catchError((error) => {
+              console.warn('Imagen no encontrada, ignorando:', fileName, error);
+              return of(null);
+            })
+          );
+        });
+
+        forkJoin(imageDeletions).pipe(
+          switchMap(() => this.raffleService.deleteRaffle(id))
+        ).subscribe({
+          next: () => {
+            console.log('✅ Rifa eliminada exitosamente');
+            this.selectedRaffles = this.selectedRaffles.filter(r => r.id !== id); // Actualiza carrusel
+
+            this.messageService.add({ severity: 'success', summary: 'Éxito', detail: 'Rifa eliminada correctamente', life: 3000 });
+          },
+          error: (error) => {
+            console.error('❌ Error al eliminar rifa:', error);
+            this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No se pudo eliminar la rifa', life: 3000 });
+          }
+        });
+      } else {
+        // Si no hay imágenes, elimina rifa directo
+        this.raffleService.deleteRaffle(id).subscribe({
+          next: () => {
+            console.log('✅ Rifa eliminada exitosamente');
+            this.selectedRaffles = this.selectedRaffles.filter(r => r.id !== id);
+
+            this.messageService.add({ severity: 'success', summary: 'Éxito', detail: 'Rifa eliminada correctamente', life: 3000 });
+          },
+          error: (error) => {
+            console.error('❌ Error al eliminar rifa:', error);
+            this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No se pudo eliminar la rifa', life: 3000 });
+          }
+        });
+      }
+    },
+    reject: () => {
+      console.log('❌ Usuario canceló eliminación de rifa.');
+    }
+  });
+}
 
  logoutAdmin(): void {
   Swal.fire({

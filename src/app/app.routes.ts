@@ -25,13 +25,13 @@ export const routes: Routes = [
   {path:'lista', component:ListaComponent},
   {path:'register', component:RegisterComponent},
   {path:'sorteo', component:SorteoComponent},
-  {path:'codigos', component:CodigosVipComponent, canActivate: [AdminGuard]},
-  { path: 'datos-rifa/:id', component: DatosRifaComponent },
-  { path: 'external-raffle/:id', component: ExternalRaffleComponent },
+  {path:'codigos', component:CodigosVipComponent,  canActivate: [AdminGuard] },
+  {path:'datos-rifa/:id', component: DatosRifaComponent },
+  {path:'external-raffle/:id', component: ExternalRaffleComponent },
   {path:'upload', component: UploadVideoComponent},
-  { path: 'edit-raffle/:id', component: EditRaffleComponent },
-  { path: 'cambiar-password-admin', component: ChangeAdminPasswordComponent, canActivate: [AdminGuard] },
-  { path:'fpagos', component: FpagosComponent},
-  { path: 'administrar', component: AdminComponent, canActivate: [AdminGuard]},
-  { path: '**', redirectTo: 'home' }
+  {path:'edit-raffle/:id', component: EditRaffleComponent },
+  {path:'cambiar-password-admin', component: ChangeAdminPasswordComponent, canActivate: [AdminGuard] },
+  {path:'fpagos', component: FpagosComponent},
+  {path:'administrar', component: AdminComponent, canActivate: [AdminGuard]},
+  {path:'**', redirectTo: 'home' }
 ];
