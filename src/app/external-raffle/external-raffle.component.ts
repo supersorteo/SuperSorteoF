@@ -365,6 +365,29 @@ private initializeComponent(): void {
     }
   }
 
+  /**
+   * Mask a phone number to show only the first 3 and last 3 numeric digits.
+   * Non-digit characters are ignored for counting; the output shows only digits
+   * with an ellipsis in the middle. Examples:
+   *   +54 9 11 1234-5678  -> 549...678
+   *   123456              -> 123...456
+   */
+  maskPhone(phone: string | null | undefined): string {
+    if (!phone) {
+      return '';
+    }
+    const digits = (phone + '').replace(/\D/g, '');
+    if (digits.length <= 6) {
+      // If too short, show first half and last half separated by ellipsis
+      const start = digits.slice(0, Math.ceil(digits.length / 2));
+      const end = digits.slice(-Math.floor(digits.length / 2));
+      return `${start}${start && end ? '...' : ''}${end}`;
+    }
+    const first = digits.slice(0, 3);
+    const last = digits.slice(-3);
+    return `${first}...${last}`;
+  }
+
 
 
 loadPaymentMethods0(): void {

@@ -1,46 +1,29 @@
-.p-toolbar {
-  background: linear-gradient(356deg, rgb(197 174 219 / 72%) 0%, rgba(255, 255, 255, 1) 100%);
-}
+.p-toolbar{
+  
+    border-radius: 10px;
+    background-color: #ffffff00;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: nowrap;
+    flex-direction: row;
+    align-items: flex-end;
+  }
 
 
 .card {
   //background-color: #e2e7ec;  // Fondo claro (puedes ajustar el color según tu preferencia)
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6); // Sombra suave
-  border-radius: 8px; // Opcional: bordes redondeados
+  box-shadow: 0 2px 8px rgba(209, 82, 82, 0); // Sombra suave
+  border-radius: 10px; // Opcional: bordes redondeados
   padding: 0.5rem;    // Espaciado interno
   //margin-bottom: 1rem; // Separación respecto a otros elementos
 }
 
 /* También puedes estilizar el toolbar interno */
-.p-toolbar {
-  background-color: transparent; // Para que herede el fondo de la card
-  box-shadow: none;
-}
 
 
-.p-button.p-button-sm {
-  font-size: 0.8rem;
-  padding: 0.5rem 1.09375rem;
-}
-
-/*.toolbar-center-content {
-  display: flex;
-  //flex-direction: column;
-  flex-direction: row;
-  align-items: center;
-  gap: 10px;
-}*/
 
 
-.toolbar-center-content {
-  display: flex;
-  flex-direction: row; /* Alinea elementos horizontalmente */
-  align-items: center; /* Centra verticalmente los elementos */
-  justify-content: center; /* Centra el contenido horizontalmente */
-  gap: 15px; /* Espacio entre elementos */
-  width: 100%; /* Asegura que ocupe todo el ancho */
-  text-align: center; /* Alinea el texto */
-}
+
 
 .toolbar-title {
   margin: 0;
@@ -80,7 +63,7 @@
   .p-toolbar-group-center {
     width: 100%;
     //justify-content: start;
-    justify-content: center;
+    justify-content: left;
   }
 
   .toolbar-logo {
@@ -95,10 +78,14 @@
 }
 
 .external-header {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
+    border-radius: 10px;
+    background-color: #ffffff52;
+    display: flex
+;
+    justify-content: space-between;
+    flex-wrap: nowrap;
+    flex-direction: row;
+    align-items: flex-end;
 }
 
 .external-text {
@@ -119,25 +106,6 @@
   }
 }
 
-/* 1) Asegura que el grupo-start sea flex y alinee todo a la izquierda */
-.p-toolbar-group-start
-.external-logo {
-  display: flex !important;
-  justify-content: flex-start !important;
-  align-items: center;
-  padding: 0;
-  margin: 0;
-}
-
-
-/* 2) El enlace que envuelve al logo también debe ser un flex sin margen */
-.p-toolbar-group-start a {
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  margin: 0 !important;
-  padding: 0 !important;
-}
 
 /* 3) Si tienes un wrapper alrededor (external-header), hazlo flex-start */
 .external-header {
