@@ -2,9 +2,9 @@
 <div *ngIf="raffle"  class="raffle-background">
   <div class="scroll-container">
    <div class="card">
-  <h2 class="product-name" style="text-align: center; margin-bottom: 1rem; color: #fff;">
+  <h1 class="product-name" style="text-align: center; margin-bottom: 1rem; color: #fff;">
     {{ raffle.producto.nombre }}
-  </h2>
+  </h1>
 
   <p-carousel
     [value]="raffle.producto.imagenes"
@@ -87,24 +87,19 @@
 
 
   </div>
-
-
-
   <p-dialog
-  header="NOMBRE DELPRODUCTO QUE DEFINIÓ EL USUARIO"
+  [header]="raffle.producto.nombre"  
   [modal]="true"
   [(visible)]="visible"
   [style]="{ width: '50rem' }"
   [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
   [maximizable]="true">
-  <!--p>{{ raffle.producto.descripcion }}</!--p-->
   <div class="formatted-description" [innerHTML]="raffle.producto.descripcion"></div>
 </p-dialog>
 
 <div class="view-participants">
   <p-button label="Ver participantes"  styleClass="custom-button1" severity="info" (onClick)="mostrarDatosP()"></p-button>
 </div>
-
 
   <app-countdown *ngIf="showCountdown" [start]="5"></app-countdown>
 
@@ -118,7 +113,7 @@
 
 
 <p-dialog
-  header="Participantes del sorteo"
+  header="Participantes reservas"
   [modal]="true"
   [(visible)]="datosParticipantes"
   [style]="{ width: '50rem' }"
@@ -136,15 +131,15 @@
       <tr>
         <!--th>#</th-->
       <th style="width: 40%;" class="name-column">Nombre</th>
-      <th style="width: 40%;" class="phone-column">Teléfono</th>
-      <th style="width: 20%;" class="reserved-number-column"># Reservado</th>
+      <th style="width: 40%;" class="phone-column">Tel.</th>
+      <th style="width: 20%;" class="reserved-number-column">Reservó</th>
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-participante let-i="rowIndex">
       <tr>
         <!--td>{{ i + 1 }}</!--td-->
       <td style="width: 40%;" class="name-column">{{ participante.name }} {{ participante.lastName }}</td>
-      <td style="width: 40%;" class="phone-column">{{ participante.phone }}</td>
+  <td style="width: 40%;" class="phone-column">{{ maskPhone(participante.phone) }}</td>
       <td style="width: 20%;" class="reserved-number-column">{{ participante.reservedNumber }}</td>
       </tr>
     </ng-template>

@@ -32,6 +32,8 @@
   </div>
   <div class="item date-container">
     <div class="date-text">
+            <p class="sorteadia">se sortea el día</p>
+
       {{ raffle.fechaSorteo | date:'dd/MM/yyyy' }}
     </div>
   </div>
@@ -86,7 +88,7 @@
                rel="noopener noreferrer"
                class="link raffle-link"
                (click)="raffle.id && copyToClipboard1(getRaffleUrl(raffle.id))">
-              Link al sorteo
+              Página del sorteo
               <i class="pi pi-copy" style="margin-left: 5px; cursor: pointer;"></i>
             </a>
 
@@ -152,7 +154,7 @@
 </div>
 
 <ng-template #noWinner>
-  <span class="no-winner">Sin ganador</span>
+  <span class="no-winner">Sin ganador :</span>
 </ng-template>
 
 
@@ -222,11 +224,12 @@
 
   <div class="floating-button-container">
     <button pButton type="button" label="NUEVA RIFA" icon="pi pi-plus" class="botoncrear" (click)="showDialog()"></button>
+  
+    <p-button (onClick)="sidebarVisible = true" icon="pi pi-bars" [rounded]="true"  severity="secondary"[text]="true" />
+ 
   </div>
 
-  <div class="floating-button">
-    <p-button (onClick)="sidebarVisible = true" icon="pi pi-bars" [rounded]="true"  severity="secondary"[text]="true" />
-  </div>
+
 
 </div>
 
