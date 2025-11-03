@@ -73,7 +73,7 @@ export class ChangeAdminPasswordComponent {
 }
 
 volver(){
-  this.router.navigate(['/codigos'])
+  this.router.navigate(['/home'])
 }
 
 

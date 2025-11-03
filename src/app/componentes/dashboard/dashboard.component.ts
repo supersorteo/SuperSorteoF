@@ -499,7 +499,8 @@ getActions(raffle: Raffle) {
       label: 'Compartir',
       icon: 'pi pi-external-link',
       command: () => {
-        this.shareOnWhatsApp();
+        //this.shareOnWhatsApp();
+        this.shareRaffleOnWhatsApp(raffle)
       }
     },
     {
@@ -2809,9 +2810,32 @@ showDialog(): void {
 }
 
 
-  /** Envía WhatsApp al ganador de la rifa */
 
 
+
+
+shareRaffleOnWhatsApp(raffle: any): void {
+  const message = encodeURIComponent(
+    `¡Hola! 🎉 Mira esta rifa en Súper Sorteo: "${raffle.nombre}" 📈\n` +
+    `con ${raffle.cantidadParticipantes} participantes y premios por $${raffle.precio} 💰.\n` +
+    `¡Participa ahora y gana! 😊\n\n` +
+    `${this.getRaffleUrl(raffle.id)}` // URL separada para visualización clara
+  );
+  const whatsappUrl = `whatsapp://send?text=${message}`;
+  //window.open(whatsappUrl, '_blank'); // Abre WhatsApp web/app en nueva pestaña (mejor fallback)
+   window.location.href = whatsappUrl;
+  setTimeout(() => {
+    if (document.hidden) {
+      Swal.fire({
+        title: '¡Enviado!',
+        text: 'El mensaje con el enlace de la rifa ha sido enviado a WhatsApp.',
+        icon: 'success',
+        timer: 1500,
+        showConfirmButton: false
+      });
+    }
+  }, 1000);
+}
 
 
 
