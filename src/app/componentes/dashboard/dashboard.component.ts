@@ -35,6 +35,7 @@ import { RaffleResultService } from '../../services/raffle-result.service';
 import { WebSocketService } from '../../services/web-socket.service';
 import { RifaGanadorDTO } from '../../interfaces/rifa-ganador-dto';
 import { CardModule } from 'primeng/card';
+import { CodigoVipServiceService } from '../../services/codigo-vip-service.service';
 /*
 interface WinningEntry {
   raffleId: number;
@@ -69,7 +70,7 @@ export interface WinningEntry {
   }[];
 }
 
-
+declare var MercadoPago: any;
 
 @Component({
   selector: 'app-dashboard',
@@ -263,9 +264,9 @@ expiryDate!: Date;
  // imagenes = ['10.jpg', '15.jpg', '30.jpg'];
 
 imagenes = [
+  { id: '5', src: '5.png', rifas: 5 },
   { id: '10', src: '101.png', rifas: 10 },
-  { id: '15', src: '150.png', rifas: 15 },
-  { id: '30', src: '300.png', rifas: 30 }
+  { id: '15', src: '150.png', rifas: 15 }
 ];
 
 
@@ -275,6 +276,9 @@ imagenes = [
   private countdownInterval: any;
   juegoResponsableVisible:boolean = false;
   initialCantidadRifas = 1;
+
+  isWalletOpen: { [key: number]: boolean } = {};
+
   constructor(
     private authService: AuthenticationService,
     private cdRef: ChangeDetectorRef,
@@ -282,6 +286,7 @@ imagenes = [
     private raffleService: RaffleService,
     private messageService: MessageService,
     private participanteService: ParticipanteService,
+    private codigoVipService: CodigoVipServiceService,
     private route: ActivatedRoute,
     private sanitizer: DomSanitizer,
     private raffleExecutionService: RaffleExecutionService,
@@ -4056,9 +4061,9 @@ mostrarParticipantesTerminados(raffleId: number): void {
 
 getCategoria(id: string): string {
   const categorias: { [key: string]: string } = {
-    '10': 'Mini',
-    '15': 'Medium',
-    '30': 'Large'
+    '5': 'Mini',
+    '10': 'Medium',
+    '15': 'Large'
   };
   return categorias[id] || 'Desconocido'; // Ahora compara con ID directo
 }
@@ -4067,9 +4072,9 @@ getCategoria(id: string): string {
 
 getDescripcion(id: string): string {
   const descripciones: { [key: string]: string } = {
-    '10': 'Explora las posibilidades de SuperSorteo con este plan inicial.',
-    '15': 'Para los entusiastas que buscan alcanzar el exito ;)',
-    '30': 'Esto es cosa de grandes..para corazones ambiciosos. ¡Vamos por todo!'
+    '5': 'Explora las posibilidades de SuperSorteo con este plan inicial.',
+    '10': 'Para los entusiastas que buscan alcanzar el exito ;)',
+    '15': 'Esto es cosa de grandes..para corazones ambiciosos. ¡Vamos por todo!'
   };
   return descripciones[id] || 'Sin descripción'; // Usa ID directo
 }
@@ -4106,7 +4111,7 @@ comprarRifas0(): void {
 }
 
 
-comprarRifas(img: any): void {
+comprarRifas1(img: any): void {
   if (!img) {
     console.log('No hay imagen seleccionada.');
     return;
@@ -4121,6 +4126,70 @@ comprarRifas(img: any): void {
 
   window.location.href = enlaceWhatsApp; // Esto intentará abrir directamente la app de WhatsApp
 }
+
+
+
+comprarRifas(img: any): void {
+  if (!img) {
+    console.log('No hay imagen seleccionada.');
+    return;
+  }
+
+  console.log('Click Comprar - ID:', img.id);
+  const cantidadRifas = img.rifas;
+  const usuarioId = this.userId; // Asegúrate de tener el ID del usuario actual
+
+  console.log(`🛒 Iniciando compra de ${cantidadRifas} rifas para el usuario ${usuarioId}`);
+
+  this.codigoVipService.generarPreferenciaPago(cantidadRifas, usuarioId).subscribe({
+    next: (response) => {
+      const preferenceId = response.id;
+      const precio = response.precio;
+
+      console.log('✅ Preferencia MP creada - ID:', preferenceId);
+      console.log(`💰 Precio del código VIP: $${precio}`);
+
+      const containerId = 'wallet_container_' + img.id;
+
+      setTimeout(() => {
+        const container = document.getElementById(containerId);
+        if (!container) {
+          console.error(`❌ Contenedor ${containerId} no encontrado`);
+          return;
+        }
+
+        /*const mp = new MercadoPago('APP_USR-e00bfa8c-9642-4459-a1c0-c3d78ac5e8b1', {
+          locale: 'es-AR'
+        });*/
+
+        //produccion
+         const mp = new MercadoPago('APP_USR-a0ecd62d-ddc6-4b42-ad56-de1384731571', {
+          locale: 'es-AR'
+        });
+
+
+        const bricksBuilder = mp.bricks();
+        bricksBuilder.create('wallet', containerId, {
+          initialization: {
+            preferenceId: preferenceId
+          },
+          customization: {
+            visual: {
+              style: {
+                theme: 'default'
+              }
+            }
+          }
+        });
+      }, 100);
+    },
+    error: (error) => {
+      console.error('❌ Error al generar preferencia:', error);
+      Swal.fire('Error', 'No se pudo iniciar el pago con Mercado Pago.', 'error');
+    }
+  });
+}
+
 
 
 

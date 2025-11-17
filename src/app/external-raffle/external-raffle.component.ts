@@ -24,7 +24,7 @@ import { PaymentOption } from '../interfaces/payment-option';
 import { AuthenticationService } from '../services/authentication.service';
 import { TooltipModule } from 'primeng/tooltip';
 
-
+declare var MercadoPago: any;
 
 @Component({
   selector: 'app-external-raffle',
@@ -97,152 +97,6 @@ private countdownHandled = false
       });
     }
 
-/*
-  ngOnInit(): void {
-
-
-         const idParam = this.route.snapshot.paramMap.get('id');
-  if (idParam) {
-    this.raffleId = Number(idParam);
-
-    // 🔍 Intentar obtener la rifa desde el state por si fue navegada internamente
-    if (history.state && history.state.raffle) {
-      this.raffle = history.state.raffle;
-      this.raffleId = this.raffle?.id ?? null;
-      this.raffleCode = this.raffle?.code ?? '';
-      console.log('🎟️ Código de la rifa obtenido desde state:', this.raffleCode);
-      this.initializeForm();
-      this.loadParticipantes(this.raffleId);
-      this.loadPaymentMethods();
-    } else {
-      // 🔁 Obtener la rifa desde el backend si no hay datos en el state
-      this.cargarRifa(this.raffleId).then(() => {
-        this.initializeForm();
-        this.loadParticipantes(this.raffleId!);
-          this.loadPaymentMethods();
-      });
-    }
-
- // 🔥 Escuchar cambios en participantes en tiempo real
-  this.participanteService.refreshParticipants$.subscribe((raffleId) => {
-    if (raffleId && raffleId === this.raffleId) {
-      console.log("🔄 Refrescando participantes en tiempo real...");
-      this.loadParticipantes(raffleId);
-    }
-  });
-
-  // Suscripción a refreshPayments$ (única y persistente)
-      this.paymentSubscription = this.paymentService.refreshPayments$.subscribe((userId) => {
-        if (this.raffle?.usuario?.id === userId) {
-          console.log(`[External] Refresh triggered for user ID: ${userId}`);
-          this.loadPaymentMethods();
-        }
-      });
-
-
-      this.loadWinningInfo();
-
-
-
-
-    this.responsiveOptions = [
-      {
-          breakpoint: '1400px',
-          numVisible: 1,
-          numScroll: 1
-      },
-      {
-          breakpoint: '1220px',
-          numVisible: 1,
-          numScroll: 1
-      },
-      {
-          breakpoint: '1100px',
-          numVisible: 1,
-          numScroll: 1
-      }
-
-
-
-
-  ];
-
-      const storedWinner = localStorage.getItem(`winner_${this.raffleId}`);
-    if (storedWinner) {
-        const winnerData = JSON.parse(storedWinner);
-        this.winningNumber = winnerData.winningNumber;
-        this.winningParticipant = winnerData.winningParticipant;
-        this.showWinner = true;
-        console.log(`💾 Número ganador restaurado: ${this.winningNumber} - ${this.winningParticipant}`);
-    }
-
- console.log("🔍 Suscribiéndose a WebSockets...");
-
-    this.webSocketService.client.onConnect = () => {
-        console.log("✅ WebSocket activo, ahora suscribiéndose...");
-
-        // 🔥 Filtrar por `rifaId` en ejecución del sorteo
-        this.webSocketService.subscribeToTopic('raffle-execution').subscribe((message: any) => {
-            console.log("📡 Mensaje recibido en ExternalComponent:", message);
-
-            if (message && message.estado === "ejecutando" && message.rifaId === this.raffleId) {
-                console.log(`🔔 Sorteo en ejecución para la rifa con ID ${message.rifaId}, mostrando en el componente externo.`);
-                this.raffleExecutionStatus = true;
-            } else {
-                console.log(`⚠️ Ignorando ejecución de rifa con ID ${message?.rifaId}, ya que no coincide con la rifa actual (${this.raffleId}).`);
-            }
-        });
-
-        // 🔥 Filtrar por `rifaId` en el contador regresivo
-        this.webSocketService.subscribeToTopic('countdown').subscribe((message: any) => {
-            if (message.rifaId === this.raffleId) {
-                console.log(`⏳ Contador regresivo recibido para la rifa ${message.rifaId}: ${message.countdownValue}`);
-                this.countdownValue = message.countdownValue;
-                this.showCountdown = true;
-            } else {
-                console.log(`⚠️ Ignorando contador para rifa ${message?.rifaId}, no corresponde a la rifa actual (${this.raffleId}).`);
-            }
-        });
-
-        // 🔥 Filtrar por `rifaId` en el número ganador
-        this.webSocketService.subscribeToTopic('winner').subscribe((message: any) => {
-            if (message.rifaId === this.raffleId) {
-                console.log(`🏆 Número ganador recibido para la rifa ${message.rifaId}: ${message.winningNumber}`);
-
-                this.winningNumber = message.winningNumber;
-                this.winningParticipant = message.ganador
-                    ? `${message.ganador.name} ${message.ganador.lastName}`
-                    : 'Sin ganador';
-
-                this.showCountdown = false;
-                this.showWinner = true;
-                  // 🔥 Guardar número ganador en localStorage para que sea persistente
-                localStorage.setItem(`winner_${this.raffleId}`, JSON.stringify({
-                    winningNumber: this.winningNumber,
-                    winningParticipant: this.winningParticipant
-                }));
-
-                // 🔥 Verificar si el número ganador estaba reservado
-                this.verificarGanadorReservado();
-            } else {
-                console.log(`⚠️ Ignorando número ganador para rifa ${message?.rifaId}, no corresponde a la rifa actual (${this.raffleId}).`);
-            }
-        });
-    };
-
-    if (!this.webSocketService.client.connected) {
-        console.warn("⚠️ WebSocket no estaba conectado, activándolo...");
-        this.webSocketService.client.activate();
-    }
-
-//this.loadPaymentMethods();
-
-  }
-
-
-
-
-}*/
 
 ngOnInit(): void {
     const idParam = this.route.snapshot.paramMap.get('id');
@@ -531,20 +385,244 @@ getBankName(bankCode: string): string {
   }
 
 
-  onPay(method: PaymentOption): void {
-    console.log('Pagar con:', method);
-    // Aquí puedes agregar la lógica para procesar el pago (por ejemplo, una llamada al backend o una alerta)
-    Swal.fire({
-      title: 'Pago iniciado',
-      text: `Procesando pago con ${method.alias} (CBU: ${method.cbu})`,
-      icon: 'info',
-      confirmButtonText: 'Aceptar'
-    });
-    // Ejemplo: Llamada al backend para procesar el pago (implementar según tu API)
-    // this.paymentService.processPayment(method).subscribe(...);
 
-    this.hideDialog()
+
+onPay0(method: PaymentOption): void {
+  console.log('🔍 Iniciando onPay - Método elegido:', method);
+
+  if (!this.raffle || !this.raffle.id) {
+    console.log('❌ Rifa no válida - raffle:', this.raffle);
+    Swal.fire('Error', 'No se seleccionó una rifa para pagar.', 'error');
+    return;
   }
+
+  const rifaId = this.raffle.id;
+  const amount = this.raffle.precio;
+  const usuarioId = this.raffle.usuario.id; // Admin ID para tracking (participante anónimo)
+
+  console.log('✅ Rifa válida - ID:', rifaId, 'Precio:', amount, 'Usuario ID (admin):', usuarioId);
+
+  if (method.bankCode === 'MP') {
+    console.log('🚀 Iniciando pago MP...');
+    this.paymentService.createPreference(rifaId, amount, usuarioId).subscribe({
+      next: (response) => {
+        console.log('✅ Preference MP creada - Response completa:', response);
+        console.log('🔗 URL Checkout MP:', response.initPoint);
+        window.location.href = response.initPoint;
+      },
+      error: (error) => {
+        console.error('❌ Error al crear pago MP - Detalle:', error);
+        Swal.fire('Error', 'No se pudo iniciar el pago con Mercado Pago.', 'error');
+      }
+    });
+  } else {
+    console.log('ℹ️ Método no MP, info genérico - bankCode:', method.bankCode);
+    Swal.fire('Info', 'Pago con este método no está disponible aún. Usa Mercado Pago.', 'info');
+  }
+
+  console.log('🔒 Cerrando modal');
+  this.metodosPgo = false;
+}
+
+onPay1(method: PaymentOption): void {
+  if (!this.raffle || !this.raffle.id) {
+    Swal.fire('Error', 'No se seleccionó una rifa para pagar.', 'error');
+    return;
+  }
+
+  const rifaId = this.raffle.id;
+  const amount = this.raffle.precio;
+  const usuarioId = this.raffle.usuario.id;
+
+  if (method.bankCode === 'MP') {
+    this.paymentService.createPreference(rifaId, amount, usuarioId).subscribe({
+      next: (response) => {
+        if (response.initPoint) {
+          window.location.href = response.initPoint;
+        } else {
+          Swal.fire('Error', 'No se recibió el enlace de pago.', 'error');
+        }
+      },
+      error: (error) => {
+        console.error('Error al crear preferencia:', error);
+        Swal.fire('Error', 'No se pudo iniciar el pago con Mercado Pago.', 'error');
+      }
+    });
+  } else {
+    Swal.fire('Info', 'Método de pago no disponible aún.', 'info');
+  }
+
+  this.metodosPgo = false;
+}
+
+onPay00(method: PaymentOption): void {
+
+  console.log('🔍 Iniciando onPay - Método elegido:', method);
+  if (!this.raffle || !this.raffle.id) {
+    Swal.fire('Error', 'No se seleccionó una rifa para pagar.', 'error');
+    return;
+  }
+
+  const rifaId = this.raffle.id;
+  const amount = this.raffle.precio;
+  const usuarioId = this.raffle.usuario.id;
+  console.log('✅ Rifa válida - ID:', rifaId, 'Precio:', amount, 'Usuario ID (admin):', usuarioId);
+
+  if (method.bankCode === 'MP') {
+    this.paymentService.createPreference(rifaId, amount, usuarioId).subscribe({
+      next: (response) => {
+        const preferenceId = response.id;
+
+
+        const mp = new MercadoPago('APP_USR-e00bfa8c-9642-4459-a1c0-c3d78ac5e8b1', {
+          locale: 'es-AR'
+        });
+
+
+
+        console.log('preference id', preferenceId)
+        console.log('✅ Preference MP creada - Response completa:', response);
+        console.log('🔗 URL Checkout MP:', response.initPoint);
+        //window.location.href = response.initPoint;
+
+        const bricksBuilder = mp.bricks();
+        bricksBuilder.create('wallet', 'wallet_container', {
+          initialization: {
+            preferenceId: preferenceId
+          },
+          customization: {
+            visual: {
+              style: {
+                theme: 'default'
+              }
+            }
+          }
+        });
+      },
+      error: (error) => {
+        console.error('Error al crear preferencia:', error);
+        Swal.fire('Error', 'No se pudo iniciar el pago con Mercado Pago.', 'error');
+      }
+    });
+  } else {
+    Swal.fire('Info', 'Método de pago no disponible aún.', 'info');
+  }
+
+  this.metodosPgo = false;
+}
+
+onPay000(method: PaymentOption): void {
+  if (!this.raffle || !this.raffle.id) {
+    Swal.fire('Error', 'No se seleccionó una rifa para pagar.', 'error');
+    return;
+  }
+
+  const rifaId = this.raffle.id;
+  const amount = this.raffle.precio;
+  const usuarioId = this.raffle.usuario.id;
+ console.log('✅ Rifa válida - ID:', rifaId, 'Precio:', amount, 'Usuario ID (admin):', usuarioId);
+
+  if (method.bankCode === 'MP') {
+    this.paymentService.createPreference(rifaId, amount, usuarioId).subscribe({
+      next: (response) => {
+        const preferenceId = response.id;
+        console.log('preference id', preferenceId)
+        console.log('✅ Preference MP creada - Response completa:', response);
+        console.log('🔗 URL Checkout MP:', response.initPoint);
+
+        // ✅ Esperar a que el DOM esté listo antes de renderizar el botón
+        setTimeout(() => {
+          const mp = new MercadoPago('APP_USR-e00bfa8c-9642-4459-a1c0-c3d78ac5e8b1', {
+            locale: 'es-AR'
+          });
+
+          const bricksBuilder = mp.bricks();
+          bricksBuilder.create('wallet', 'wallet_container', {
+            initialization: {
+              preferenceId: preferenceId
+            },
+            customization: {
+              visual: {
+                style: {
+                  theme: 'default'
+                }
+              }
+            }
+          });
+        }, 100); // Espera 100ms para asegurar que el contenedor esté en el DOM
+      },
+      error: (error) => {
+        console.error('Error al crear preferencia:', error);
+        Swal.fire('Error', 'No se pudo iniciar el pago con Mercado Pago.', 'error');
+      }
+    });
+  } else {
+    Swal.fire('Info', 'Método de pago no disponible aún.', 'info');
+  }
+
+  this.metodosPgo = false;
+}
+
+onPay(method: PaymentOption): void {
+    console.log('🔍 Iniciando onPay - Método elegido:', method);
+  if (!this.raffle || !this.raffle.id) {
+    Swal.fire('Error', 'No se seleccionó una rifa para pagar.', 'error');
+    return;
+  }
+
+  const rifaId = this.raffle.id;
+  const amount = this.raffle.precio;
+  const usuarioId = this.raffle.usuario.id;
+ console.log('✅ Rifa válida - ID:', rifaId, 'Precio:', amount, 'Usuario ID (admin):', usuarioId);
+  if (method.bankCode === 'MP') {
+    this.paymentService.createPreference(rifaId, amount, usuarioId).subscribe({
+      next: (response) => {
+        const preferenceId = response.id;
+        console.log('🔗 URL Checkout MP:', response.initPoint);
+        console.log('preference id', preferenceId)
+        console.log('✅ Preference MP creada - Response completa:', response);
+
+
+        // ✅ Esperar a que el DOM esté listo
+        setTimeout(() => {
+          const container = document.getElementById('wallet_container');
+          if (!container) {
+            console.error('❌ Contenedor wallet_container no encontrado en el DOM');
+            return;
+          }
+
+          const mp = new MercadoPago('APP_USR-a0ecd62d-ddc6-4b42-ad56-de1384731571', {
+            locale: 'es-AR'
+          });
+
+          const bricksBuilder = mp.bricks();
+          bricksBuilder.create('wallet', 'wallet_container', {
+            initialization: {
+              preferenceId: preferenceId
+            },
+            customization: {
+              visual: {
+                style: {
+                  theme: 'default'
+                }
+              }
+            }
+          });
+        }, 100); // Espera 100ms para asegurar que el contenedor esté renderizado
+      },
+      error: (error) => {
+        console.error('Error al crear preferencia:', error);
+        Swal.fire('Error', 'No se pudo iniciar el pago con Mercado Pago.', 'error');
+      }
+    });
+  } else {
+    Swal.fire('Info', 'Método de pago no disponible aún.', 'info');
+  }
+
+  this.metodosPgo = false;
+}
+
+
 
   verificarGanadorReservado(): void {
     this.participanteService.getParticipantesByRaffleId(this.raffle!.id!).subscribe({

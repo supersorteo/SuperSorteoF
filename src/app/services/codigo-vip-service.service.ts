@@ -19,4 +19,16 @@ export class CodigoVipServiceService {
   obtenerCodigosVip(): Observable<CodigoVip[]> {
     return this.http.get<CodigoVip[]>(this.apiUrl);
   }
+
+  generarPreferenciaPago(cantidadRifas: number, usuarioId: number): Observable<any> {
+  const payload = {
+    cantidadRifas,
+    usuarioId
+  };
+
+  //return this.http.post<any>('https://sweet-laughter-production.up.railway.app/codigos-vip/pago', payload);
+  return this.http.post<any>(`${this.apiUrl}/pago`, payload);
+}
+
+
 }

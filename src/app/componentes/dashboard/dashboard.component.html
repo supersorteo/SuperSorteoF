@@ -20,7 +20,7 @@
       </div>
       <div *ngFor="let raffle of activeRaffles" class="p-card mb-5" style="position: relative">
 
-    
+
 
 
 
@@ -104,7 +104,7 @@
 
           <div style="height: 50px; position: relative; margin-top: 10px;" class="speeddial-linear-demo">
             <p-speedDial
-            
+
             [model]="getActions(raffle)"
             [radius]="80"
             type="semi-circle"
@@ -139,7 +139,7 @@
 
 
 
-          
+
 
 
 
@@ -191,7 +191,7 @@
 
         </div>
 
-        
+
 
           <div style="height: 40px; margin-top: 10px;" class="speeddial-linear-demo">
             <p-speedDial
@@ -224,9 +224,9 @@
 
   <div class="floating-button-container">
     <button pButton type="button" label="NUEVA RIFA" icon="pi pi-plus" class="botoncrear" (click)="showDialog()"></button>
-  
+
     <p-button (onClick)="sidebarVisible = true" icon="pi pi-bars" [rounded]="true"  severity="secondary"[text]="true" />
- 
+
   </div>
 
 
@@ -343,29 +343,37 @@ header="Crear Nueva Rifa"
       [responsiveOptions]="responsiveOptions"
       (onPageChange)="onPageChange($event)">
         <ng-template let-img pTemplate="item">
-          <div class="border-1 surface-border border-round m-2 p-3">
-            <!-- <div class="relative mx-auto"> -->
-              <img [src]="'assets/' +  img.src" alt="Imagen" class="w-full border-round" />
+          <div class="border-1 surface-border border-round m-2 p-3 precios ">
+
+              <img [src]="'assets/' +  img.src" alt="Imagen" class="w-full border-round imagen" />
             </div>
             <h1 class="text-center font-bold text-lg">{{ getCategoria(img.id) }}</h1>
 
 
               <p class="text-center text-sm text-gray-600">{{ getDescripcion(img.id) }}</p>
-            <p-button label="Comprar" [rounded]="true" [outlined]="true" severity="help" styleClass="w-full" (click)="comprarRifas(img)" />
-          
+            <p-button
+            label="Comprar"
+            [rounded]="true"
+            [outlined]="true"
+            severity="help"
+            styleClass="w-full"
+            (click)="comprarRifas(img)" />
+
+          <div [id]="'wallet_container_' + img.id" style="margin-top: 1rem;"></div>
         </ng-template>
       </p-carousel>
+
 </div>
 
-         
+
 
 
     </div>
 
 
 
-  
-  
+
+
 
 
 
@@ -391,7 +399,7 @@ header="Crear Nueva Rifa"
 
    <div class="overflow-y-auto">
     <div class="list-none py-3 m-0">
-        
+
 
 
       <ng-template #expiredTemplate>
@@ -403,7 +411,7 @@ header="Crear Nueva Rifa"
           <div class="sidebar-buttons">
             <button pButton type="button" label="Ser VIP" class="p-button-success" (click)="abrirModal()"></button>
           </div>
-        </li> 
+        </li>
         <li>
           <div class="sidebar-buttons">
             <button pButton type="button" label="Métodos de Pago" class="p-button-help p-button-sm" routerLink="/fpagos" ></button>
@@ -415,7 +423,7 @@ header="Crear Nueva Rifa"
             <button pButton type="button" label="Compartir"  class="p-button-secondary" (click)="shareOnWhatsApp()"></button>
           </div>
         </li>
-       
+
 
           <li>
           <div class="sidebar-buttons">
@@ -431,12 +439,12 @@ header="Crear Nueva Rifa"
       </ul>
 
 
-      
+
     </div>
-    
+
    </div>
 
-   
+
 <p class="dias-restantes-text">Días restantes hasta el vencimiento</p>
 
       <div *ngIf="remainingTime.days + remainingTime.hours + remainingTime.minutes + remainingTime.seconds > 0; else expiredTemplate" class="countdown-container">
@@ -450,7 +458,7 @@ header="Crear Nueva Rifa"
         <div class="time-box">{{ remainingTime.seconds | number:'2.0-0' }}</div>
         <div class="separator">s</div>
         <hr>
-        
+
 
       </div>
 

@@ -19,6 +19,7 @@
     "@angular/platform-browser-dynamic": "17.3.11",
     "@angular/router": "17.3.11",
     "@angular/service-worker": "17.3.11",
+    "@mercadopago/sdk-react": "^1.0.6",
     "@stomp/stompjs": "^7.1.1",
     "canvas-confetti": "^1.9.3",
     "crypto-browserify": "^3.12.1",

@@ -12,7 +12,6 @@ import { RaffleService } from './raffle.service';
 export class AdminService {
 
   private apiUrl = 'https://sweet-laughter-production.up.railway.app'; // Usa tu URL de producción
-
   //private apiUrl = 'http://localhost:8080';
   constructor(
     private authService: AuthenticationService,

@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { PaymentOption } from '../interfaces/payment-option';
@@ -10,6 +10,10 @@ import { AuthenticationService } from './authentication.service';
 export class PaymentServiceService {
   private apiUrl = 'https://sweet-laughter-production.up.railway.app/api/payment-options';
   //private apiUrl = 'http://localhost:8080/api/payment-options';
+
+  private url = 'https://sweet-laughter-production.up.railway.app/api/rifas/pago';
+  //private url = "http://localhost:8080/api/rifas/pago"
+
   private paymentOptionsSubject = new BehaviorSubject<PaymentOption[]>([]);
   public paymentOptions$ = this.paymentOptionsSubject.asObservable();
   private paymentOptionsMap = new Map<number, BehaviorSubject<PaymentOption[]>>();
@@ -48,6 +52,18 @@ export class PaymentServiceService {
       })
     );
   }
+
+
+
+createPreference(rifaId: number, amount: number, usuarioId: number): Observable<any> {
+  const payload = {
+    rifaId,
+    amount,
+    usuarioId
+  };
+
+  return this.http.post<any>(`${this.url}`, payload);
+}
 
 
 

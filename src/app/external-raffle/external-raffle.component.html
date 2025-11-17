@@ -1,4 +1,5 @@
 <!--div *ngIf="raffle" (touchstart)="handleScreenTouch($event)" class="raffle-background"-->
+<div id="wallet_container" style="margin-top: 1rem;"></div>
 <div *ngIf="raffle"  class="raffle-background">
   <div class="scroll-container">
    <div class="card">
@@ -88,7 +89,7 @@
 
   </div>
   <p-dialog
-  [header]="raffle.producto.nombre"  
+  [header]="raffle.producto.nombre"
   [modal]="true"
   [(visible)]="visible"
   [style]="{ width: '50rem' }"
@@ -281,11 +282,19 @@
           styleClass="p-button-primary p-button-sm"
           (onClick)="onPay(method)"
         ></p-button>
+
+
       </div>
     </div>
+
+
+
   </div>
+
+
   <ng-template #noMethods>
     <p>No tienes métodos de pago registrados.</p>
   </ng-template>
 </p-dialog>
+
 

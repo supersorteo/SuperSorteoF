@@ -888,6 +888,26 @@ background-image: linear-gradient(to right top, #c109b0, #a845cc, #8a63e0, #6778
   align-items: center;
 }
 
+/*.precios {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-height: 400px;
+}
+
+.imagen {
+  max-height: 150px;
+  object-fit: cover;
+  border-radius: 8px;
+}*/
+
+.p-carousel .p-carousel-container {
+    display: grid !important;
+    grid-template-columns: 2.5% 95% 2.5% !important;
+    align-items: center;
+    /* height: 250px; */
+}
+
 /* Estilo base para la imagen del carrusel */
 .carousel-img {
   width: 100%;
@@ -1196,3 +1216,6 @@ background-image: linear-gradient(to right top, #c109b0, #a845cc, #8a63e0, #6778
     }
   }
 }
+
+
+
