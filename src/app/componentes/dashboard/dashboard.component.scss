@@ -1218,4 +1218,39 @@ background-image: linear-gradient(to right top, #c109b0, #a845cc, #8a63e0, #6778
 }
 
 
+.vip-crown-container {
+  position: fixed;
+  top: 15px;
+  right: 15px;
+  z-index: 9999;
+  background: linear-gradient(135deg, #FFD700, #FFA500);
+  padding: 10px 16px;
+  border-radius: 50px;
+  box-shadow: 0 6px 20px rgba(255, 215, 0, 0.5);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  animation: vipPulse 3s infinite;
+  border: 3px solid #fff;
+  font-weight: bold;
+  color: white;
+}
 
+.vip-crown-icon {
+  font-size: 2.2rem;
+  color: white;
+  filter: drop-shadow(0 0 8px gold);
+}
+
+.vip-badge {
+  font-size: 1rem;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 4px 12px;
+  border-radius: 20px;
+}
+
+@keyframes vipPulse {
+  0% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.7); }
+  70% { box-shadow: 0 0 0 15px rgba(255, 215, 0, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0); }
+}

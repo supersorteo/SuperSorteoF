@@ -30,5 +30,8 @@ export class CodigoVipServiceService {
   return this.http.post<any>(`${this.apiUrl}/pago`, payload);
 }
 
+getSoldCodes(): Observable<CodigoVip[]> {
+    return this.http.get<CodigoVip[]>(`${this.apiUrl}/vendidos`);
+  }
 
 }

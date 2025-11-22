@@ -22,6 +22,8 @@ import { CardModule } from 'primeng/card';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { Router } from '@angular/router';
 import { catchError, forkJoin, of, switchMap } from 'rxjs';
+import { CodigoVip } from '../../interfaces/codigo-vip';
+import { CodigoVipServiceService } from '../../services/codigo-vip-service.service';
 
 @Component({
   selector: 'app-admin',
@@ -48,13 +50,18 @@ export class AdminComponent implements OnInit {
   editForm: FormGroup;
   editingUser: User | null = null;
   responsiveOptions!: any[];
+
+  soldCodes: CodigoVip[] = []; // Lista códigos vendidos
+  showSoldCodesDialog = false;
+  totalPrecio: number = 0;
   constructor(
     private authService: AuthenticationService, // Llamadas directas
     private raffleService: RaffleService, // Llamadas directas
     private fb: FormBuilder,
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
-    private router: Router
+    private router: Router,
+    private codigoVipService: CodigoVipServiceService
   ) {
     this.editForm = this.fb.group({
       name: ['', Validators.required],
@@ -178,22 +185,7 @@ deleteSelectedUsers(): void {
 }
 
   // Abrir modal de edición
-  editUser0(user: User): void {
-    if (!user.id) {
-      console.error('❌ ID del usuario no definido:', user);
-      return;
-    }
-    console.log(`✏️ Editando usuario ID ${user.id}:`, user);
-    this.editingUser = { ...user };
-    this.editForm.patchValue({
-      name: user.name,
-      email: user.email,
-      telefono: user.telefono,
-      esVip: user.esVip,
-      cantidadRifas: user.cantidadRifas || 1
-    });
-    this.showEditDialog = true;
-  }
+
 
   editUser(user: User): void {
   if (!user.id) {
@@ -236,29 +228,7 @@ deleteSelectedUsers(): void {
 
 
   // Guardar cambios del usuario (llamada directa a AuthenticationService)
-  saveEditedUser0(): void {
-    if (this.editForm.invalid || !this.editingUser) {
-      console.error('Formulario de edición inválido');
-      return;
-    }
 
-    const updatedUser: User = { ...this.editingUser, ...this.editForm.value };
-    console.log('💾 Guardando usuario actualizado:', updatedUser);
-
-    this.authService.updateUser(updatedUser).subscribe({
-      next: (user) => {
-        console.log('✅ Usuario actualizado:', user);
-        this.users = this.users.map(u => u.id === updatedUser.id ? user : u); // Actualiza en la tabla
-        this.showEditDialog = false;
-        this.editForm.reset();
-        Swal.fire('Éxito', 'Usuario actualizado correctamente', 'success');
-      },
-      error: (error) => {
-        console.error('❌ Error al actualizar usuario:', error);
-        Swal.fire('Error', 'No se pudo actualizar el usuario', 'error');
-      }
-    });
-  }
 
   saveEditedUser(): void {
   if (this.editForm.invalid || !this.editingUser) {
@@ -318,71 +288,7 @@ deleteSelectedUsers(): void {
     });
   }
 
-deleteRaffle0(id: number): void {
-  if (!id) {
-    console.error('❌ ID de rifa no definido');
-    Swal.fire('Error', 'No se puede eliminar la rifa sin ID válido.', 'error');
-    return;
-  }
 
-  console.log(`🗑️ Eliminando rifa ID ${id}...`);
-  Swal.fire({
-    title: '¿Estás seguro?',
-    text: '¿Quieres eliminar esta rifa y todos sus datos asociados? Esta acción no se puede deshacer.',
-    icon: 'warning',
-    showCancelButton: true,
-    confirmButtonText: 'Sí, eliminar',
-    cancelButtonText: 'Cancelar',
-    customClass: { popup: 'swal-modal-high-z' }
-  }).then((result) => {
-    if (result.isConfirmed) {
-      this.raffleService.deleteRaffle(id).subscribe({
-        next: () => {
-          console.log('✅ Rifa eliminada exitosamente');
-          this.selectedRaffles = this.selectedRaffles.filter(r => r.id !== id); // Actualiza el carrusel
-          Swal.fire('Eliminada', 'Rifa eliminada correctamente.', 'success');
-        },
-        error: (error) => {
-          console.error('❌ Error al eliminar rifa:', error);
-          Swal.fire('Error', 'No se pudo eliminar la rifa', 'error');
-        }
-      });
-    }
-  });
-}
-
-deleteRaffle1(id: number): void {
-  if (!id) {
-    console.error('❌ ID de rifa no definido');
-    this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No se puede eliminar la rifa sin ID válido.', life: 3000 });
-    return;
-  }
-
-  console.log(`🗑️ Eliminando rifa ID ${id}...`);
-  this.confirmationService.confirm({
-    message: '¿Estás seguro de que quieres eliminar esta rifa y todos sus datos asociados?',
-    header: 'Confirmar Eliminación',
-    icon: 'pi pi-exclamation-triangle',
-    acceptLabel: 'Sí, eliminar',
-    rejectLabel: 'Cancelar',
-    accept: () => {
-      this.raffleService.deleteRaffle(id).subscribe({
-        next: () => {
-          console.log('✅ Rifa eliminada exitosamente');
-          this.selectedRaffles = this.selectedRaffles.filter(r => r.id !== id); // Actualiza el carrusel
-          this.messageService.add({ severity: 'success', summary: 'Éxito', detail: 'Rifa eliminada correctamente', life: 3000 });
-        },
-        error: (error) => {
-          console.error('❌ Error al eliminar rifa:', error);
-          this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No se pudo eliminar la rifa', life: 3000 });
-        }
-      });
-    },
-    reject: () => {
-      console.log('❌ Usuario canceló eliminación de rifa.');
-    }
-  });
-}
 
 deleteRaffle(id: number): void {
   if (!id) {
@@ -470,6 +376,26 @@ deleteRaffle(id: number): void {
     cambiarPassword(){
       this.router.navigate(['/cambiar-password-admin'])
     }
+
+    loadSoldCodes(): void {
+    this.codigoVipService.getSoldCodes().subscribe({
+      next: (soldCodes) => {
+        console.log('✅ Códigos vendidos cargados:', soldCodes.length);
+        this.soldCodes = soldCodes;
+        this.calculateTotalPrecio();
+        this.showSoldCodesDialog = true;
+      },
+      error: (error) => {
+        console.error('❌ Error al cargar códigos vendidos:', error);
+        Swal.fire('Error', 'No se pudieron cargar los códigos vendidos.', 'error');
+      }
+    });
+  }
+
+  private calculateTotalPrecio(): void {
+    this.totalPrecio = this.soldCodes.reduce((sum, code) => sum + (code.precio || 0), 0);
+    console.log('Total precio calculado:', this.totalPrecio); // Log para debug
+  }
 
 
 }

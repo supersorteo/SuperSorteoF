@@ -358,11 +358,49 @@ imagenes = [
 
 
 
+this.loadCurrentUserData();
+
+    // Detecta si viene de pago exitoso (success URL de MP)
+    const urlParams = new URLSearchParams(window.location.search);
+    const paymentId = urlParams.get('payment_id');
+    if (paymentId) {
+      console.log('Pago exitoso detectado - payment_id:', paymentId);
+      this.handleSuccessfulPayment();
+    }
 
 }
 
 
+private loadCurrentUserData(): void {
+    const currentUser = this.authService.getCurrentUser();
+    if (currentUser) {
+      this.isVip = currentUser.esVip || false;
+      this.cantidadRifasPermitidas = currentUser.cantidadRifas || 1;
+      console.log('Usuario cargado - VIP:', this.isVip, 'Rifas:', this.cantidadRifasPermitidas, 'id del usuario:', currentUser.id);
+    }
+  }
 
+  private handleSuccessfulPayment(): void {
+    Swal.fire({
+      title: '¡Pago Exitoso!',
+      text: 'Tu código VIP ha sido activado. ¡Ahora eres VIP!',
+      icon: 'success',
+      timer: 4000
+    });
+
+    // Recarga usuario del backend para activar VIP
+    if (this.userId) {
+      this.authService.getUserById(this.userId).subscribe({
+        next: (usuarioActualizado) => {
+          this.actualizarDatosUsuario(usuarioActualizado);
+          this.loadUserRaffles(); // Recarga tus rifas
+        },
+        error: (err) => {
+          console.error('Error recargando usuario post-pago:', err);
+        }
+      });
+    }
+  }
 
 private async initIndexedDB(): Promise<void> {
     return new Promise((resolve, reject) => {

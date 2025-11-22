@@ -2,6 +2,12 @@
   <p-toast/>
 <div class="container p-2 bg-light rounded shadow-sm page-dashboard">
 
+  <!-- Corona VIP fija en esquina superior derecha -->
+<div *ngIf="isVip" class="vip-crown-container">
+  <i class="pi pi-crown vip-crown-icon"></i>
+  <div class="vip-badge">VIP</div>
+</div>
+
 
   <div *ngIf="mostrarVideo" class="video-container">
   <video width="100%" controls autoplay (ended)="ocultarVideo()">

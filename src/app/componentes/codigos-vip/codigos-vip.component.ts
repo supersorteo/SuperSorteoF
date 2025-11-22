@@ -21,9 +21,9 @@ import { TooltipModule } from 'primeng/tooltip';
 export class CodigosVipComponent implements OnInit{
   codigosVip: CodigoVip[] = [];
   cantidadRifasOptions = [
+    { label: '5 Rifas', value: 5 },
     { label: '10 Rifas', value: 10 },
-    { label: '15 Rifas', value: 15 },
-    { label: '30 Rifas', value: 30 }
+    { label: '15 Rifas', value: 15 }
   ];
   cantidadRifas: number = 10;
   selectedCodigo!: CodigoVip;
@@ -86,7 +86,8 @@ generarCodigoVip() {
         id: res.id,
         codigo: res.codigo,
         cantidadRifas: this.cantidadRifas,
-        utilizado: false
+        utilizado: false,
+        precio: res.precio || 0
       };
       this.codigosVip.unshift(nuevoCodigo); // Agregar al inicio
       console.log('✅ Código VIP generado:', nuevoCodigo);

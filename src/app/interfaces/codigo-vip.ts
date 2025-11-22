@@ -2,5 +2,7 @@ export interface CodigoVip {
   id?:number,
   codigo: string,
   utilizado?:boolean,
-  cantidadRifas: number
+  cantidadRifas: number,
+  precio: number
+
 }
