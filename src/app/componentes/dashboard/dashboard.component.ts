@@ -4167,7 +4167,7 @@ comprarRifas1(img: any): void {
 
 
 
-comprarRifas(img: any): void {
+comprarRifas00(img: any): void {
   if (!img) {
     console.log('No hay imagen seleccionada.');
     return;
@@ -4228,7 +4228,68 @@ comprarRifas(img: any): void {
   });
 }
 
+comprarRifas(img: any): void {
+  if (!img) {
+    console.log('No hay imagen seleccionada.');
+    return;
+  }
 
+  console.log('Click Comprar - ID:', img.id);
+  const cantidadRifas = img.rifas;
+  const usuarioId = this.userId;
+
+  console.log(`🛒 Iniciando compra de ${cantidadRifas} rifas para el usuario ${usuarioId}`);
+
+  this.codigoVipService.generarPreferenciaPago(cantidadRifas, usuarioId).subscribe({
+    next: (response) => {
+      const preferenceId = response.id;
+      const precio = response.precio;
+
+      console.log('✅ Preferencia MP creada - ID:', preferenceId);
+      console.log(`💰 Precio del código VIP: $${precio}`);
+
+      const containerId = 'wallet_container_' + img.id;
+
+      setTimeout(() => {
+        const container = document.getElementById(containerId);
+        if (!container) {
+          console.error(`❌ Contenedor ${containerId} no encontrado`);
+          return;
+        }
+
+        const mp = new MercadoPago('APP_USR-a0ecd62d-ddc6-4b42-ad56-de1384731571', {
+          locale: 'es-AR'
+        });
+
+        const bricksBuilder = mp.bricks();
+        bricksBuilder.create('wallet', containerId, {
+          initialization: { preferenceId: preferenceId },
+          customization: { visual: { style: { theme: 'default' } } }
+        });
+      }, 100);
+    },
+    error: (httpError) => {
+      this.displayDialog1 = false
+      console.error('❌ Error al generar preferencia:', httpError);
+
+      // 🔥 Aquí capturamos el mensaje exacto que viene del backend
+      let mensajeError = 'No se pudo iniciar el pago con Mercado Pago.';
+
+      if (httpError.error && httpError.error.error) {
+        mensajeError = httpError.error.error; // ← Este es el mensaje del backend
+      } else if (typeof httpError.error === 'string') {
+        mensajeError = httpError.error;
+      }
+
+   Swal.fire({
+  icon: 'info',
+  title: 'Aún tienes rifas disponibles 🎉',
+  text: mensajeError,
+  confirmButtonText: 'OK'
+});
+    }
+  });
+}
 
 
 seleccionarImagen(img: string): void {
