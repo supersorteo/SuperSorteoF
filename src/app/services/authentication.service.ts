@@ -1,7 +1,7 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
-import { catchError, map, Observable, tap, throwError } from 'rxjs';
+import { catchError, map, Observable, of, tap, throwError } from 'rxjs';
 import { User } from '../interfaces/user';
 import { environment } from '../../environment/environment';
 
@@ -151,6 +151,26 @@ changePassword(email: string, codigo: string, nuevaPassword: string): Observable
   }).pipe(
     map(response => response === 'true'),
     catchError(this.handleError)
+  );
+}
+
+getVipInitialLimit(userId: number): Observable<number> {
+  return this.http.get<{ initialRifas: number }>(`${this.apiUrl}/${userId}/vip-initial`).pipe(
+    map(response => {
+      console.log('🔥 Backend VIP initial rifas:', response.initialRifas);
+      return response.initialRifas;
+    }),
+    catchError((error) => {
+      console.error('❌ Error backend VIP initial limit:', error);
+      // Fallback localStorage
+      const currentUser = this.getCurrentUser();
+      const vipInitialKey = `vipInitialLimit_${userId}`;
+      const stored = localStorage.getItem(vipInitialKey);
+      const parsed = stored ? parseInt(stored, 10) : NaN;
+      const fallback = isNaN(parsed) ? 1 : parsed;
+      console.log('🔥 Fallback localStorage VIP initial rifas:', fallback);
+      return of(fallback);
+    })
   );
 }
 

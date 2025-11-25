@@ -2472,203 +2472,9 @@ compartirRifa(raffle: any) {
 
 
 
-  showDialog0(): void {
-    const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
-    // Si no existe la propiedad 'cantidadRifas' se asume que el usuario solo puede tener 1 rifa
-    const cantidadRifasPermitidas = currentUser.cantidadRifas || 1;
-
-    // En lugar de solo contar las rifas activas, se cuenta el total de rifas (activas + terminadas)
-    const totalRifas = this.userRaffles ? this.userRaffles.length : 0;
-
-    // Si el usuario NO es VIP y ya tiene al menos una rifa (activa o terminada), se bloquea la apertura del modal
-    if (!this.isVip && totalRifas >= 1) {
-      console.error('Error: Los usuarios no VIP solo pueden crear una rifa.');
-      Swal.fire({
-        title: 'Límite alcanzado',
-        text: 'Los usuarios que no son VIP solo pueden tener una rifa activa o terminada.',
-        icon: 'warning',
-        confirmButtonText: 'Aceptar',
-      });
-      return;
-    }
-
-    // Para usuarios VIP, se verifica si han alcanzado el límite (tomando en cuenta todas sus rifas)
-    if (this.isVip && totalRifas >= cantidadRifasPermitidas) {
-      console.error('Error: Has alcanzado el límite de rifas permitidas según tu código VIP.');
-      Swal.fire({
-        title: 'Límite alcanzado',
-        text: `Ya has alcanzado el número máximo de ${cantidadRifasPermitidas} rifas permitidas según tu código VIP.`,
-        icon: 'warning',
-        confirmButtonText: 'Aceptar',
-      });
-      return;
-    }
-
-    // Si pasa la validación, se abre el modal normalmente
-    this.displayDialog = true;
-  }
 
 
-  showDialog1(): void {
-  console.log('🔍 Verificando límite para crear rifa...');
-  const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
-  const cantidadRifasPermitidas = currentUser.cantidadRifas || 1;
-  console.log('Límite permitidas:', cantidadRifasPermitidas, 'VIP:', this.isVip);
-
-  const totalRifas = this.userRaffles ? this.userRaffles.length : 0;
-  console.log('Rifas cargadas:', totalRifas, 'userRaffles:', this.userRaffles);
-
-  if (!this.isVip && totalRifas >= 1) {
-    console.log('Bloqueo no VIP: totalRifas >= 1');
-    Swal.fire({
-      title: 'Límite alcanzado',
-      text: 'Los usuarios que no son VIP solo pueden tener una rifa.',
-      icon: 'warning',
-      confirmButtonText: 'Aceptar',
-    });
-    return;
-  }
-
-  if (this.isVip && totalRifas >= cantidadRifasPermitidas) {
-    console.log('Bloqueo VIP: totalRifas >= permitidas');
-    Swal.fire({
-      title: 'Límite alcanzado',
-      text: `Ya has creado ${totalRifas} rifas (límite: ${cantidadRifasPermitidas}).`,
-      icon: 'warning',
-      confirmButtonText: 'Aceptar',
-    });
-    return;
-  }
-
-  console.log('✅ Límite OK, abriendo modal...');
-  this.displayDialog = true;
-}
-
-
-showDialog2(): void {
-  console.log('🔍 Verificando límite para crear rifa...');
-  const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
-  const cantidadRifasPermitidas = currentUser.cantidadRifas || 1; // Restantes (decrementa, ej. 5)
-  const initialCantidadRifas = currentUser.initialCantidadRifas || cantidadRifasPermitidas; // Inicial fijo (10)
-  console.log('Límite inicial (fijo):', initialCantidadRifas, 'Restantes:', cantidadRifasPermitidas, 'VIP:', this.isVip);
-
-  const totalRifas = this.userRaffles ? this.userRaffles.length : 0;
-  console.log('Rifas creadas:', totalRifas);
-
-  if (!this.isVip && totalRifas >= 1) {
-    console.log('Bloqueo no VIP: totalRifas >= 1');
-    Swal.fire({
-      title: 'Límite alcanzado',
-      text: 'Los usuarios que no son VIP solo pueden tener una rifa.',
-      icon: 'warning',
-      confirmButtonText: 'Aceptar',
-    });
-    return;
-  }
-
-  if (this.isVip && totalRifas >= initialCantidadRifas) { // 🔥 Compara con inicial fijo (10)
-    console.log('Bloqueo VIP: totalRifas >= initialLimit');
-    Swal.fire({
-      title: 'Límite alcanzado',
-      text: `Ya has creado ${totalRifas} rifas (límite inicial: ${initialCantidadRifas}). Restantes: ${cantidadRifasPermitidas}.`,
-      icon: 'warning',
-      confirmButtonText: 'Aceptar',
-    });
-    return;
-  }
-
-  console.log('✅ Límite OK, abriendo modal...');
-  this.displayDialog = true;
-}
-
-showDialog3(): void {
-  console.log('🔍 Verificando límite para crear rifa...');
-  const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
-  const cantidadRifasPermitidas = currentUser.cantidadRifas || 1; // Restantes (decrementa, ej. 9)
-
-  // 🔥 Lee límite inicial fijo desde clave separada
-  const vipInitialKey = `vipInitialLimit_${this.userId}`;
-  const initialCantidadRifas = parseInt(localStorage.getItem(vipInitialKey) || '1', 10); // Fijo 10
-  console.log('Límite inicial fijo:', initialCantidadRifas, 'Restantes:', cantidadRifasPermitidas, 'VIP:', this.isVip);
-
-  const totalRifas = this.userRaffles ? this.userRaffles.length : 0;
-  console.log('Rifas creadas:', totalRifas);
-
-  if (!this.isVip && totalRifas >= 1) {
-    console.log('Bloqueo no VIP: totalRifas >= 1');
-    Swal.fire({
-      title: 'Límite alcanzado',
-      text: 'Los usuarios que no son VIP solo pueden tener una rifa.',
-      icon: 'warning',
-      confirmButtonText: 'Aceptar',
-    });
-    return;
-  }
-
-  if (this.isVip && totalRifas >= initialCantidadRifas) { // Compara con fijo (10)
-    console.log('Bloqueo VIP: totalRifas >= initialLimit');
-    Swal.fire({
-      title: 'Límite alcanzado',
-      text: `Ya has creado ${totalRifas} rifas (límite inicial: ${initialCantidadRifas}). Restantes: ${cantidadRifasPermitidas}.`,
-      //text: `Ya has creado ${totalRifas} permitidas por su codigo Vip`,
-      icon: 'warning',
-      confirmButtonText: 'Aceptar',
-    });
-    return;
-  }
-
-  console.log('✅ Límite OK, abriendo modal...');
-  this.displayDialog = true;
-}
-
-showDialog4(): void {
-  console.log('🔍 Verificando límite para crear rifa...');
-
-  // 1. Usa propiedad de componente como principal (fija)
-  let initialCantidadRifas = this.initialCantidadRifas; // Fijo 10
-
-  // 2. Fallback a localStorage si propiedad no set (ej. recarga)
-  if (initialCantidadRifas === 1 || !this.initialCantidadRifas) {
-    const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
-    const vipInitialKey = `vipInitialLimit_${this.userId}`;
-    initialCantidadRifas = parseInt(localStorage.getItem(vipInitialKey) || '1', 10);
-    this.initialCantidadRifas = initialCantidadRifas; // Set propiedad para futuras llamadas
-  }
-
-  const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
-  const cantidadRifasPermitidas = currentUser.cantidadRifas || 1; // Restantes (decrementa)
-  console.log('Límite inicial fijo:', initialCantidadRifas, 'Restantes:', cantidadRifasPermitidas, 'VIP:', this.isVip);
-
-  const totalRifas = this.userRaffles ? this.userRaffles.length : 0;
-  console.log('Rifas creadas:', totalRifas);
-
-  if (!this.isVip && totalRifas >= 1) {
-    console.log('Bloqueo no VIP: totalRifas >= 1');
-    Swal.fire({
-      title: 'Límite alcanzado',
-      text: 'Los usuarios que no son VIP solo pueden tener una rifa.',
-      icon: 'warning',
-      confirmButtonText: 'Aceptar',
-    });
-    return;
-  }
-
-  if (this.isVip && totalRifas >= initialCantidadRifas) { // Compara con fijo (10)
-    console.log('Bloqueo VIP: totalRifas >= initialLimit');
-    Swal.fire({
-      title: 'Límite alcanzado',
-      text: `Ya has creado ${totalRifas} rifas (límite inicial: ${initialCantidadRifas}). Restantes: ${cantidadRifasPermitidas}.`,
-      icon: 'warning',
-      confirmButtonText: 'Aceptar',
-    });
-    return;
-  }
-
-  console.log('✅ Límite OK, abriendo modal...');
-  this.displayDialog = true;
-}
-
-showDialog(): void {
+showDialog0(): void {
   console.log('🔍 Verificando límite para crear rifa...');
 
   // 1. Usa propiedad de componente como principal (fija)
@@ -2711,6 +2517,77 @@ showDialog(): void {
     Swal.fire({
       title: 'Límite alcanzado',
       //text: `Ya has creado ${totalRifasFiltradas} rifas con este código VIP (límite inicial: ${initialCantidadRifas}). Restantes: ${cantidadRifasPermitidas}.`,
+      text: `Ya has creado ${totalRifasFiltradas} rifas con este código VIP si desea crear más rifas obtenga un nuevo codigo VIP`,
+      icon: 'warning',
+      confirmButtonText: 'Aceptar',
+    });
+    return;
+  }
+
+  console.log('✅ Límite OK, abriendo modal...');
+  this.displayDialog = true;
+}
+
+showDialog(): void {
+  console.log('🔍 Verificando límite para crear rifa...');
+
+  // 🔥 Fetch initialCantidadRifas del backend (límite fijo del código VIP actual)
+  this.authService.getVipInitialLimit(this.userId).subscribe({
+    next: (initialCantidadRifas) => {
+      console.log('🔥 Backend initialCantidadRifas (límite fijo código VIP):', initialCantidadRifas);
+      this.initialCantidadRifas = initialCantidadRifas;
+
+      // Continúa validación
+      this.performVipValidation(initialCantidadRifas);
+    },
+    error: (error) => {
+      console.error('❌ Error backend initial limit:', error);
+      // Fallback localStorage
+      const fallback = this.getLocalInitialLimit();
+      console.log('🔥 Fallback localStorage initialCantidadRifas:', fallback);
+      this.initialCantidadRifas = fallback;
+      this.performVipValidation(fallback);
+    }
+  });
+}
+
+// 🔥 Helper privado: Fallback local
+private getLocalInitialLimit(): number {
+  const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+  const vipInitialKey = `vipInitialLimit_${this.userId}`;
+  const stored = localStorage.getItem(vipInitialKey);
+  const parsed = stored ? parseInt(stored, 10) : NaN;
+  return isNaN(parsed) ? 1 : parsed;
+}
+
+// 🔥 Helper privado: Validación VIP (evita duplicar)
+private performVipValidation(initialCantidadRifas: number): void {
+  const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+  const cantidadRifasPermitidas = currentUser.cantidadRifas || 1; // Restantes
+  const currentCodigoVip = currentUser.codigoVip || '';
+  console.log('Límite inicial fijo (backend/local):', initialCantidadRifas, 'Restantes:', cantidadRifasPermitidas, 'Código actual:', currentCodigoVip, 'VIP:', this.isVip);
+
+  const totalRifasFiltradas = this.userRaffles ? this.userRaffles.filter(r => r.codigoVipUsado === currentCodigoVip).length : 0;
+  console.log('Rifas creadas (filtradas por código):', totalRifasFiltradas);
+
+  const totalRifasDisplay = this.userRaffles ? this.userRaffles.length : 0;
+  console.log('Rifas totales para display:', totalRifasDisplay);
+
+  if (!this.isVip && totalRifasDisplay >= 1) {
+    console.log('Bloqueo no VIP: totalRifasDisplay >= 1');
+    Swal.fire({
+      title: 'Límite alcanzado',
+      text: 'Los usuarios que no son VIP solo pueden tener una rifa.',
+      icon: 'warning',
+      confirmButtonText: 'Aceptar',
+    });
+    return;
+  }
+
+  if (this.isVip && totalRifasFiltradas >= initialCantidadRifas) {
+    console.log('Bloqueo VIP: totalRifasFiltradas >= initialLimit');
+    Swal.fire({
+      title: 'Límite alcanzado',
       text: `Ya has creado ${totalRifasFiltradas} rifas con este código VIP si desea crear más rifas obtenga un nuevo codigo VIP`,
       icon: 'warning',
       confirmButtonText: 'Aceptar',
