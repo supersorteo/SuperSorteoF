@@ -36,6 +36,7 @@ import { WebSocketService } from '../../services/web-socket.service';
 import { RifaGanadorDTO } from '../../interfaces/rifa-ganador-dto';
 import { CardModule } from 'primeng/card';
 import { CodigoVipServiceService } from '../../services/codigo-vip-service.service';
+import { PaymentServiceService } from '../../services/payment-service.service';
 /*
 interface WinningEntry {
   raffleId: number;
@@ -287,6 +288,7 @@ imagenes = [
     private messageService: MessageService,
     private participanteService: ParticipanteService,
     private codigoVipService: CodigoVipServiceService,
+    private paymentService: PaymentServiceService,
     private route: ActivatedRoute,
     private sanitizer: DomSanitizer,
     private raffleExecutionService: RaffleExecutionService,
@@ -4105,7 +4107,7 @@ comprarRifas00(img: any): void {
   });
 }
 
-comprarRifas(img: any): void {
+comprarRifas001(img: any): void {
   if (!img) {
     console.log('No hay imagen seleccionada.');
     return;
@@ -4167,6 +4169,68 @@ comprarRifas(img: any): void {
     }
   });
 }
+
+comprarRifas(img: any): void {
+  if (!img) {
+    console.log('No hay imagen seleccionada.');
+    return;
+  }
+
+  console.log('Click Comprar - ID:', img.id);
+  const cantidadRifas = img.rifas;
+  const usuarioId = this.userId;
+
+  console.log(`🛒 Iniciando compra de ${cantidadRifas} rifas para el usuario ${usuarioId}`);
+
+  // Llama backend directo para preference (sin verificar métodos)
+  this.codigoVipService.generarPreferenciaPago(cantidadRifas, usuarioId).subscribe({
+    next: (response) => {
+      const preferenceId = response.id;
+      const precio = response.precio;
+
+      console.log('✅ Preferencia MP creada - ID:', preferenceId);
+      console.log(`💰 Precio del código VIP: $${precio}`);
+
+      const containerId = 'wallet_container_' + img.id;
+
+      setTimeout(() => {
+        const container = document.getElementById(containerId);
+        if (!container) {
+          console.error(`❌ Contenedor ${containerId} no encontrado`);
+          return;
+        }
+
+        const mp = new MercadoPago('APP_USR-a0ecd62d-ddc6-4b42-ad56-de1384731571', {
+          locale: 'es-AR'
+        });
+
+        const bricksBuilder = mp.bricks();
+        bricksBuilder.create('wallet', containerId, {
+          initialization: { preferenceId: preferenceId },
+          customization: { visual: { style: { theme: 'default' } } }
+        });
+      }, 100);
+    },
+    error: (httpError) => {
+      console.error('❌ Error al generar preferencia:', httpError);
+      let mensajeError = 'No se pudo iniciar el pago con Mercado Pago.';
+
+      if (httpError.error && httpError.error.error) {
+        mensajeError = httpError.error.error;
+      } else if (typeof httpError.error === 'string') {
+        mensajeError = httpError.error;
+      }
+
+      Swal.fire({
+        icon: 'info',
+        title: 'Aún tienes rifas disponibles 🎉',
+        text: mensajeError,
+        confirmButtonText: 'OK'
+      });
+    }
+  });
+}
+
 
 
 seleccionarImagen(img: string): void {
