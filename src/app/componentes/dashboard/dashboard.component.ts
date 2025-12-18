@@ -370,6 +370,34 @@ this.loadCurrentUserData();
       this.handleSuccessfulPayment();
     }
 
+
+
+
+  const url = this.router.url;
+  if (url.includes('dashboard')) {
+    const queryParams = this.route.snapshot.queryParams;
+    if (queryParams['payment_id'] || queryParams['preference_id'] || queryParams['status']) {
+      console.log('Volviendo del pago de MP, recargando usuario...');
+      Swal.fire({
+        title: '¡Pago procesado!',
+        text: 'Tu código VIP ha sido activado.',
+        icon: 'success',
+        timer: 4000,
+        showConfirmButton: false
+      });
+
+      // Recarga usuario del backend para activar VIP y cantidadRifas
+      if (this.userId) {
+        this.authService.getUserById(this.userId).subscribe({
+          next: (usuarioActualizado) => {
+            this.actualizarDatosUsuario(usuarioActualizado);
+            this.loadUserRaffles(); // Recarga tus rifas
+          }
+        });
+      }
+    }
+  }
+
 }
 
 
@@ -1323,35 +1351,6 @@ loadUserRaffles(): void {
 }
 
 
-private loadImagesFromIndexedDB1(productId: number, imageUrls: string[]): void {
-  if (!this.db) {
-    console.warn('⚠️ IndexedDB no inicializado, usando URLs del backend');
-    return;
-  }
-
-  if (isNaN(productId)) {
-    console.error('❌ productId no es un número válido:', productId);
-    return;
-  }
-
-  const transaction = this.db.transaction(['images'], 'readonly');
-  const store = transaction.objectStore('images');
-  const request = store.get(productId);
-
-  request.onsuccess = (event: any) => {
-    const data = event.target.result;
-    if (data) {
-      const blob = data.blob;
-      const url = URL.createObjectURL(blob);
-      imageUrls[data.slot] = url; // Reemplaza la URL del backend con la local
-      console.log(`🖼️ Imagen cargada desde IndexedDB para productId ${productId}, slot ${data.slot}`);
-    } else {
-      console.log(`ℹ️ No se encontró imagen en IndexedDB para productId ${productId}, usando URL del backend`);
-    }
-  };
-
-  request.onerror = () => console.error(`❌ Error al cargar imagen desde IndexedDB para productId ${productId}`);
-}
 
 private loadImagesFromIndexedDB(productId: number, imageUrls: string[]): void {
   if (!this.db) {
@@ -1389,82 +1388,7 @@ private loadImagesFromIndexedDB(productId: number, imageUrls: string[]): void {
 
  // Validar y asignar código VIP
 
-validarYAsignarCodigoVip0(): void {
-  if (!this.codigoVip.trim()) {
-    this.mostrarMensaje('error', 'Código VIP requerido', 'Por favor, ingrese un código VIP.');
-    return;
-  }
 
-  const userId = this.userId;
-  if (!userId) {
-    this.mostrarMensaje('error', 'Usuario no identificado', 'No se ha encontrado información del usuario.');
-    return;
-  }
-
-  this.raffleService.activarVip(userId, this.codigoVip.trim()).subscribe({
-    next: (usuarioActualizado) => {
-      console.log('✅ Usuario actualizado:', usuarioActualizado);
-      console.log('Cantidad rifas del backend:', usuarioActualizado.cantidadRifas);
-      // Actualizar variables del usuario en el frontend
-      this.actualizarDatosUsuario(usuarioActualizado);
-      this.sidebarVisible = false
-      this.mostrarMensaje('success', '¡VIP activado!', `Ahora puedes crear ${usuarioActualizado.cantidadRifas} rifas.`);
-    },
-    error: (error) => {
-      console.error('❌ Error al activar VIP:', error);
-      this.mostrarMensaje('error', 'Error en la activación', error.message || 'No se pudo activar el VIP.');
-    }
-  });
-
-  this.hideProductDialog();
-
-
-}
-
-
-validarYAsignarCodigoVip1(): void {
-  if (!this.codigoVip.trim()) {
-    this.mostrarMensaje('error', 'Código VIP requerido', 'Por favor, ingrese un código VIP.');
-    return;
-  }
-
-  const userId = this.userId;
-  if (!userId) {
-    this.mostrarMensaje('error', 'Usuario no identificado', 'No se ha encontrado información del usuario.');
-    return;
-  }
-
-  this.raffleService.activarVip(userId, this.codigoVip.trim()).subscribe({
-    next: (usuarioActualizado) => {
-      console.log('✅ Usuario actualizado del backend:', usuarioActualizado);
-      console.log('Cantidad rifas del backend:', usuarioActualizado.cantidadRifas); // Log para depurar
-
-      // Actualizar variables del usuario en el frontend
-      this.actualizarDatosUsuario(usuarioActualizado);
-
-      // 🔥 Fuerza actualización de localStorage con el valor backend
-      const currentUserRaw = localStorage.getItem('currentUser');
-      if (currentUserRaw) {
-        const currentUser = JSON.parse(currentUserRaw);
-        currentUser.initialCantidadRifas = usuarioActualizado.cantidadRifas;
-        currentUser.cantidadRifas = usuarioActualizado.cantidadRifas; // Fuerza el valor backend
-        localStorage.setItem('currentUser', JSON.stringify(currentUser));
-        console.log('localStorage actualizado con initialCantidadRifas =', currentUser.initialCantidadRifas);
-        console.log('localStorage actualizado con cantidadRifas =', currentUser.cantidadRifas);
-      }
-
-      //this.loadUserRaffles();
-      this.sidebarVisible = false;
-      this.mostrarMensaje('success', '¡VIP activado!', `Ahora puedes crear ${usuarioActualizado.cantidadRifas} rifas.`);
-    },
-    error: (error) => {
-      console.error('❌ Error al activar VIP:', error);
-      this.mostrarMensaje('error', 'Error en la activación', error.message || 'No se pudo activar el VIP.');
-    }
-  });
-
-  this.hideProductDialog();
-}
 
 validarYAsignarCodigoVip(): void {
   if (!this.codigoVip.trim()) {
@@ -1559,6 +1483,13 @@ private actualizarDatosUsuario(usuarioActualizado: any): void {
     this.isVip = usuarioActualizado.esVip;
     this.cantidadRifasPermitidas = usuarioActualizado.cantidadRifas;
     this.codigoVip = usuarioActualizado.codigoVip;
+    console.log('🎟️ Rifas restantes actualizadas:', this.cantidadRifasPermitidas);
+      if (this.isVip) {
+    console.log('👑 Usuario VIP - Rifas disponibles para crear:', this.cantidadRifasPermitidas);
+      } else {
+        console.log('❌ Usuario no VIP - Solo puede tener 1 rifa');
+      }
+
     // Convertir fechaRegistro de string ISO a Date
     this.fechaRegistro = usuarioActualizado.fechaRegistro ? new Date(usuarioActualizado.fechaRegistro) : null;
     console.log('🔹 Datos del usuario actualizados:', usuarioActualizado);
@@ -2530,7 +2461,7 @@ showDialog0(): void {
   this.displayDialog = true;
 }
 
-showDialog(): void {
+showDialog00(): void {
   console.log('🔍 Verificando límite para crear rifa...');
 
   // 🔥 Fetch initialCantidadRifas del backend (límite fijo del código VIP actual)
@@ -2553,6 +2484,27 @@ showDialog(): void {
   });
 }
 
+showDialog(): void {
+  console.log('🔍 Verificando límite para crear rifa...');
+
+  // Fetch initialCantidadRifas del backend (límite fijo del código VIP actual)
+  this.authService.getVipInitialLimit(this.userId).subscribe({
+    next: (initialCantidadRifas) => {
+      console.log('🔥 Backend initialCantidadRifas (límite fijo código VIP):', initialCantidadRifas);
+      this.initialCantidadRifas = initialCantidadRifas;
+
+      this.performVipValidation(initialCantidadRifas);
+    },
+    error: (error) => {
+      console.error('❌ Error backend initial limit:', error);
+      const fallback = this.getLocalInitialLimit();
+      console.log('🔥 Fallback localStorage initialCantidadRifas:', fallback);
+      this.initialCantidadRifas = fallback;
+      this.performVipValidation(fallback);
+    }
+  });
+}
+
 // 🔥 Helper privado: Fallback local
 private getLocalInitialLimit(): number {
   const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
@@ -2563,20 +2515,36 @@ private getLocalInitialLimit(): number {
 }
 
 // 🔥 Helper privado: Validación VIP (evita duplicar)
+
+
 private performVipValidation(initialCantidadRifas: number): void {
   const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
-  const cantidadRifasPermitidas = currentUser.cantidadRifas || 1; // Restantes
+  const cantidadRifasPermitidas = currentUser.cantidadRifas || 1;
   const currentCodigoVip = currentUser.codigoVip || '';
-  console.log('Límite inicial fijo (backend/local):', initialCantidadRifas, 'Restantes:', cantidadRifasPermitidas, 'Código actual:', currentCodigoVip, 'VIP:', this.isVip);
+
+  // 🔥 BLOQUEO POR CUENTA EXPIRADA (más de 30 días)
+  if (this.remainingTime.days + this.remainingTime.hours + this.remainingTime.minutes + this.remainingTime.seconds <= 0) {
+    Swal.fire({
+      title: 'Cuenta VIP inactiva',
+      text: 'Han pasado más de 30 días desde tu última activación. Tu cuenta VIP está inactiva. Compra un nuevo código VIP para seguir creando rifas.',
+      icon: 'warning',
+      confirmButtonText: 'Comprar nuevo código VIP',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.abrirModal(); // Abre el modal de compra de códigos VIP
+      }
+    });
+    return;
+  }
+
+  console.log('Límite inicial fijo:', initialCantidadRifas, 'Restantes:', cantidadRifasPermitidas, 'Código actual:', currentCodigoVip, 'VIP:', this.isVip);
 
   const totalRifasFiltradas = this.userRaffles ? this.userRaffles.filter(r => r.codigoVipUsado === currentCodigoVip).length : 0;
   console.log('Rifas creadas (filtradas por código):', totalRifasFiltradas);
 
   const totalRifasDisplay = this.userRaffles ? this.userRaffles.length : 0;
-  console.log('Rifas totales para display:', totalRifasDisplay);
 
   if (!this.isVip && totalRifasDisplay >= 1) {
-    console.log('Bloqueo no VIP: totalRifasDisplay >= 1');
     Swal.fire({
       title: 'Límite alcanzado',
       text: 'Los usuarios que no son VIP solo pueden tener una rifa.',
@@ -2587,10 +2555,9 @@ private performVipValidation(initialCantidadRifas: number): void {
   }
 
   if (this.isVip && totalRifasFiltradas >= initialCantidadRifas) {
-    console.log('Bloqueo VIP: totalRifasFiltradas >= initialLimit');
     Swal.fire({
       title: 'Límite alcanzado',
-      text: `Ya has creado ${totalRifasFiltradas} rifas con este código VIP si desea crear más rifas obtenga un nuevo codigo VIP`,
+      text: `Ya has creado ${totalRifasFiltradas} rifas con este código VIP. Si deseas crear más rifas, obtén un nuevo código VIP.`,
       icon: 'warning',
       confirmButtonText: 'Aceptar',
     });
@@ -2601,7 +2568,62 @@ private performVipValidation(initialCantidadRifas: number): void {
   this.displayDialog = true;
 }
 
+private performVipValidation0(initialCantidadRifas: number): void {
+  const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+  const cantidadRifasPermitidas = currentUser.cantidadRifas || 1; // Restantes (acumuladas)
+  const currentCodigoVip = currentUser.codigoVip || '';
 
+  // BLOQUEO POR CUENTA EXPIRADA (más de 30 días)
+  if (this.remainingTime.days + this.remainingTime.hours + this.remainingTime.minutes + this.remainingTime.seconds <= 0) {
+    Swal.fire({
+      title: 'Cuenta VIP inactiva',
+      text: 'Han pasado más de 30 días desde tu última activación. Tu cuenta VIP está inactiva. Compra un nuevo código VIP para reactivarla.',
+      icon: 'warning',
+      confirmButtonText: 'Comprar nuevo código VIP',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.abrirModal(); // Abre modal compra VIP
+      }
+    });
+    return;
+  }
+
+  console.log('Límite inicial fijo (acumulado):', initialCantidadRifas, 'Restantes:', cantidadRifasPermitidas, 'Código actual:', currentCodigoVip, 'VIP:', this.isVip);
+
+  const totalRifasFiltradas = this.userRaffles ? this.userRaffles.filter(r => r.codigoVipUsado === currentCodigoVip).length : 0;
+  console.log('Rifas creadas (filtradas por último código):', totalRifasFiltradas);
+
+  const totalRifasDisplay = this.userRaffles ? this.userRaffles.length : 0;
+
+  // No VIP: máximo 1 rifa
+  if (!this.isVip && totalRifasDisplay >= 1) {
+    Swal.fire({
+      title: 'Límite alcanzado',
+      text: 'Los usuarios que no son VIP solo pueden tener una rifa.',
+      icon: 'warning',
+      confirmButtonText: 'Aceptar',
+    });
+    return;
+  }
+
+  // VIP: bloquea solo si agotó todas las rifas acumuladas
+  if (this.isVip && cantidadRifasPermitidas <= 0) {
+    Swal.fire({
+      title: 'Sin rifas disponibles',
+      text: 'Has agotado todas las rifas de tus códigos VIP. Compra uno nuevo para obtener más.',
+      icon: 'info',
+      confirmButtonText: 'Comprar nuevo código VIP',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.abrirModal();
+      }
+    });
+    return;
+  }
+
+  console.log('✅ Límite OK, abriendo modal...');
+  this.displayDialog = true;
+}
 
   showProductDialog() {
     this.displayProductDialog = true;

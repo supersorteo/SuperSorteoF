@@ -7,6 +7,7 @@ import { InputSwitchModule } from 'primeng/inputswitch';
 import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { ThemeService } from './services/theme.service';
+import { AuthenticationService } from './services/authentication.service';
 @Component({
   selector: 'app-root',
   standalone: true,
@@ -18,7 +19,8 @@ export class AppComponent {
   title = 'Supersorteo';
   shouldShowToolbar: boolean = true;
   shouldShowThemeToggle: boolean = true;
-  constructor(private router: Router) {
+  constructor(private router: Router, private authService: AuthenticationService) {
+
     this.router.events.subscribe(event => {
 
       if (event instanceof NavigationEnd) {
@@ -36,7 +38,12 @@ export class AppComponent {
           currentUrl.startsWith('/administrar')
 
 
+
+
         );
+        if ((currentUrl === '/' || currentUrl === '/home') && this.authService.isUserLoggedIn()) {
+        this.router.navigate(['/dashboard']);
+      }
 
       }
     });

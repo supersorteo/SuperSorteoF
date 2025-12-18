@@ -11,8 +11,8 @@ export class PaymentServiceService {
   private apiUrl = 'https://sweet-laughter-production.up.railway.app/api/payment-options';
   //private apiUrl = 'http://localhost:8080/api/payment-options';
 
-  private url = 'https://sweet-laughter-production.up.railway.app/api/rifas/pago';
-  //private url = "http://localhost:8080/api/rifas/pago"
+  //private url = 'https://sweet-laughter-production.up.railway.app/api/rifas/pago';
+  private url = "http://localhost:8080/api/rifas/pago"
 
   private paymentOptionsSubject = new BehaviorSubject<PaymentOption[]>([]);
   public paymentOptions$ = this.paymentOptionsSubject.asObservable();

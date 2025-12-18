@@ -401,18 +401,23 @@ header="Crear Nueva Rifa"
 
 
 <div class="card flex justify-content-center">
+
   <p-sidebar [(visible)]="sidebarVisible" >
 
    <div class="overflow-y-auto">
     <div class="list-none py-3 m-0">
 
-
+<div *ngIf="isVip" class="rifas-restantes-sidebar">
+  <i class="pi pi-ticket" style="font-size: 1.5rem; color: gold; margin-right: 8px;"></i>
+  <strong>Rifas restantes: {{ cantidadRifasPermitidas }}</strong>
+</div>
 
       <ng-template #expiredTemplate>
         <div class="expired">La cuenta ha expirado.</div>
       </ng-template>
 
       <ul class="list-none p-0 m-0 overflow-hidden">
+
         <li>
           <div class="sidebar-buttons">
             <button pButton type="button" label="Ser VIP" class="p-button-success" (click)="abrirModal()"></button>

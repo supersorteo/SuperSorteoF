@@ -1234,6 +1234,7 @@ background-image: linear-gradient(to right top, #c109b0, #a845cc, #8a63e0, #6778
   border: 3px solid #fff;
   font-weight: bold;
   color: white;
+  transition: all 0.3s ease;
 }
 
 .vip-crown-icon {
@@ -1253,4 +1254,81 @@ background-image: linear-gradient(to right top, #c109b0, #a845cc, #8a63e0, #6778
   0% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.7); }
   70% { box-shadow: 0 0 0 15px rgba(255, 215, 0, 0); }
   100% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0); }
+}
+
+@media (max-width: 992px) {
+  .vip-crown-container {
+    top: 10px;
+    right: 10px;
+    padding: 8px 12px;
+    gap: 8px;
+  }
+
+  .vip-crown-icon {
+    font-size: 1.8rem;
+  }
+
+  .vip-badge {
+    font-size: 0.9rem;
+    padding: 4px 10px;
+  }
+}
+
+// Móviles grandes (≤768px)
+@media (max-width: 768px) {
+  .vip-crown-container {
+    top: 8px;
+    right: 8px;
+    padding: 6px 10px;
+    gap: 6px;
+  }
+
+  .vip-crown-icon {
+    font-size: 1.6rem;
+  }
+
+  .vip-badge {
+    font-size: 0.8rem;
+    padding: 3px 8px;
+  }
+}
+
+// Móviles pequeños (≤480px)
+@media (max-width: 480px) {
+  .vip-crown-container {
+    top: 6px;
+    right: 6px;
+    padding: 5px 8px;
+    gap: 5px;
+    border-width: 2px;
+  }
+
+  .vip-crown-icon {
+    font-size: 1.4rem;
+  }
+
+  .vip-badge {
+    font-size: 0.75rem;
+    padding: 3px 6px;
+  }
+
+  @keyframes vipPulse {
+    0% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.5); }
+    70% { box-shadow: 0 0 0 8px rgba(255, 215, 0, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0); }
+  }
+}
+
+.rifas-restantes-sidebar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  margin: 15px 0;
+  padding: 10px;
+  background: linear-gradient(135deg, #5c552d, #FFA500);
+  border-radius: 12px;
+  color: white;
+  font-size: 1.1rem;
+  box-shadow: 0 4px 12px rgba(255, 215, 0, 0.4);
 }

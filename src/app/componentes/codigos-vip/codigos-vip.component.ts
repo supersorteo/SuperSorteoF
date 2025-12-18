@@ -25,7 +25,7 @@ export class CodigosVipComponent implements OnInit{
     { label: '10 Rifas', value: 10 },
     { label: '15 Rifas', value: 15 }
   ];
-  cantidadRifas: number = 10;
+  cantidadRifas: number = 5;
   selectedCodigo!: CodigoVip;
   constructor(private codigoVipService: CodigoVipServiceService, private router: Router) {}
 
